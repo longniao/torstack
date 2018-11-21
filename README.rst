@@ -1,6 +1,6 @@
 # Torstack
 
-<img src="docs/logo.svg" align="left" width=255 height=40> Torstack is a full stack framework base on `Tornado <http://www.tornadoweb.org>`. it is designed to make getting started quick and easy, so you can focus on writing your app without needing to reinvent the wheel.
+<img src="docs/logo.svg" align="left" width=300 height=47> Torstack is a full stack framework base on `Tornado <http://www.tornadoweb.org>`. it is designed to make getting started quick and easy, so you can focus on writing your app without needing to reinvent the wheel.
 
 
 # Installing
