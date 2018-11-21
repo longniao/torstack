@@ -1,9 +1,11 @@
-# Torstack
+Torstack
+========
 
 <img src="docs/logo.svg" align="left" width=300 height=47> Torstack is a full stack framework base on `Tornado <http://www.tornadoweb.org>`. it is designed to make getting started quick and easy, so you can focus on writing your app without needing to reinvent the wheel.
 
 
-# Installing
+Installing
+----------
 
 Install and update using `pip`_:
 
@@ -12,7 +14,8 @@ Install and update using `pip`_:
     pip install -U torstack
 
 
-# A Simple Demo
+A Simple Demo
+-------------
 
 .. code-block:: python
 
@@ -23,9 +26,8 @@ Install and update using `pip`_:
         app.listen(8888)
         app.run()
 
-# Features
-
-## Supported
+Features
+--------
 
 * to be continued
 
