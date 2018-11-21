@@ -14,6 +14,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
+from torstack.exception import BaseException
+from random import choice
 
 engine_setting=dict(
         echo=False,  # print sql
@@ -33,21 +35,34 @@ class MysqlStorage(object):
 
     def __init__(self, master, slave=None):
         if not master:
-            raise Exception('100001', 'Mysql config error.')
+            raise BaseException('100001', 'error mysql config.')
 
         self.session_map = {}
-        self.create_sessions()
+        self.create_sessions(master, slave)
 
-    def create_sessions(self):
-        if self.options:
-            for key, value in self.options.items():
-                engine_url = 'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % (value['username'], value['password'], value['host'], value['port'], value['dbname'])
-                # print(key, engine_url)
-                self.session_map[key] = self.create_single_session(engine_url)
+
+    def create_sessions(self, master, slave=None):
+        # master database
+        if master:
+            self.session_map['master'] = self.create_single_session(master)
+
+        # slave database
+        slave = []
+        if not slave:
+            slave.append(self.session_map['master'])
+        else:
+            if isinstance(slave, dict):
+                slave.append(self.create_single_session(slave))
+            elif isinstance(slave, list):
+                for config in slave:
+                    slave.append(self.create_single_session(config))
+        self.session_map['slave'] = slave
+
 
     @classmethod
-    def create_single_session(cls, url, scopefunc=None):
-        engine = create_engine(url, **engine_setting)
+    def create_single_session(cls, config, scopefunc=None):
+        engine_url = 'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
+        engine = create_engine(engine_url, **engine_setting)
         return scoped_session(
             sessionmaker(
                 autocommit=False,
@@ -58,16 +73,18 @@ class MysqlStorage(object):
             scopefunc=scopefunc
         )
 
+
     def get_session(self, name):
         try:
             if not name:
                 name = 'slave'
 
-            return self.session_map[name]
+            return choice(self.session_map[name])
         except KeyError:
             raise KeyError('{} not created, check your DB_SETTINGS'.format(name))
         except IndexError:
             raise IndexError('cannot get names from DB_SETTINGS')
+
 
     @contextmanager
     def session_ctx(self, bind=None):
