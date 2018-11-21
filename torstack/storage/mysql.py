@@ -2,7 +2,7 @@
 
 '''
 torstack.storage.mysql
-Basic mysql storage definition.
+mysql storage definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.

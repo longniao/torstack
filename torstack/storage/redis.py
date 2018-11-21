@@ -2,7 +2,7 @@
 
 '''
 torstack.storage.redis
-Basic redis storage definition.
+redis storage definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
@@ -12,10 +12,14 @@ import redis
 
 class RedisStorage(object):
     def __init__(self, options):
+        if not options:
+            raise BaseException('100001', 'error redis config.')
+
         self.options = options
         self._pool = None
         self._client = None
-        self._expireTime = 1800
+        self._expire = 1800
+
 
     @property
     def pool(self):
