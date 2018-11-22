@@ -21,8 +21,17 @@ MESSAGE_PREFIX = 'msg_'
 class BaseHandler(tornado.web.RequestHandler):
 
     def initialize(self):
+        _config_session = self.settings['_config_session']
+        _config_cookie = self.settings['_config_cookie']
         self._session_id = None
         self._session_data = None
+        self._session_storage = None
+
+        if '_config_base' in self.settings:
+            _config_base = self.settings['_config_base']
+        else:
+            pass
+
 
     @property
     def session_key(self):
@@ -30,10 +39,7 @@ class BaseHandler(tornado.web.RequestHandler):
         session key
         :return:
         '''
-        if options.session.get('session_key'):
-            return options.session.get('session_key')
-        else:
-            return 'session_key'
+        return _config_session.get('session_key')
 
     @property
     def session_id(self):
@@ -49,14 +55,14 @@ class BaseHandler(tornado.web.RequestHandler):
             # create session id if not exist
             if not self._session_id:
                 self._session_id = StringLibrary.gen_uuid()
-                print(self.session_key, self._session_id, cookie_config['expires_days'])
-                self.set_secure_cookie(self.session_key, self._session_id, expires_days=cookie_config['expires_days'])
+                print(self.session_key, self._session_id, _config_cookie['expires_days'])
+                self.set_secure_cookie(self.session_key, self._session_id, expires_days=_config_cookie['expires_days'])
         return self._session_id
 
     @property
     def current_user(self):
         '''
-        获取当前用户
+        current user
         :return:
         '''
         if not self._session_data:
@@ -67,10 +73,7 @@ class BaseHandler(tornado.web.RequestHandler):
                     session_string = session_string if isinstance(session_string, str) else session_string.decode(
                         'utf-8')
 
-                    import json
                     self._session_data = json.loads(session_string)
-                    # print('user_data:', self.user_data)
-                    # 刷新过期时间为30分钟
                     self.settings['redis'].setExpire(self.session_id, 1800)
                 except:
                     print("Unexpected error:", sys.exc_info()[0])
@@ -86,12 +89,8 @@ class BaseHandler(tornado.web.RequestHandler):
         :return:
         '''
         if data:
-            session_data = dict(
-                user_id=data.id,
-                user_name=data.user_name,
-                nick_name=None,
-            )
-            session_string = '{"user_id":"%s","user_name":"%s","nick_name":"%s"}' % (session_data['user_id'], session_data['user_name'], session_data['nick_name'])
+            session_data = data.__dict__
+            session_string = json.dumps(data.__dict__)
         else:
             session_data = dict()
             session_string = ''

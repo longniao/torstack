@@ -46,3 +46,8 @@ log_config = dict(
     backupCount=30,
     fmt="%(asctime)s - %(name)s - %(filename)s[line:%(lineno)d] - %(levelname)s - %(message)s",
 )
+
+# base
+base_config = dict(
+    session_storage='redis',
+)

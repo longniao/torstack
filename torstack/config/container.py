@@ -1,60 +1,65 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack..config
-backend manager definition.
+torstack.config.container
+config container definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
 '''
 
-import os
-import warnings
 
-from tornado.util import import_object
-from tornado.options import options
+class ConfigContainer(object):
 
-from exception import ConfigError
-from torngas.storage import storage
-from torngas import global_settings
-
-from configparser import ConfigParser
-import ast
-
-SETTINGS_MODULE_ENVIRON = "TORNGAS_APP_SETTINGS"
-
-
-class SettingContainer(object):
-    def __contains__(self, item):
-        setting = _Settings.settings_object()
-        return hasattr(setting, item)
-
-    def __getattr__(self, item):
-        setting = _Settings.settings_object()
-        if hasattr(setting, item):
-            config = getattr(setting, item)
-        else:
-            raise ConfigError('settings "%s" not exist!' % item)
-
-        return storage(config) if type(config) is dict else config
+    _CONFIG_DICT_ = dict()
 
     @classmethod
-    def settings_object(cls):
+    def get_config(cls):
+        return cls._CONFIG_DICT_
 
-        if not hasattr(cls, '_sett'):
-            cls._sett = global_settings
-            try:
-                sett_obj = import_object(options.settings)
-                cls._sett.__dict__.update(sett_obj.__dict__)
-            except Exception:
-                if os.environ.get(SETTINGS_MODULE_ENVIRON, None):
-                    try:
-                        sett_obj = import_object(os.environ[SETTINGS_MODULE_ENVIRON] or None)
-                        cls._sett.__dict__.update(sett_obj.__dict__)
-                    except:
-                        warnings.warn('settings import error.')
+    @classmethod
+    def add_mysql(cls, config):
+        cls._CONFIG_DICT_['mysql'] = config
 
-        return cls._sett
+    @classmethod
+    def add_redis(cls, config):
+        cls._CONFIG_DICT_['redis'] = config
 
+    @classmethod
+    def add_mongodb(cls, config):
+        cls._CONFIG_DICT_['mongodb'] = config
 
-settings = _Settings()
+    @classmethod
+    def add_memcache(cls, config):
+        cls._CONFIG_DICT_['memcache'] = config
+
+    @classmethod
+    def add_application(cls, config):
+        cls._CONFIG_DICT_['application'] = config
+
+    @classmethod
+    def add_session(cls, config):
+        cls._CONFIG_DICT_['session'] = config
+
+    @classmethod
+    def add_cookie(cls, config):
+        cls._CONFIG_DICT_['cookie'] = config
+
+    @classmethod
+    def add_log(cls, config):
+        cls._CONFIG_DICT_['log'] = config
+
+    @classmethod
+    def add_base(cls, config):
+        cls._CONFIG_DICT_['base'] = config
+
+    @classmethod
+    def get(cls, config):
+        if config in cls._CONFIG_DICT_:
+            return cls._CONFIG_DICT_[config]
+        else:
+            return None
+
+    @classmethod
+    def store(cls):
+        define("_CONFIG_DICT_", default=cls._CONFIG_DICT_, type=dict)

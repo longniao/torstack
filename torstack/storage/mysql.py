@@ -35,7 +35,7 @@ class MysqlStorage(object):
 
     def __init__(self, master, slave=None):
         if not master:
-            raise BaseException('100001', 'error mysql config.')
+            raise BaseException('10101', 'error mysql config.')
 
         self.session_map = {}
         self.create_sessions(master, slave)

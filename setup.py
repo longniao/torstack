@@ -19,7 +19,6 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'futures',
         'redis',
         'sqlalchemy',
     ])
