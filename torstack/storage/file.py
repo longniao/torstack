@@ -33,10 +33,18 @@ class FileStorage(object):
         return None
 
     @classmethod
-    def set(cls, file, content=''):
+    def save(cls, file, content=''):
         FileStorage.mkdir(FileStorage.path)
         path = '%s/%s' % (FileStorage.path, file)
         fp = open(path, 'w+')
         fp.write(content)
         fp.close()
         return True
+
+    @classmethod
+    def delete(cls, file):
+        path = '%s/%s' % (FileStorage.path, file)
+        if os.path.exists(path):
+            os.remove(path)
+        else:
+            return True

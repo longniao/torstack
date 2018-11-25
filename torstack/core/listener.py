@@ -7,7 +7,7 @@ from interest.core.manager import ClientManager
 
 __author__ = 'longniao@gmail.com'
 
-class Listener(threading.Thread):
+class CoreListener(threading.Thread):
 
     def __init__(self, redis, channels):
         threading.Thread.__init__(self)

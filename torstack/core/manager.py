@@ -6,7 +6,7 @@ from interest.models.client import Client
 
 __author__ = 'longniao@gmail.com'
 
-class ClientManager(object):
+class CoreClient(object):
 
     _CLIENTS_MAP = {}
 

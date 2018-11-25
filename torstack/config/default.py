@@ -24,9 +24,8 @@ application_config = dict(
 
 # session
 session_config = dict(
-    session_key='_tid',
-    session_prefix='_',
-    session_message='u_msg_',
+    session_name='_tsid',
+    session_lifetime=1800,
 )
 
 # cookie
