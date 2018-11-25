@@ -30,12 +30,32 @@ class WebApplication(tornado.web.Application):
         else:
             raise BaseException('10001', 'error config.')
 
+        # ===================================================================
+        # ======= config ====================================================
+        # ===================================================================
+
         # application
         if 'application' not in config:
             raise BaseException('10002', 'error application config.')
 
         # application settings
-        self.settings = {**application_config, **config['application']}
+        self.settings = application_config.update(config['application'])
+
+        # base
+        if 'base' in config:
+            self.settings['_config_base'] = base_config.update(config['base'])
+
+        # session config
+        if 'session' in config:
+            self.settings['_config_session'] = session_config.update(config['session'])
+
+        # cookie config
+        if 'cookie' in config:
+            self.settings['_config_cookie'] = cookie_config.update(config['cookie'])
+
+        # ===================================================================
+        # ======= storage ===================================================
+        # ===================================================================
 
         # redis
         if 'redis' in config:
@@ -57,17 +77,18 @@ class WebApplication(tornado.web.Application):
         if 'memcache' in config:
             pass
 
+        # ===================================================================
+        # ======= session and cookie ========================================
+        # ===================================================================
+
         # session
-        if 'session' in config:
-            self.settings['_config_session'] = {**session_config, **config['session']}
+        from torstack.core.session import CoreSession
+        self.settings['session'] = CoreSession(redis_storage, self.settings['_config_session'])
 
         # cookie
-        if 'cookie' in config:
-            self.settings['_config_cookie'] = {**cookie_config, **config['cookie']}
+        from torstack.core.cookie import CoreCookie
+        self.settings['cookie'] = CoreCookie(self.settings['_config_cookie'])
 
-        # base
-        if 'base' in config:
-            self.settings['_config_base'] = {**base_config, **config['base']}
 
     def run(self, handlers):
         '''

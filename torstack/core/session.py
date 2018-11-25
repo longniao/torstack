@@ -39,7 +39,7 @@ class CoreSession(object):
         self._expires = self._default_session_lifetime
         self._is_dirty = True
         self.__init_session_driver()
-        self.__init_session_object() # initialize session object
+        self.__init_session_object()
 
 
     def __init_config(self, config={}):
@@ -138,6 +138,16 @@ class CoreSession(object):
         '''
         pass
 
+    def set_expires(self, key, lifetime=None):
+        '''
+        set lifetime
+        :param key:
+        :param lifetime:
+        :return:
+        '''
+        if not lifetime:
+            lifetime = self.expires
+        return self.driver.expire(key, lifetime)
 
     @property
     def id(self):
