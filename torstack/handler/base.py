@@ -2,7 +2,7 @@
 
 '''
 torstack.handler.base
-basic handler definition.
+web handler definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
