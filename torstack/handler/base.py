@@ -19,6 +19,8 @@ class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         self._session_id = None
         self._session_data = None
+        self.db = self.settings['_storage_mysql']
+        self.redis = self.settings['_storage_redis']
 
         self.session = self.settings['session']
         self.cookie = self.settings['cookie']
@@ -30,14 +32,14 @@ class BaseHandler(tornado.web.RequestHandler):
         :return:
         '''
         if not self._session_id:
-            session_id = self.get_secure_cookie(self.session.name)
+            session_id = self.get_secure_cookie(self.cookie.name)
             if session_id:
                 self._session_id = session_id if isinstance(session_id, str) else session_id.decode('utf-8')
 
             # create session id if not exist
             if not self._session_id:
                 self._session_id = self.session.id
-                self.set_secure_cookie(self.session.name, self._session_id, expires_days=self.session.expires)
+                self.set_secure_cookie(self.cookie.name, self._session_id, expires_days=self.session.expires)
         return self._session_id
 
     @property

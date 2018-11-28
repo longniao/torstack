@@ -26,18 +26,15 @@ del l
 class CoreSession(object):
 
     SESSION_CONFIG = dict(
-        session_name='_tsid',
-        session_lifetime=1800,
+        prefix='sid_',
+        lifetime=1800, # 60*30
     )
 
     def __init__(self, driver, config={}):
         self.__init_driver(driver)
         self.__init_config(config)
 
-        self._default_session_lifetime = datetime.utcnow() + timedelta(
-            seconds=self.settings.get('session_lifetime', self.DEFAULT_SESSION_LIFETIME))
-        self._expires = self._default_session_lifetime
-        self._is_dirty = True
+        self._expires = datetime.utcnow() + timedelta(seconds=self.settings.get('lifetime'))
         self.__init_session_driver()
         self.__init_session_object()
 
@@ -74,8 +71,8 @@ class CoreSession(object):
         session_id = (b2a_base64(urandom(blength)))[:-1]
         if isinstance(session_id, str):
             # PY2
-            return session_id.translate(_smap)
-        return session_id.decode('utf-8').translate(_smap)
+            return self.SESSION_CONFIG['prefix'] + session_id.translate(_smap)
+        return self.SESSION_CONFIG['prefix'] + session_id.decode('utf-8').translate(_smap)
 
 
     def get(self, key, default=None):
@@ -111,7 +108,7 @@ class CoreSession(object):
         else:
             raise BaseException('10001', 'error data format: %s.' % str(value))
 
-        self.driver.save(key, session_string, self.SESSION_CONFIG['session_lifetime'])
+        self.driver.save(key, session_string, self.SESSION_CONFIG['lifetime'])
 
 
     def delete(self, key):
@@ -158,19 +155,11 @@ class CoreSession(object):
 
 
     @property
-    def name(self):
-        '''
-        :return: session name
-        '''
-        return self.SESSION_CONFIG['session_name']
-
-
-    @property
     def expires(self):
         '''
         :return: session expires time
         '''
-        return self.SESSION_CONFIG['session_lifetime']
+        return self.SESSION_CONFIG['lifetime']
 
 
 class SessionMixin(object):

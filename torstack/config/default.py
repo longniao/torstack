@@ -24,14 +24,26 @@ application_config = dict(
 
 # session
 session_config = dict(
-    session_name='_tsid',
-    session_lifetime=1800,
+    prefix='sid_',
+    lifetime=1800,  # 60*30
 )
 
 # cookie
 cookie_config = dict(
-    expires=88473600,
-    expires_days=1024,
+    name='_tsid',
+    expires=315360000, # 60*60*24*365*10
+    expires_days=3650,
+)
+
+# rest
+token_config = dict(
+    prefix='token_',
+    lifetime=315360000, # 60*60*24*365*10
+)
+
+# rest
+rest_config = dict(
+    allow_remote_access=True,
 )
 
 # log
