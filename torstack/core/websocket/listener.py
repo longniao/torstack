@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 
+'''
+torstack.core.websocket.listener
+websocket client listener definition.
+
+:copyright: (c) 2018 by longniao <longniao@gmail.com>
+:license: MIT, see LICENSE for more details.
+'''
+
 import json
 import threading
 from tornado.log import app_log
-from interest.core.manager import ClientManager
+from torstack.core.websocket.manager import ClientManager
 
 __author__ = 'longniao@gmail.com'
 
-class CoreListener(threading.Thread):
+class ClientListener(threading.Thread):
 
     def __init__(self, redis, channels):
         threading.Thread.__init__(self)

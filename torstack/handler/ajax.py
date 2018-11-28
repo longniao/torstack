@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.handler.rest
-rest handler definition.
+torstack.handler.ajax
+ajax handler definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
@@ -14,7 +14,7 @@ from torstack.handler.base import BaseHandler
 class AjaxHandler(BaseHandler):
 
     def initialize(self):
-        super(RestHandler, self).initialize()
+        super(AjaxHandler, self).initialize()
         self.set_header('Content-Type', 'text/json')
 
     def write_error(self, status_code, **kwargs):

@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
 
+'''
+torstack.core.websocket.manager
+websocket client manager definition.
+
+:copyright: (c) 2018 by longniao <longniao@gmail.com>
+:license: MIT, see LICENSE for more details.
+'''
+
 import json
 from tornado.log import app_log
-from interest.models.client import Client
+from torstack.core.websocket.client import Client
 
 __author__ = 'longniao@gmail.com'
 
-class CoreClient(object):
+class ClientManager(object):
 
     _CLIENTS_MAP = {}
 
