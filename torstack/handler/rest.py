@@ -13,6 +13,7 @@ from __future__ import absolute_import, unicode_literals
 import sys
 import json
 import tornado.web
+from torstack.exception import BaseException
 
 class RestHandler(tornado.web.RequestHandler):
 
@@ -22,11 +23,13 @@ class RestHandler(tornado.web.RequestHandler):
         self.db = self.settings['_storage_mysql']
         self.redis = self.settings['_storage_redis']
 
-        if self.settings['_config_rest']['enable']:
-            self.token = self.settings['token']
-            self.set_header('Content-Type', 'text/json')
-            if self.settings['rest_config']['allow_remote_access']:
-                self.access_control_allow()
+        if self.settings['_config_rest']['enable'] == False:
+            raise BaseException('10105', 'error rest config.')
+
+        self.rest = self.settings['rest']
+        self.set_header('Content-Type', 'text/json')
+        if self.settings['_config_rest']['allow_remote_access']:
+            self.access_control_allow()
 
     def access_control_allow(self):
         # 允许 JS 跨域调用
