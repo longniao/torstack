@@ -61,6 +61,10 @@ class WebApplication(tornado.web.Application):
             rest_config.update(config['rest'])
         self.settings['_config_rest'] = rest_config
 
+        if 'rest_header' in config:
+            rest_header_config.update(config['rest_header'])
+        self.settings['_config_rest_header'] = rest_header_config
+
         # ===================================================================
         # ======= storage ===================================================
         # ===================================================================
@@ -106,7 +110,7 @@ class WebApplication(tornado.web.Application):
         # rest
         if rest_config['_config_rest']['enable'] == True:
             from torstack.core.rest import CoreRest
-            self.settings['rest'] = CoreRest(redis_storage, self.settings['_config_rest'])
+            self.settings['rest'] = CoreRest(redis_storage, self.settings['_config_rest'], self.settings['_config_rest_header'])
 
 
     def run(self, handlers):

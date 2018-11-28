@@ -35,4 +35,5 @@ setup(
     install_requires=[
         'redis',
         'sqlalchemy',
+        'pyconvert',
     ])

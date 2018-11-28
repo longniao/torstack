@@ -45,6 +45,14 @@ rest_config = dict(
     token_lifetime=315360000,  # 60*60*24*365*10
 )
 
+# rest header
+rest_header_config = dict(
+    token='',
+    version='',
+    signature='',
+    timestamp='',
+)
+
 # log
 log_config = dict(
     enable=False,
