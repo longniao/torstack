@@ -14,6 +14,7 @@ from __future__ import (absolute_import, division, print_function,
 class CoreCookie(object):
 
     COOKIE_CONFIG = dict(
+        enable=True,
         name='_tsid',
         expires=88473600, # 60*60*24*365*10
         expires_days=3650,

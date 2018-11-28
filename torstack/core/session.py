@@ -26,6 +26,7 @@ del l
 class CoreSession(object):
 
     SESSION_CONFIG = dict(
+        enable=True,
         prefix='sid_',
         lifetime=1800, # 60*30
     )
@@ -146,8 +147,7 @@ class CoreSession(object):
             lifetime = self.expires
         return self.driver.expire(key, lifetime)
 
-    @property
-    def id(self):
+    def new_id(self):
         '''
         :return: new session id
         '''

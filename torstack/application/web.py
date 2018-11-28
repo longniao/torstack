@@ -43,15 +43,23 @@ class WebApplication(tornado.web.Application):
 
         # base
         if 'base' in config:
-            self.settings['_config_base'] = base_config.update(config['base'])
+            base_config.update(config['base'])
+        self.settings['_config_base'] = base_config
 
         # session config
         if 'session' in config:
-            self.settings['_config_session'] = session_config.update(config['session'])
+            session_config.update(config['session'])
+        self.settings['_config_session'] = session_config
 
         # cookie config
         if 'cookie' in config:
-            self.settings['_config_cookie'] = cookie_config.update(config['cookie'])
+            cookie_config.update(config['cookie'])
+        self.settings['_config_cookie'] = cookie_config
+
+        # rest config
+        if 'rest' in config:
+            rest_config.update(config['rest'])
+        self.settings['_config_rest'] = rest_config
 
         # ===================================================================
         # ======= storage ===================================================
@@ -82,12 +90,23 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # session
-        from torstack.core.session import CoreSession
-        self.settings['session'] = CoreSession(redis_storage, self.settings['_config_session'])
+        if self.settings['_config_session']['enable'] == True:
+            from torstack.core.session import CoreSession
+            self.settings['session'] = CoreSession(redis_storage, self.settings['_config_session'])
 
         # cookie
-        from torstack.core.cookie import CoreCookie
-        self.settings['cookie'] = CoreCookie(self.settings['_config_cookie'])
+        if self.settings['_config_cookie']['enable'] == True:
+            from torstack.core.cookie import CoreCookie
+            self.settings['cookie'] = CoreCookie(self.settings['_config_cookie'])
+
+        # ===================================================================
+        # ======= rest config ===============================================
+        # ===================================================================
+
+        # rest
+        if rest_config['_config_rest']['enable'] == True:
+            from torstack.core.rest import CoreRest
+            self.settings['rest'] = CoreRest(redis_storage, self.settings['_config_rest'])
 
 
     def run(self, handlers):

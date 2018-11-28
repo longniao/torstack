@@ -24,30 +24,30 @@ application_config = dict(
 
 # session
 session_config = dict(
+    enable=True,
     prefix='sid_',
     lifetime=1800,  # 60*30
 )
 
 # cookie
 cookie_config = dict(
+    enable=True,
     name='_tsid',
     expires=315360000, # 60*60*24*365*10
     expires_days=3650,
 )
 
 # rest
-token_config = dict(
-    prefix='token_',
-    lifetime=315360000, # 60*60*24*365*10
-)
-
-# rest
 rest_config = dict(
+    enable=False,
     allow_remote_access=True,
+    token_prefix='token_',
+    token_lifetime=315360000,  # 60*60*24*365*10
 )
 
 # log
 log_config = dict(
+    enable=False,
     log_level="WARNING",
     log_console=False,
     log_file=True,

@@ -38,7 +38,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
             # create session id if not exist
             if not self._session_id:
-                self._session_id = self.session.id
+                self._session_id = self.session.new_id()
                 self.set_secure_cookie(self.cookie.name, self._session_id, expires_days=self.session.expires)
         return self._session_id
 
