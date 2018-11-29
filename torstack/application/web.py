@@ -65,6 +65,11 @@ class WebApplication(tornado.web.Application):
             rest_header_config.update(config['rest_header'])
         self.settings['_config_rest_header'] = rest_header_config
 
+        # websocket config
+        if 'websocket' in config:
+            websocket_config.update(config['websocket'])
+        self.settings['_config_websocket'] = websocket_config
+
         # ===================================================================
         # ======= storage ===================================================
         # ===================================================================
@@ -104,13 +109,23 @@ class WebApplication(tornado.web.Application):
             self.settings['cookie'] = CoreCookie(self.settings['_config_cookie'])
 
         # ===================================================================
-        # ======= rest config ===============================================
+        # ======= rest ======================================================
         # ===================================================================
 
         # rest
         if rest_config['_config_rest']['enable'] == True:
             from torstack.core.rest import CoreRest
             self.settings['rest'] = CoreRest(redis_storage, self.settings['_config_rest'], self.settings['_config_rest_header'])
+
+        # ===================================================================
+        # ======= websocket =================================================
+        # ===================================================================
+
+        # websocket
+        if rest_config['_config_websocket']['enable'] == True:
+            from torstack.core.websocket.listener import ClientListener
+            client = ClientListener(redis_storage.client, [options.redis_channel])
+            client.start()
 
 
     def run(self, handlers):

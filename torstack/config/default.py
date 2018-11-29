@@ -53,6 +53,11 @@ rest_header_config = dict(
     timestamp='',
 )
 
+# websocket
+websocket_config = dict(
+    enable=False,
+)
+
 # log
 log_config = dict(
     enable=False,
@@ -69,4 +74,25 @@ log_config = dict(
 # base
 base_config = dict(
     session_storage='redis',
+)
+
+# redis
+redis_config = dict(
+    host='',
+    port=6379,
+    db=1,
+    password=None,
+    channel='',
+    max_connections=30,
+    session_expires_days=30,
+    autoconnect=True,
+)
+
+# mysql
+mysql_config = dict(
+    host='',
+    port=3306,
+    dbname='',
+    username='',
+    password='',
 )
