@@ -70,6 +70,11 @@ class WebApplication(tornado.web.Application):
             websocket_config.update(config['websocket'])
         self.settings['_config_websocket'] = websocket_config
 
+        # scheduler config
+        if 'scheduler' in config:
+            scheduler_config.update(config['scheduler'])
+        self.settings['_scheduler_config'] = scheduler_config
+
         # ===================================================================
         # ======= storage ===================================================
         # ===================================================================
@@ -126,6 +131,17 @@ class WebApplication(tornado.web.Application):
             from torstack.websocket.client import ClientListener
             client = ClientListener(redis_storage.client, [options.redis_channel])
             client.start()
+
+        # ===================================================================
+        # ======= scheduler =================================================
+        # ===================================================================
+
+        if self.settings['_scheduler_config']['enable'] == True:
+            from torstack.core.scheduler import CoreScheduler
+            from torstack.scheduler.executor import Executers
+            taskmgr = CoreScheduler(Executers, self.settings['_storage_mysql'])
+            taskmgr.start()
+
 
 
     def run(self, handlers):

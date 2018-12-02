@@ -11,7 +11,7 @@ websocket client manager definition.
 import json
 
 from tornado.log import app_log
-from torstack.exception import BaseException
+
 from torstack.websocket.client import Client
 
 

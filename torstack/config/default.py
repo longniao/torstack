@@ -96,3 +96,9 @@ mysql_config = dict(
     username='',
     password='',
 )
+
+# scheduler config
+scheduler_config = dict(
+    enable=False,
+    autorun=True,
+)
