@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.core.websocket.listener
+torstack.websocket.listener
 websocket client listener definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
@@ -10,10 +10,10 @@ websocket client listener definition.
 
 import json
 import threading
-from tornado.log import app_log
-from torstack.core.websocket.manager import ClientManager
 
-__author__ = 'longniao@gmail.com'
+from tornado.log import app_log
+from torstack.websocket.manager import ClientManager
+
 
 class ClientListener(threading.Thread):
 

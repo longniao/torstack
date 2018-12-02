@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.core.websocket.client
+torstack.websocket.client
 websocket client definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
@@ -10,12 +10,11 @@ websocket client definition.
 
 class Client(object):
 
-    def __init__(self, identity, nickname="", email='', avatar='', handler=None):
+    def __init__(self, identity, id='', name='', handler=None):
         self._identity = identity
+        self._id = id
+        self._name = name
         self._handler = handler
-        self._nickname = nickname
-        self._email = email
-        self._avatar = avatar
 
     @property
     def identity(self):
@@ -27,16 +26,12 @@ class Client(object):
         return self._handler
 
     @property
-    def nickname(self):
-        return self._nickname
+    def id(self):
+        return self._id
 
     @property
-    def email(self):
-        return self._email
-
-    @property
-    def avatar(self):
-        return self._avatar
+    def name(self):
+        return self._name
 
     def __str__(self):
         return self.identity

@@ -14,7 +14,7 @@ import tornado.websocket
 from tornado.log import app_log
 from tornado.options import options
 
-from torstack.core.websocket.manager import ClientManager
+from torstack.websocket import ClientManager
 
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):

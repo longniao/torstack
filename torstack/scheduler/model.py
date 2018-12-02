@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.model.scheduler
+torstack.scheduler.model
 scheduler model definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
