@@ -102,3 +102,6 @@ scheduler_config = dict(
     enable=False,
     autorun=True,
 )
+
+# scheduler executors
+scheduler_executors = []

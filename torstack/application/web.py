@@ -75,6 +75,12 @@ class WebApplication(tornado.web.Application):
             scheduler_config.update(config['scheduler'])
         self.settings['_scheduler_config'] = scheduler_config
 
+        # scheduler config
+        if 'executors' in config:
+            scheduler_executors.update(config['executors'])
+        self.settings['_scheduler_executors'] = scheduler_executors
+        self.settings['_scheduler_handlers'] = []
+
         # ===================================================================
         # ======= storage ===================================================
         # ===================================================================
@@ -138,10 +144,28 @@ class WebApplication(tornado.web.Application):
 
         if self.settings['_scheduler_config']['enable'] == True:
             from torstack.core.scheduler import CoreScheduler
-            from torstack.scheduler.executor import Executers
-            taskmgr = CoreScheduler(Executers, self.settings['_storage_mysql'])
+            taskmgr = CoreScheduler(self.settings['_scheduler_executors'], self.settings['_storage_mysql'])
             taskmgr.start()
 
+            from tornado.web import url
+            from torstack.scheduler.handler import *
+            handlers = [
+                # 任务
+                url(r"/scheduler/job_add", AddJobHandler, name='job_add'),
+                url(r"/scheduler/job_pause", PauseJobHandler, name='job_pause'),
+                url(r"/scheduler/job_resume", ResumeJobHandler, name='job_resume'),
+                url(r"/scheduler/job_remove", RemoveJobHandler, name='job_remove'),
+                url(r"/scheduler/job_remove_all", RemoveAllJobsHandler, name='job_remove_all'),
+                url(r"/scheduler/job_list", GetAllJobsHandler, name='job_list'),
+                # 定时器
+                url(r"/scheduler/start", StartHandler, name='scheduler_start'),
+                url(r"/scheduler/shutdown", ShutdownSchedHandler, name='scheduler_shutdown'),
+                url(r"/scheduler/pause", PauseSchedHandler, name='scheduler_pause'),
+                url(r"/scheduler/resume", ResumeSchedHandler, name='scheduler_resume'),
+                url(r"/scheduler/status", GetStatusHandler, name='scheduler_status'),
+                url(r"/scheduler/switch", SwitchSchedHandler, name='scheduler_switch'),
+            ]
+            self.settings['_scheduler_handlers'] = handlers
 
 
     def run(self, handlers):
@@ -153,4 +177,5 @@ class WebApplication(tornado.web.Application):
         if not handlers:
             raise BaseException('10003', 'error application handlers.')
 
+        handlers.extend(self.settings['_scheduler_handlers'])
         tornado.web.Application.__init__(self, handlers, **self.settings)
