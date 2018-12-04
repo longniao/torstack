@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .web import WebApplication
+from torstack.app.web import WebApplication
 
 __all__ = [
     'WebApplication',
