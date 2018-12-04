@@ -35,9 +35,7 @@ class CoreSession(object):
         self.__init_driver(driver)
         self.__init_config(config)
 
-        self._expires = datetime.utcnow() + timedelta(seconds=self.settings.get('lifetime'))
-        self.__init_session_driver()
-        self.__init_session_object()
+        self._expires = datetime.utcnow() + timedelta(seconds=self.SESSION_CONFIG.get('lifetime'))
 
 
     def __init_config(self, config={}):

@@ -17,6 +17,8 @@ import tornado.httpserver
 import tornado.web
 from tornado.options import options
 from torstack.config.default import *
+from tornado.web import url
+from torstack.scheduler.handler import *
 
 
 class WebApplication(tornado.web.Application):
@@ -39,7 +41,8 @@ class WebApplication(tornado.web.Application):
             raise BaseException('10002', 'error application config.')
 
         # application settings
-        self.settings = application_config.update(config['application'])
+        application_config.update(config['application'])
+        self.settings = application_config
 
         # base
         if 'base' in config:
@@ -94,7 +97,15 @@ class WebApplication(tornado.web.Application):
         # mysql
         if 'mysql' in config:
             from torstack.storage.mysql import MysqlStorage
-            mysql_storage = MysqlStorage(config['mysql'])
+            if 'master' in config['mysql']:
+                # master and slave
+                if 'slave' not in config['mysql']:
+                    config['mysql']['slave'] = None
+                mysql_storage = MysqlStorage(config['mysql']['master'], config['mysql']['slave'])
+            else:
+                # only one database
+                mysql_config.update(config['mysql'])
+                mysql_storage = MysqlStorage(mysql_config, None)
             self.settings['_storage_mysql'] = mysql_storage
 
         # mongodb
@@ -147,8 +158,6 @@ class WebApplication(tornado.web.Application):
             taskmgr = CoreScheduler(self.settings['_scheduler_executors'], self.settings['_storage_mysql'])
             taskmgr.start()
 
-            from tornado.web import url
-            from torstack.scheduler.handler import *
             handlers = [
                 # 任务
                 url(r"/scheduler/job_add", AddJobHandler, name='job_add'),
