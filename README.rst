@@ -118,6 +118,9 @@ A Simple Config
       }
 
 
+A Simple Example
+-------------
+
 .. code-block:: python
 
     import os
