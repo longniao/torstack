@@ -36,18 +36,15 @@ class WebApplication(tornado.web.Application):
         # ======= config ====================================================
         # ===================================================================
 
-        # application
-        if 'application' not in config:
-            raise BaseException('10002', 'error application config.')
-
         # application settings
-        application_config.update(config['application'])
-        self.settings = application_config
+        if 'settings' in config:
+            settings_config.update(config['settings'])
+        self.settings = settings_config
 
-        # base
-        if 'base' in config:
-            base_config.update(config['base'])
-        self.settings['_config_base'] = base_config
+        # application log
+        if 'log' in config:
+            log_config.update(config['log'])
+        self.settings['_config_log'] = log_config
 
         # session config
         if 'session' in config:
@@ -88,12 +85,6 @@ class WebApplication(tornado.web.Application):
         # ======= storage ===================================================
         # ===================================================================
 
-        # redis
-        if 'redis' in config:
-            from torstack.storage.redis import RedisStorage
-            redis_storage = RedisStorage(config['redis'])
-            self.settings['_storage_redis'] = redis_storage
-
         # mysql
         if 'mysql' in config:
             from torstack.storage.mysql import MysqlStorage
@@ -111,6 +102,16 @@ class WebApplication(tornado.web.Application):
         # mongodb
         if 'mongodb' in config:
             pass
+
+        # ===================================================================
+        # ======= cache =====================================================
+        # ===================================================================
+
+        # redis
+        if 'redis' in config:
+            from torstack.storage.redis import RedisStorage
+            redis_storage = RedisStorage(config['redis'])
+            self.settings['_storage_redis'] = redis_storage
 
         # memcache
         if 'memcache' in config:

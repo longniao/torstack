@@ -11,52 +11,25 @@ helloworld app.py definition.
 
 import os
 from os.path import abspath, dirname
-from tornado.options import define, options
-from configparser import ConfigParser
-import ast
+from torstack.config.container import ConfigContainer
 from torstack.server import TorStackServer
 from torstack.handler.base import BaseHandler
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
-TEMPLATE_DIR = os.path.join(PROJECT_DIR, 'website/template')
-STATIC_DIR = os.path.join(PROJECT_DIR, 'website/static')
 CONF_DIR = os.path.join(PROJECT_DIR, 'conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
 
-print('PROJECT_DIR:', PROJECT_DIR)
-print('TEMPLATE_DIR:', TEMPLATE_DIR)
-print('STATIC_DIR:', STATIC_DIR)
-print('CONF_DIR:', CONF_DIR)
-print('CONF_FILE:', CONF_FILE)
+ConfigContainer.load_config(CONF_FILE)
+ConfigContainer.store()
 
-config = ConfigParser()
-config.read(CONF_FILE, encoding='UTF-8')
-settings = ast.literal_eval(config.get('application', 'settings'))
-log = ast.literal_eval(config.get('application', 'log'))
-redis = ast.literal_eval(config.get('redis', 'master'))
-mysql = dict(
-    master=ast.literal_eval(config.get('mysql', 'master')),
-    slave=ast.literal_eval(config.get('mysql', 'slave')),
-)
-session = ast.literal_eval(config.get('base', 'session'))
-cookie = ast.literal_eval(config.get('base', 'cookie'))
+template_path = ConfigContainer.get('settings', 'template_path')
+static_path = ConfigContainer.get('settings', 'static_path')
 
-settings['template_path'] = TEMPLATE_DIR
-settings['static_path'] = STATIC_DIR
+template_path = os.path.join(PROJECT_DIR, template_path)
+static_path = os.path.join(PROJECT_DIR, static_path)
 
-_CONFIG_DICT_ = dict(
-    application=settings,
-    session=session,
-    cookie=cookie,
-    log=log,
-    redis=redis,
-    mysql=mysql,
-)
-
-define("_CONFIG_DICT_", default=_CONFIG_DICT_, type=dict)
-
-print('_CONFIG_DICT_:', _CONFIG_DICT_)
-
+ConfigContainer.set('settings', 'template_path', template_path)
+ConfigContainer.set('settings', 'static_path', static_path)
 
 
 class MainHandler(BaseHandler):

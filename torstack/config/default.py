@@ -8,8 +8,10 @@ default config definition.
 :license: MIT, see LICENSE for more details.
 '''
 
-# application
-application_config = dict(
+# application config ====================================
+
+# settings
+settings_config = dict(
     debug=True,
     port=8888,
     cookie_secret="1qaz2wsx1qaz2wsx1qaz2wsx1qaz2wsx",
@@ -22,13 +24,28 @@ application_config = dict(
     static_path='website/static',
 )
 
+# log
+log_config = dict(
+    enable=False,
+    log_level="WARNING",
+    log_console=False,
+    log_file=True,
+    log_path="/tmp/logs/log",
+    when="D",
+    interval=1,
+    backupCount=30,
+    fmt="%(asctime)s - %(name)s - %(filename)s[line:%(lineno)d] - %(levelname)s - %(message)s",
+)
+
+# base config ====================================
+
 # session
 session_config = dict(
     enable=True,
     prefix='sid_',
     lifetime=1800,  # 60*30
+    storage='redis',
 )
-
 # cookie
 cookie_config = dict(
     enable=True,
@@ -36,6 +53,8 @@ cookie_config = dict(
     expires=315360000, # 60*60*24*365*10
     expires_days=3650,
 )
+
+# rest config ====================================
 
 # rest
 rest_config = dict(
@@ -53,27 +72,33 @@ rest_header_config = dict(
     timestamp='',
 )
 
+# websocket config ====================================
+
 # websocket
 websocket_config = dict(
     enable=False,
 )
 
-# log
-log_config = dict(
+# scheduler config ====================================
+
+# scheduler config
+scheduler_config = dict(
     enable=False,
-    log_level="WARNING",
-    log_console=False,
-    log_file=True,
-    log_path="/tmp/logs/log",
-    when="D",
-    interval=1,
-    backupCount=30,
-    fmt="%(asctime)s - %(name)s - %(filename)s[line:%(lineno)d] - %(levelname)s - %(message)s",
+    autorun=True,
 )
 
-# base
-base_config = dict(
-    session_storage='redis',
+# scheduler executors
+scheduler_executors = []
+
+# storage config ====================================
+
+# mysql
+mysql_config = dict(
+    host='',
+    port=3306,
+    dbname='',
+    username='',
+    password='',
 )
 
 # redis
@@ -88,20 +113,3 @@ redis_config = dict(
     autoconnect=True,
 )
 
-# mysql
-mysql_config = dict(
-    host='',
-    port=3306,
-    dbname='',
-    username='',
-    password='',
-)
-
-# scheduler config
-scheduler_config = dict(
-    enable=False,
-    autorun=True,
-)
-
-# scheduler executors
-scheduler_executors = []
