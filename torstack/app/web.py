@@ -135,7 +135,7 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # rest
-        if rest_config['_config_rest']['enable'] == True:
+        if self.settings['_config_rest']['enable'] == True:
             from torstack.core.rest import CoreRest
             self.settings['rest'] = CoreRest(redis_storage, self.settings['_config_rest'], self.settings['_config_rest_header'])
 
@@ -144,7 +144,7 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # websocket
-        if rest_config['_config_websocket']['enable'] == True:
+        if self.settings['_config_websocket']['enable'] == True:
             from torstack.websocket.client import ClientListener
             client = ClientListener(redis_storage.client, [options.redis_channel])
             client.start()
@@ -177,7 +177,7 @@ class WebApplication(tornado.web.Application):
             self.settings['_scheduler_handlers'] = handlers
 
 
-    def run(self, handlers):
+    def add_handlers(self, handlers):
         '''
         run application
         :param handlers:
@@ -185,6 +185,12 @@ class WebApplication(tornado.web.Application):
         '''
         if not handlers:
             raise BaseException('10003', 'error application handlers.')
+        self.settings['_scheduler_handlers'].extend(handlers)
 
-        handlers.extend(self.settings['_scheduler_handlers'])
-        tornado.web.Application.__init__(self, handlers, **self.settings)
+
+    def ready(self):
+        '''
+        :return:
+        '''
+        tornado.web.Application.__init__(self, self.settings['_scheduler_handlers'], **self.settings)
+

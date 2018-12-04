@@ -14,7 +14,7 @@ from os.path import abspath, dirname
 from tornado.options import define, options
 from configparser import ConfigParser
 import ast
-from torstack.app.web import WebApplication
+from torstack.server import TorStackServer
 from torstack.handler.base import BaseHandler
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
@@ -65,8 +65,8 @@ class MainHandler(BaseHandler):
 
 
 def main():
-    app = WebApplication()
-    app.run([(r"/", MainHandler)])
+    server = TorStackServer()
+    server.run([(r"/", MainHandler)])
 
 
 if __name__ == "__main__":
