@@ -58,3 +58,5 @@ class RedisStorage(object):
             self.client.expire(key, lifetime)
         return
 
+    def delete(self, key):
+        return self.client.expire(key, 0)

@@ -36,7 +36,6 @@ class LoginHandler(BaseHandler):
         userData = UserAccountService.get_one(self.db, username)
         if userData is not None:
             if userData.password == EncipherLibrary.encrypt(password, userData.salt):
-                print(userData.session_data)
                 self.set_session(userData.session_data)
                 self.add_message("success", u"Login success, Wellcome back，{0}!".format(username))
                 self.redirect(next_url)
@@ -85,9 +84,10 @@ class RegisterHandler(BaseHandler):
 
         userData = UserAccountService.get_one(self.db, username)
         if userData is None:
-            userData = UserAccountService.add_data(self.db, username, password)
-            if userData:
-                self.set_session(userData)
+            result = UserAccountService.add_data(self.db, username, password)
+            if result:
+                userData = UserAccountService.get_one(self.db, username)
+                self.set_session(userData.session_data)
                 self.add_message("success", u"Register success, Wellcome，{0}!".format(username))
                 self.redirect(next_url)
             else:
@@ -102,7 +102,7 @@ class LogoutHandler(BaseHandler):
     logout
     '''
     def get(self):
-        self.clean_session_data()
-        self.add_message("success", u"您已退出登陆。")
+        self.clean_session()
+        self.add_message("success", u"Logout success.")
         self.redirect("/")
 

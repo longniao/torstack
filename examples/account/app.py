@@ -31,12 +31,12 @@ ConfigContainer.set('settings', 'template_path', template_path)
 ConfigContainer.set('settings', 'static_path', static_path)
 
 from tornado.web import url
-from handlers import HomeHandler, LoginHandler, RegisterHandler
+from handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
 handlers = [
     url(r"/", HomeHandler, name='home'),
     url(r"/login", LoginHandler, name='login'),
     url(r"/register", RegisterHandler, name='register'),
-    url(r"/reset", LoginHandler, name='reset'),
+    url(r"/logout", LogoutHandler, name='logout'),
 ]
 
 def main():
