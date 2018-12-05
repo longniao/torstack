@@ -13,7 +13,6 @@ import os
 from os.path import abspath, dirname
 from torstack.config.container import ConfigContainer
 from torstack.server import TorStackServer
-from torstack.handler.base import BaseHandler
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
@@ -31,15 +30,18 @@ static_path = os.path.join(PROJECT_DIR, static_path)
 ConfigContainer.set('settings', 'template_path', template_path)
 ConfigContainer.set('settings', 'static_path', static_path)
 
-
-class MainHandler(BaseHandler):
-    def get(self):
-        self.write("Hello, world")
-
+from tornado.web import url
+from handlers import HomeHandler, LoginHandler, RegisterHandler
+handlers = [
+    url(r"/", HomeHandler, name='home'),
+    url(r"/login", LoginHandler, name='login'),
+    url(r"/register", RegisterHandler, name='register'),
+    url(r"/reset", LoginHandler, name='reset'),
+]
 
 def main():
     server = TorStackServer()
-    server.run([(r"/", MainHandler)])
+    server.run(handlers)
 
 
 if __name__ == "__main__":

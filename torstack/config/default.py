@@ -19,7 +19,7 @@ settings_config = dict(
     compress_response=True,
     max_threads_num=500,
     autoreload=True,
-    login_url="/login",
+    login_url="/account",
     template_path='website/template',
     static_path='website/static',
 )

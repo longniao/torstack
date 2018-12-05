@@ -78,8 +78,10 @@ class MysqlStorage(object):
         try:
             if not name:
                 name = 'slave'
-
-            return choice(self.session_map[name])
+            if isinstance(self.session_map[name], list):
+                return choice(self.session_map[name])
+            else:
+                return self.session_map[name]
         except KeyError:
             raise KeyError('{} not created, check your DB_SETTINGS'.format(name))
         except IndexError:

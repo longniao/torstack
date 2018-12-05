@@ -48,3 +48,13 @@ class RedisStorage(object):
         :return:
         '''
         return self.client.pipeline()
+
+    def get(self, key):
+        return self.client.get(key)
+
+    def save(self, key, value, lifetime=None):
+        self.client.set(key, value)
+        if lifetime:
+            self.client.expire(key, lifetime)
+        return
+

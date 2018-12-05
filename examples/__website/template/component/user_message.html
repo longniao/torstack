@@ -1,0 +1,7 @@
+{% if user_messages %}
+  {% for message in user_messages %}
+    <div class="alert alert-{{ message['category'] }}" role="alert">
+      {{ message['message'] }}
+    </div>
+  {% end %}
+{% end %}

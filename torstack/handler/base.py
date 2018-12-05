@@ -43,6 +43,14 @@ class BaseHandler(tornado.web.RequestHandler):
         return self._session_id
 
     @property
+    def message_id(self):
+        '''
+        flash message id
+        :return:
+        '''
+        return 'msg_' + self.session_id
+
+    @property
     def current_user(self):
         '''
         current user
@@ -60,17 +68,65 @@ class BaseHandler(tornado.web.RequestHandler):
 
         return self._session_data
 
-    def save_session(self, data):
+    def set_session(self, data):
         '''
-        设置session
+        set session
         :param data:
         :return:
         '''
-        self.session.save(self.session_id, data)
+        self.session.set(self.session_id, data)
 
     def clean_session(self):
         '''
-        清理session
+        clean session
         :return:
         '''
         self.session.delete(self.session_id)
+
+    def add_message(self, category, message):
+        '''
+        add flash message
+        :param category:
+        :param message:
+        :return:
+        '''
+        if category and message:
+            message = dict(
+                category=category,
+                message=message,
+            )
+            message_string = json.dumps(message)
+            self.redis.client.rpush(self.message_id, message_string)
+
+    def read_messages(self, length=1):
+        '''
+        read flash messages
+        :return:
+        '''
+        messages = []
+        for i in range(length):
+            message_string = self.redis.client.lpop(self.message_id)
+            if message_string:
+                if isinstance(message_string, str):
+                    pass
+                else:
+                    message_string = message_string.decode('utf-8')
+
+                message = json.loads(message_string)
+                messages.append(message)
+
+        return messages
+
+    def response(self, template, **kwargs):
+        '''
+        handler response
+        :param template:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        kwargs['current_user'] = self.current_user
+        if 'user_messages' not in kwargs:
+            kwargs['user_messages'] = self.read_messages()
+        print(kwargs)
+        return self.render(template, **kwargs)

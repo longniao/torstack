@@ -1,0 +1,37 @@
+{% extends "../layout/public.html" %}
+
+{% block content %}
+<div class="row">
+  <form class="form-signin" method="post" action="/register">
+    <h2 class="form-signin-heading">Register Form</h2>
+    {% module xsrf_form_html() %}
+    {% if next_url %}
+    <input type="hidden" name="next" value="{{ next_url }}"/>
+    {% end %}
+
+    {% include "../component/user_message.html" %}
+
+    <div class="input-group">
+      <span class="input-group-addon" id="basic-addon1">U</span>
+      <input type="text" id="username" name="username" value="{% if username %}{{ username }}{% end %}" class="form-control" placeholder="Username" aria-describedby="basic-addon1" required autofocus>
+    </div>
+
+    <br />
+
+    <div class="input-group">
+      <span class="input-group-addon" id="basic-addon2">P</span>
+      <input type="password" id="password" name="password" value="{% if password %}{{ password }}{% end %}" class="form-control" placeholder="Password" aria-describedby="basic-addon2" required>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-addon" id="basic-addon3">P</span>
+      <input type="password" id="password2" name="password2" value="{% if password2 %}{{ password2 }}{% end %}" class="form-control" placeholder="Password Confirm" aria-describedby="basic-addon3" required>
+    </div>
+
+    <br />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit"> Submit </button>
+
+  </form>
+</div>
+{% end %}

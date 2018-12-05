@@ -1,0 +1,27 @@
+{% extends "../layout/public.html" %}
+
+{% block content %}
+<div class="row">
+  <form class="form-signin" method="post" action="/login">
+    <h2 class="form-signin-heading">Please Login</h2>
+    {% module xsrf_form_html() %}
+    {% if next_url %}
+    <input type="hidden" name="next" value="{{ next_url }}"/>
+    {% end %}
+
+    {% include "../component/user_message.html" %}
+
+    <label for="username" class="sr-only">Username</label>
+    <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+
+    <label for="password" class="sr-only">Password</label>
+    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit"> Login </button>
+
+    <div class="login-help">
+      <a href="{{ reverse_url('register') }}">Create account</a> or <a href="{{ reverse_url('reset') }}">Reset password</a>
+    </div>
+  </form>
+</div>
+{% end %}

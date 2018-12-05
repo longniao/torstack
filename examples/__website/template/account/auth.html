@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block layout_extra_head %}
+<link rel="stylesheet" href="{{ static_url("css/auth.css") }}">
+
+{% end %}
+
+{% block layout_body %}
+<div class="container">
+    {% block auth_content %}{% end %}
+</div>
+{% end %}
+
+{% block layout_footer %}
+{% include "footer.html" %}
+{% end %}
+
+{% block layout_extra_script_file %}
+<script src="{{ static_url("js/pwstrength.js") }}"></script>
+{% end %}

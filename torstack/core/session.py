@@ -11,17 +11,9 @@ Basic session definition.
 from __future__ import (absolute_import, division, print_function,
                         with_statement)
 
+import json
 from datetime import datetime, timedelta
-from os import urandom
-from binascii import b2a_base64
-from torstack.library.compat import _xrange
-
-l = [c for c in map(chr, _xrange(256))]
-l[47] = '-'
-l[43] = '_'
-l[61] = '.'
-_smap = str('').join(l)
-del l
+from torstack.library.encipher import EncipherLibrary
 
 class CoreSession(object):
 
@@ -67,11 +59,7 @@ class CoreSession(object):
         :param blength:
         :return:
         '''
-        session_id = (b2a_base64(urandom(blength)))[:-1]
-        if isinstance(session_id, str):
-            # PY2
-            return self.SESSION_CONFIG['prefix'] + session_id.translate(_smap)
-        return self.SESSION_CONFIG['prefix'] + session_id.decode('utf-8').translate(_smap)
+        return EncipherLibrary.gen_token(blength)
 
 
     def get(self, key, default=None):
