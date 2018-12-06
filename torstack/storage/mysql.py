@@ -149,17 +149,25 @@ class MysqlStorage(object):
         pass
 
 
-    def get_session(self, type):
+    def get_pool(self, bind, type='session'):
         try:
             if not self.current_db:
                 dbs = list(self.sessionPool.keys())
                 self.current_db = dbs[0]
-            if not type:
-                type = 'master'
-            if isinstance(self.sessionPool[self.current_db][type], list):
-                return choice(self.sessionPool[self.current_db][type])
+            if not bind:
+                bind = 'master'
+
+            if type == 'session':
+                pool = self.sessionPool
+            elif type == 'engine':
+                pool = self.enginePool
             else:
-                return self.sessionPool[self.current_db][type]
+                raise KeyError('error pool type')
+
+            if isinstance(pool[self.current_db][bind], list):
+                return choice(pool[self.current_db][bind])
+            else:
+                return pool[self.current_db][bind]
         except KeyError:
             raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
         except IndexError:
@@ -174,10 +182,16 @@ class MysqlStorage(object):
         '''
         self.current_db = dbname
 
+    def get_engine(self, bind='master'):
+        '''
+        get engine
+        :return:
+        '''
+        return self.get_pool(bind, type='engine')
 
     @contextmanager
     def session_ctx(self, bind='master'):
-        DBSession = self.get_session(bind)
+        DBSession = self.get_pool(bind)
         session = DBSession()
         try:
             yield session

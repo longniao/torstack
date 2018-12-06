@@ -85,6 +85,8 @@ websocket_config = dict(
 scheduler_config = dict(
     enable=False,
     autorun=True,
+    dbtype='mysql',
+    dbname='test'
 )
 
 # scheduler executors
@@ -100,24 +102,6 @@ mysql_config = dict(
     username='',
     password='',
     type='master',
-)
-db = dict(
-    a=dict(
-        master=['1111'],
-        slave=['2222','3333'],
-    ),
-    b=dict(
-        master=['4444'],
-        slave=[],
-    ),
-    c=dict(
-        master=[],
-        slave=['55555'],
-    ),
-    d=dict(
-        master=['66666'],
-        slave=['77777'],
-    )
 )
 
 # redis

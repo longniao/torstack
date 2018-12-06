@@ -18,7 +18,7 @@ class CoreScheduler(object):
     '''
     docstring for scheduler
     '''
-    def __init__(self,schedExecuters,storage,dbType="mysql",dbname='',tablename="scheduler_job"):
+    def __init__(self,schedExecuters,client,dbtype="mysql",dbname='',tablename="scheduler_job"):
         '''
            参数：
                schedExecuters － 执行者列表
@@ -32,20 +32,21 @@ class CoreScheduler(object):
 
         self.executers = dict([ (x.id, x.path) for x in schedExecuters ])
 
-        self.dbClient = storage
-        self.dbType = dbType
+        self.dbClient = client
+        self.dbType = dbtype
         self.dbname = dbname
 
         from apscheduler.schedulers.background import BackgroundScheduler
 
         self.scheduler = BackgroundScheduler()
 
-        if dbType == DBTYPE_MYSQL:
-            engine = storage.get_session('master').get_engine()
+        if dbtype == DBTYPE_MYSQL:
+            client.use(dbname)
+            engine = client.get_engine()
             self.scheduler.add_jobstore('sqlalchemy',tablename=tablename,engine=engine,pickle_protocol=0)
 
-        elif dbType == DBTYPE_MONGO:
-            self.scheduler.add_jobstore('mongodb',database=dbname, collection=tablename,client=storage,pickle_protocol=0)
+        elif dbtype == DBTYPE_MONGO:
+            self.scheduler.add_jobstore('mongodb',database=dbname, collection=tablename,client=client,pickle_protocol=0)
 
 
     def start(self):

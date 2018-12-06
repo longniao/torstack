@@ -146,8 +146,15 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         if self.settings['_scheduler_config']['enable'] == True:
+            if self.settings['_scheduler_config']['dbtype'] == 'mysql':
+                client = self.settings['_storage_mysql']
+            elif self.settings['_scheduler_config']['dbtype'] == 'mongodb':
+                client = self.settings['_storage_mysql']
+            else:
+                raise BaseException('10001', 'error scheduler dbtype config.')
+
             from torstack.core.scheduler import CoreScheduler
-            taskmgr = CoreScheduler(self.settings['_scheduler_executors'], self.settings['_storage_mysql'])
+            taskmgr = CoreScheduler(self.settings['_scheduler_executors'], client, self.settings['_scheduler_config']['dbtype'], self.settings['_scheduler_config']['dbname'])
             taskmgr.start()
 
             handlers = [
