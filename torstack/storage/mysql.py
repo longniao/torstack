@@ -33,37 +33,98 @@ engine_setting=dict(
 
 class MysqlStorage(object):
 
-    def __init__(self, master, slave=None):
-        if not master:
+    def __init__(self, configs=[]):
+        if not configs:
             raise BaseException('10101', 'error mysql config.')
 
-        self.session_map = {}
-        self.create_sessions(master, slave)
+        self.current_db = None
+        self.config_list = []
+        self.enginePool = {}
+        self.sessionPool = {}
 
+        self.init_configs(configs)
+        self.init_pool()
+        self.create_pool()
+        self.fix_pool()
 
-    def create_sessions(self, master, slave=None):
-        # master database
-        if master:
-            self.session_map['master'] = self.create_single_session(master)
-
-        # slave database
-        slave = []
-        if not slave:
-            slave.append(self.session_map['master'])
+    def init_configs(self, configs=[]):
+        '''
+        Init configurations.
+        :param self:
+        :param config:
+        :return:
+        '''
+        if isinstance(configs, list):
+            pass
+        elif isinstance(configs, dict):
+            configs = [configs]
         else:
-            if isinstance(slave, dict):
-                slave.append(self.create_single_session(slave))
-            elif isinstance(slave, list):
-                for config in slave:
-                    slave.append(self.create_single_session(config))
-        self.session_map['slave'] = slave
+            raise BaseException('10101', 'error mysql config.')
+
+        for config in configs:
+            try:
+                host, port, dbname, username, password, master = config.get('host'), config.get('port'), config.get('dbname'), config.get('username'), config.get('password'), config.get('type', 'master')
+
+                if not isinstance(host, str):
+                    raise ValueError('Invalid host')
+                if not port:
+                    config['port'] = port = 3306
+                elif not isinstance(port, int):
+                    raise ValueError('Invalid port')
+
+                self.config_list.append(config)
+            except Exception as e:
+                raise Exception('error: %s', str(e))
+
+    def init_pool(self):
+        '''
+        init pool
+        :return:
+        '''
+        for config in self.config_list:
+            dbname = config['dbname']
+            if dbname not in self.enginePool:
+                self.enginePool[dbname] = dict(
+                    master=[],
+                    slave=[],
+                )
+                self.sessionPool[dbname] = dict(
+                    master=[],
+                    slave=[],
+                )
+
+    def create_pool(self):
+        '''
+        create dataqbase instances
+        :param hosts:
+        :return:
+        '''
+        for config in self.config_list:
+            dbname = config['dbname']
+            type = config['type']
+
+            engine, session = self.__create_single_session(config)
+            self.enginePool[dbname][type].append(session)
+            self.sessionPool[dbname][type].append(session)
+
+    def fix_pool(self):
+        '''
+        fix pool
+        :return:
+        '''
+        for dbname in self.enginePool:
+            pool = self.enginePool[dbname]
+            if not pool['master']:
+                raise ValueError('database [%s] have no master instance' % dbname)
+
+            if not pool['slave']:
+                m = pool['master'][0]
+                self.enginePool[dbname]['slave'].append(m)
 
 
-    @classmethod
-    def create_single_session(cls, config, scopefunc=None):
-        engine_url = 'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
-        engine = create_engine(engine_url, **engine_setting)
-        return scoped_session(
+    def __create_single_session(self, config, scopefunc=None):
+        engine = self.__create_single_engine(config)
+        return engine, scoped_session(
             sessionmaker(
                 autocommit=False,
                 autoflush=True,
@@ -73,23 +134,49 @@ class MysqlStorage(object):
             scopefunc=scopefunc
         )
 
+    def __create_single_engine(self, config):
+        engine_url = 'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
+        engine = create_engine(engine_url, **engine_setting)
+        return engine
 
-    def get_session(self, name):
+
+    def close(self, instance):
+        '''
+        Close an instance
+        :param instance:
+        :return:
+        '''
+        pass
+
+
+    def get_session(self, type):
         try:
-            if not name:
-                name = 'slave'
-            if isinstance(self.session_map[name], list):
-                return choice(self.session_map[name])
+            if not self.current_db:
+                dbs = list(self.sessionPool.keys())
+                self.current_db = dbs[0]
+            if not type:
+                type = 'master'
+            if isinstance(self.sessionPool[self.current_db][type], list):
+                return choice(self.sessionPool[self.current_db][type])
             else:
-                return self.session_map[name]
+                return self.sessionPool[self.current_db][type]
         except KeyError:
-            raise KeyError('{} not created, check your DB_SETTINGS'.format(name))
+            raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
         except IndexError:
             raise IndexError('cannot get names from DB_SETTINGS')
 
 
+    def use(self, dbname):
+        '''
+        set dbname
+        :param dbname:
+        :return:
+        '''
+        self.current_db = dbname
+
+
     @contextmanager
-    def session_ctx(self, bind=None):
+    def session_ctx(self, bind='master'):
         DBSession = self.get_session(bind)
         session = DBSession()
         try:

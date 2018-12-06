@@ -88,16 +88,7 @@ class WebApplication(tornado.web.Application):
         # mysql
         if 'mysql' in config:
             from torstack.storage.mysql import MysqlStorage
-            if 'master' in config['mysql']:
-                # master and slave
-                if 'slave' not in config['mysql']:
-                    config['mysql']['slave'] = None
-                mysql_storage = MysqlStorage(config['mysql']['master'], config['mysql']['slave'])
-            else:
-                # only one database
-                mysql_config.update(config['mysql'])
-                mysql_storage = MysqlStorage(mysql_config, None)
-            self.settings['_storage_mysql'] = mysql_storage
+            self.settings['_storage_mysql'] = MysqlStorage(config['mysql'])
 
         # mongodb
         if 'mongodb' in config:

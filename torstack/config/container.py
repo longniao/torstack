@@ -98,14 +98,10 @@ class ConfigContainer(object):
     @classmethod
     def add_mysql(cls, config=None):
         if not config:
-            config = dict(
-                master=ast.literal_eval(parser.get('mysql', 'master')),
-            )
             try:
-                slave=ast.literal_eval(parser.get('mysql', 'slave')),
+                config = ast.literal_eval(parser.get('storage', 'mysql'))
             except Exception as e:
-                slave = None
-            config['slave'] = slave
+                config = None
         cls._CONFIG_DICT_['mysql'] = config
 
     @classmethod
