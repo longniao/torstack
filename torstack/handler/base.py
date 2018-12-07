@@ -13,6 +13,7 @@ from __future__ import absolute_import, unicode_literals
 import sys
 import json
 import tornado.web
+from torstack.exception import BaseException
 
 class BaseHandler(tornado.web.RequestHandler):
 
@@ -63,8 +64,7 @@ class BaseHandler(tornado.web.RequestHandler):
                     self._session_data = json.loads(session_string)
                     self.session.set_expires(self.session_id, self.session.expires)
                 except:
-                    print("Unexpected error:", sys.exc_info()[0])
-                    # raise
+                    raise BaseException('10001', "Unexpected error:", sys.exc_info()[0])
 
         return self._session_data
 
@@ -128,5 +128,4 @@ class BaseHandler(tornado.web.RequestHandler):
         kwargs['current_user'] = self.current_user
         if 'user_messages' not in kwargs:
             kwargs['user_messages'] = self.read_messages()
-        print(kwargs)
         return self.render(template, **kwargs)

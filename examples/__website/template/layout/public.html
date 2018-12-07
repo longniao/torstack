@@ -19,7 +19,7 @@
      <div id="navbar" class="navbar-collapse collapse">
        <ul class="nav navbar-nav navbar-right">
        {% if current_user %}
-         <li><a href="/dashboard">Account: {{ current_user['username'] }}</a></li>
+         <li><a href="/">Account: {{ current_user['username'] }}</a></li>
          <li><a href="/logout">Logout</a></li>
        {% else %}
          <li><a href="/login">Login</a></li>

@@ -20,11 +20,10 @@ class RedisStorage(object):
         self._client = None
         self._expire = 1800
 
-
     @property
     def pool(self):
         '''
-        连接池
+        get redis pool
         :return:
         '''
         if not self._pool:
@@ -34,7 +33,7 @@ class RedisStorage(object):
     @property
     def client(self):
         '''
-        客户端
+        get redis client
         :return:
         '''
         if not self._client:
@@ -44,19 +43,45 @@ class RedisStorage(object):
     @property
     def pipeline(self):
         '''
-        管道
+        get redis pipeline
         :return:
         '''
         return self.client.pipeline()
 
     def get(self, key):
+        '''
+        get value of key
+        :param key:
+        :return:
+        '''
         return self.client.get(key)
 
     def save(self, key, value, lifetime=None):
+        '''
+        save key value
+        :param key:
+        :param value:
+        :param lifetime:
+        :return:
+        '''
         self.client.set(key, value)
         if lifetime:
             self.client.expire(key, lifetime)
         return
 
     def delete(self, key):
+        '''
+        delete key
+        :param key:
+        :return:
+        '''
         return self.client.expire(key, 0)
+
+    def expire(self, key, lifetime=0):
+        '''
+        set key expire time
+        :param key:
+        :param lifetime:
+        :return:
+        '''
+        return self.client.expire(key, lifetime)
