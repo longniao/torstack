@@ -45,7 +45,7 @@ class MysqlStorage(object):
         self.init_configs(configs)
         self.init_pool()
         self.create_pool()
-        self.fix_pool()
+        self.check_pool()
 
     def init_configs(self, configs=[]):
         '''
@@ -82,16 +82,11 @@ class MysqlStorage(object):
         :return:
         '''
         for config in self.config_list:
-            dbname = config['dbname']
-            if dbname not in self.enginePool:
-                self.enginePool[dbname] = dict(
-                    master=[],
-                    slave=[],
-                )
-                self.sessionPool[dbname] = dict(
-                    master=[],
-                    slave=[],
-                )
+            if config['dbname'] not in self.enginePool:
+                self.enginePool[config['dbname']+'_master'] = []
+                self.enginePool[config['dbname']+'_slave'] = []
+                self.sessionPool[config['dbname']+'_master'] = []
+                self.sessionPool[config['dbname']+'_slave'] = []
 
     def create_pool(self):
         '''
@@ -100,27 +95,19 @@ class MysqlStorage(object):
         :return:
         '''
         for config in self.config_list:
-            dbname = config['dbname']
-            type = config['type']
-
+            instance = '%s_%s' % (config['dbname'], config['type'])
             engine, session = self.__create_single_session(config)
-            self.enginePool[dbname][type].append(session)
-            self.sessionPool[dbname][type].append(session)
+            self.enginePool[instance].append(engine)
+            self.sessionPool[instance].append(session)
 
-    def fix_pool(self):
+    def check_pool(self):
         '''
         fix pool
         :return:
         '''
         for dbname in self.enginePool:
-            pool = self.enginePool[dbname]
-            if not pool['master']:
-                raise ValueError('database [%s] have no master instance' % dbname)
-
-            if not pool['slave']:
-                m = pool['master'][0]
-                self.enginePool[dbname]['slave'].append(m)
-
+            if not self.enginePool[dbname]:
+                raise ValueError('database [%s] have no instance' % dbname)
 
     def __create_single_session(self, config, scopefunc=None):
         engine = self.__create_single_engine(config)
@@ -139,7 +126,6 @@ class MysqlStorage(object):
         engine = create_engine(engine_url, **engine_setting)
         return engine
 
-
     def close(self, instance):
         '''
         Close an instance
@@ -148,50 +134,46 @@ class MysqlStorage(object):
         '''
         pass
 
-
-    def get_pool(self, bind, type='session'):
-        try:
-            if not self.current_db:
-                dbs = list(self.sessionPool.keys())
-                self.current_db = dbs[0]
-            if not bind:
-                bind = 'master'
-
-            if type == 'session':
-                pool = self.sessionPool
-            elif type == 'engine':
-                pool = self.enginePool
-            else:
-                raise KeyError('error pool type')
-
-            if isinstance(pool[self.current_db][bind], list):
-                return choice(pool[self.current_db][bind])
-            else:
-                return pool[self.current_db][bind]
-        except KeyError:
-            raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
-        except IndexError:
-            raise IndexError('cannot get names from DB_SETTINGS')
-
-
-    def use(self, dbname):
+    def use(self, dbname, dbtype='master'):
         '''
         set dbname
         :param dbname:
         :return:
         '''
-        self.current_db = dbname
+        self.current_db = '%s_%s' % (dbname, dbtype)
+        return self
 
-    def get_engine(self, bind='master'):
-        '''
-        get engine
-        :return:
-        '''
-        return self.get_pool(bind, type='engine')
+    def get_session(self, dbname=None, dbtype='master'):
+        try:
+            if not self.current_db:
+                if not dbname:
+                    raise KeyError('error dbname')
+                else:
+                    self.use(dbname, dbtype)
+
+            return choice(self.sessionPool[self.current_db])
+        except KeyError:
+            raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
+        except IndexError:
+            raise IndexError('cannot get names from DB_SETTINGS')
+
+    def get_engine(self, dbname=None, dbtype='master'):
+        try:
+            if not self.current_db:
+                if not dbname:
+                    raise KeyError('error dbname')
+                else:
+                    self.use(dbname, dbtype)
+
+            return choice(self.enginePool[self.current_db])
+        except KeyError:
+            raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
+        except IndexError:
+            raise IndexError('cannot get names from DB_SETTINGS')
 
     @contextmanager
-    def session_ctx(self, bind='master'):
-        DBSession = self.get_pool(bind)
+    def session_ctx(self, dbname=None, dbtype='master'):
+        DBSession = self.get_session(dbname, dbtype)
         session = DBSession()
         try:
             yield session

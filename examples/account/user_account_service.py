@@ -7,12 +7,13 @@ from models import UserAccount
 
 logger = logging.getLogger(__name__)
 
+dbname = 'test'
 
 class UserAccountService(object):
 
     @staticmethod
     def get_one(db_session, username):
-        with db_session.session_ctx() as session:
+        with db_session.session_ctx(dbname) as session:
             return session.query(UserAccount).filter(UserAccount.username == username).first()
 
     @staticmethod
@@ -27,7 +28,7 @@ class UserAccountService(object):
 
             data_to_save = UserAccount(**data)
 
-            with db_session.session_ctx(bind='master') as session:
+            with db_session.session_ctx('dbname') as session:
                 session.add(data_to_save)
                 session.commit()
             return data_to_save
@@ -41,7 +42,7 @@ class UserAccountService(object):
         if userData:
             if userData.password == EncipherLibrary.encrypt(old_password, userData.salt):
                 # 密码正确
-                with db_session.session_ctx(bind='master') as session:
+                with db_session.session_ctx('dbname') as session:
                     count = session.query(UserAccount).filter(UserAccount.username == username).update({"password":new_password})
                     if count:
                         session.commit()
@@ -50,16 +51,16 @@ class UserAccountService(object):
 
     @staticmethod
     def get_count(db_session):
-        with db_session.session_ctx() as session:
+        with db_session.session_ctx('dbname') as session:
             return session.query(UserAccount).count()
 
     @staticmethod
     def list_data(db_session, status=True):
         if status:
-            with db_session.session_ctx() as session:
+            with db_session.session_ctx('dbname') as session:
                 dataList = session.query(UserAccount).filter(UserAccount.status == '1').order_by(UserAccount.id.asc()).all()
         else:
-            with db_session.session_ctx() as session:
+            with db_session.session_ctx('dbname') as session:
                 dataList = session.query(UserAccount).order_by(UserAccount.id.asc()).all()
 
         return dataList

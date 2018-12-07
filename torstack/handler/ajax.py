@@ -9,6 +9,7 @@ ajax handler definition.
 '''
 
 import traceback
+import json
 from torstack.handler.base import BaseHandler
 
 class AjaxHandler(BaseHandler):
@@ -16,6 +17,7 @@ class AjaxHandler(BaseHandler):
     def initialize(self):
         super(AjaxHandler, self).initialize()
         self.set_header('Content-Type', 'text/json')
+        self.taskmgr = self.settings['_taskmgr']
 
     def write_error(self, status_code, **kwargs):
         self._status_code = 200
@@ -32,7 +34,7 @@ class AjaxHandler(BaseHandler):
             self.write_json(None, status_code, self._reason)
 
     def write_json(self, data, status_code=200, msg='success.'):
-        self.finish(dumps({
+        self.finish(json.dumps({
             'code': status_code,
             'msg': msg,
             'data': data

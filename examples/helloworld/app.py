@@ -34,7 +34,7 @@ ConfigContainer.set('settings', 'static_path', static_path)
 
 class MainHandler(BaseHandler):
     def get(self):
-        self.write("Hello, world")
+        self.write("Hello, scheduler")
 
 
 def main():

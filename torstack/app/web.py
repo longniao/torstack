@@ -79,7 +79,7 @@ class WebApplication(tornado.web.Application):
         if 'executors' in config:
             scheduler_executors.update(config['executors'])
         self.settings['_scheduler_executors'] = scheduler_executors
-        self.settings['_scheduler_handlers'] = []
+        self.settings['_handlers'] = []
 
         # ===================================================================
         # ======= storage ===================================================
@@ -156,6 +156,7 @@ class WebApplication(tornado.web.Application):
             from torstack.core.scheduler import CoreScheduler
             taskmgr = CoreScheduler(self.settings['_scheduler_executors'], client, self.settings['_scheduler_config']['dbtype'], self.settings['_scheduler_config']['dbname'])
             taskmgr.start()
+            self.settings['_taskmgr'] = taskmgr
 
             handlers = [
                 # 任务
@@ -173,7 +174,7 @@ class WebApplication(tornado.web.Application):
                 url(r"/scheduler/status", GetStatusHandler, name='scheduler_status'),
                 url(r"/scheduler/switch", SwitchSchedHandler, name='scheduler_switch'),
             ]
-            self.settings['_scheduler_handlers'] = handlers
+            self.settings['_handlers'] = handlers
 
 
     def add_handlers(self, handlers):
@@ -184,12 +185,12 @@ class WebApplication(tornado.web.Application):
         '''
         if not handlers:
             raise BaseException('10003', 'error application handlers.')
-        self.settings['_scheduler_handlers'].extend(handlers)
+        self.settings['_handlers'].extend(handlers)
 
 
     def ready(self):
         '''
         :return:
         '''
-        tornado.web.Application.__init__(self, self.settings['_scheduler_handlers'], **self.settings)
+        tornado.web.Application.__init__(self, self.settings['_handlers'], **self.settings)
 

@@ -13,6 +13,7 @@ import os
 from os.path import abspath, dirname
 from torstack.config.container import ConfigContainer
 from torstack.server import TorStackServer
+from torstack.handler.base import BaseHandler
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
@@ -23,13 +24,14 @@ ConfigContainer.store()
 
 ConfigContainer.set('scheduler', 'enable', True)
 ConfigContainer.set('scheduler', 'autorun', True)
-print(ConfigContainer.get_config())
 
-handlers = []
+class MainHandler(BaseHandler):
+    def get(self):
+        self.write("Hello, world")
 
 def main():
     server = TorStackServer()
-    server.run(handlers)
+    server.run([(r"/", MainHandler)])
 
 
 if __name__ == "__main__":

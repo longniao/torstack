@@ -10,18 +10,18 @@ job scheduler definition.
 
 import logging
 import pickle
-from torstack.handler.base import BaseHandler
+from torstack.handler.ajax import AjaxHandler
 from torstack.scheduler.service import SchedulerService
 
 logger = logging.getLogger(__name__)
 
-class SchedulerHandler(BaseHandler):
+class SchedulerHandler(AjaxHandler):
 
     def initialize(self):
         '''
         Init
         '''
-        super(JobHandler, self).initialize()
+        super(SchedulerHandler, self).initialize()
 
     def get_status(self):
         '''
