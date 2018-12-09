@@ -50,6 +50,7 @@ class TorStackServer(object):
 
         # app.listen(options.port,xheaders=True)
         try:
+            print ('Server running on http://localhost:{}'.format(application.settings['port']))
             # ioloop = tornado.ioloop.IOLoop.current()
             ioloop = tornado.ioloop.IOLoop.instance()
 
@@ -58,9 +59,10 @@ class TorStackServer(object):
             # loop.spawn_callback(minute_loop2)
 
             ioloop.start()
-            print ('Server running on http://localhost:{}'.format(application.settings['port']))
-
-        except KeyboardInterrupt:
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            raise
+        finally:
             tornado.ioloop.IOLoop.instance().stop()
 
 
