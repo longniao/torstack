@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 
+'''
+torstack.scheduler.handler
+scheduler executor definition.
+
+:copyright: (c) 2018 by longniao <longniao@gmail.com>
+:license: MIT, see LICENSE for more details.
+'''
+
 from __future__ import absolute_import, unicode_literals
 
-import json
 from tornado import gen
+from tornado.web import url
 from torstack.handler.scheduler import SchedulerHandler
 
 class PauseJobHandler(SchedulerHandler):
@@ -157,3 +165,20 @@ class SwitchSchedHandler(SchedulerHandler):
             self.start_scheduler()
             self.response_json("start scheduler")
 
+
+handlers = [
+    # job
+    url(r"/scheduler/job_add", AddJobHandler, name='job_add'),
+    url(r"/scheduler/job_pause", PauseJobHandler, name='job_pause'),
+    url(r"/scheduler/job_resume", ResumeJobHandler, name='job_resume'),
+    url(r"/scheduler/job_remove", RemoveJobHandler, name='job_remove'),
+    url(r"/scheduler/job_remove_all", RemoveAllJobsHandler, name='job_remove_all'),
+    url(r"/scheduler/job_list", GetAllJobsHandler, name='job_list'),
+    # scheduler
+    url(r"/scheduler/start", StartHandler, name='scheduler_start'),
+    url(r"/scheduler/shutdown", ShutdownSchedHandler, name='scheduler_shutdown'),
+    url(r"/scheduler/pause", PauseSchedHandler, name='scheduler_pause'),
+    url(r"/scheduler/resume", ResumeSchedHandler, name='scheduler_resume'),
+    url(r"/scheduler/status", GetStatusHandler, name='scheduler_status'),
+    url(r"/scheduler/switch", SwitchSchedHandler, name='scheduler_switch'),
+]

@@ -12,32 +12,28 @@ helloworld app.py definition.
 import os
 import sys
 from os.path import abspath, dirname
-from torstack.config.container import ConfigContainer
 from torstack.server import TorStackServer
 from torstack.handler.base import BaseHandler
 sys.path.append('..')
-print(sys.path)
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
 
-ConfigContainer.load_config(CONF_FILE)
-ConfigContainer.store()
-
-ConfigContainer.set('scheduler', 'enable', True)
-ConfigContainer.set('scheduler', 'autorun', True)
-
 from executer import TestExecuter
-ConfigContainer.add_executers([TestExecuter])
 print(TestExecuter.id)
 
 class MainHandler(BaseHandler):
     def get(self):
-        self.write("Hello, world")
+        self.write("Hello, taskmgr")
 
 def main():
     server = TorStackServer()
+    server.config.load(CONF_FILE)
+    server.config.set('scheduler', 'enable', True)
+    server.config.set('scheduler', 'autorun', True)
+    server.config.add_executers([TestExecuter])
+
     server.run([(r"/", MainHandler)])
 
 

@@ -20,8 +20,31 @@ class ConfigContainer(object):
     _CONFIG_DICT_ = dict()
 
     @classmethod
-    def load_config(cls, config_file):
+    def load(cls, config_file):
         parser.read(config_file, encoding='UTF-8')
+        ConfigContainer.store()
+
+    @classmethod
+    def get(cls, config=None, key=None):
+        if not config:
+            return cls._CONFIG_DICT_
+        elif config not in cls._CONFIG_DICT_:
+            raise BaseException('10010', 'Error config')
+        else:
+            item = cls._CONFIG_DICT_[config]
+            if not key:
+                return item
+            elif key not in item:
+                raise BaseException('10010', 'Error config')
+            else:
+                return item[key]
+
+    @classmethod
+    def set(cls, config, key, value):
+        try:
+            cls._CONFIG_DICT_[config][key] = value
+        except Exception as e:
+            raise BaseException('10010', 'Error config %s - %s - %s' % (config, key, value))
 
     # application config ====================================
 
@@ -149,29 +172,6 @@ class ConfigContainer(object):
 
 
     @classmethod
-    def get(cls, config=None, key=None):
-        if not config:
-            return cls._CONFIG_DICT_
-        elif config not in cls._CONFIG_DICT_:
-            raise BaseException('10010', 'Error config')
-        else:
-            item = cls._CONFIG_DICT_[config]
-            if not key:
-                return item
-            elif key not in item:
-                raise BaseException('10010', 'Error config')
-            else:
-                return item[key]
-
-    @classmethod
-    def set(cls, config, key, value):
-        try:
-            cls._CONFIG_DICT_[config][key] = value
-        except Exception as e:
-            raise BaseException('10010', 'Error config %s - %s - %s' % (config, key, value))
-
-
-    @classmethod
     def store(cls):
         ConfigContainer.add_settings()
         ConfigContainer.add_log()
@@ -188,7 +188,3 @@ class ConfigContainer(object):
         ConfigContainer.add_memcache()
         define("_CONFIG_DICT_", default=cls._CONFIG_DICT_, type=dict)
 
-
-    @classmethod
-    def get_config(cls):
-        return cls._CONFIG_DICT_

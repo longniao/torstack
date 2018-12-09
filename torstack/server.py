@@ -9,13 +9,21 @@ server definition.
 '''
 
 import tornado
-from tornado.options import define, options
+from torstack.config.container import ConfigContainer
 from torstack.app.web import WebApplication
 
 class TorStackServer(object):
 
     def __init__(self):
         pass
+
+    @property
+    def config(self):
+        '''
+        get ConfigContainer
+        :return:
+        '''
+        return ConfigContainer
 
     def run(self, handlers=[]):
         '''

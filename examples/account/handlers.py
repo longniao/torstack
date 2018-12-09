@@ -15,7 +15,7 @@ class HomeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         messages = self.read_messages()
-        self.render("account/home.html", messages=messages)
+        return self.render("account/home.html", messages=messages)
 
 class LoginHandler(BaseHandler):
     '''
@@ -38,13 +38,13 @@ class LoginHandler(BaseHandler):
             if userData.password == EncipherLibrary.encrypt(password, userData.salt):
                 self.set_session(userData.session_data)
                 self.add_message("success", u"Login success, Wellcome back，{0}!".format(username))
-                self.redirect(next_url)
+                return self.redirect(next_url)
             else:
                 self.add_message("danger", u"Login failed, error password")
-                self.redirect("/")
+                return self.redirect("/")
         else:
             self.add_message("danger", u"Login failed, error username")
-            self.redirect("/")
+            return self.redirect("/")
 
 class RegisterHandler(BaseHandler):
     '''
@@ -62,7 +62,7 @@ class RegisterHandler(BaseHandler):
             next_url=next_url,
         )
 
-        self.response("account/register.html", **register_data)
+        return self.response("account/register.html", **register_data)
 
     @gen.coroutine
     def post(self):
@@ -80,7 +80,7 @@ class RegisterHandler(BaseHandler):
 
         if password != password2:
             self.add_message("danger", u"Password confirm failed")
-            self.response("account/register.html", **register_data)
+            return self.response("account/register.html", **register_data)
 
         userData = UserAccountService.get_one(self.db, username)
         if userData is None:
@@ -89,13 +89,13 @@ class RegisterHandler(BaseHandler):
                 userData = UserAccountService.get_one(self.db, username)
                 self.set_session(userData.session_data)
                 self.add_message("success", u"Register success, Wellcome，{0}!".format(username))
-                self.redirect(next_url)
+                return self.redirect(next_url)
             else:
                 self.add_message("danger", u"Register failed")
-                self.response("account/register.html", **register_data)
+                return self.response("account/register.html", **register_data)
         else:
             self.add_message("danger", u"Register failed, username is exist")
-            self.response("account/register.html", **register_data)
+            return self.response("account/register.html", **register_data)
 
 class LogoutHandler(BaseHandler):
     '''
@@ -104,5 +104,5 @@ class LogoutHandler(BaseHandler):
     def get(self):
         self.clean_session()
         self.add_message("success", u"Logout success.")
-        self.redirect("/")
+        return self.redirect("/")
 

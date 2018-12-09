@@ -17,9 +17,6 @@ import tornado.httpserver
 import tornado.web
 from tornado.options import options
 from torstack.config.default import *
-from tornado.web import url
-from torstack.scheduler.handler import *
-
 
 class WebApplication(tornado.web.Application):
 
@@ -158,22 +155,7 @@ class WebApplication(tornado.web.Application):
             taskmgr.start()
             self.settings['_taskmgr'] = taskmgr
 
-            handlers = [
-                # 任务
-                url(r"/scheduler/job_add", AddJobHandler, name='job_add'),
-                url(r"/scheduler/job_pause", PauseJobHandler, name='job_pause'),
-                url(r"/scheduler/job_resume", ResumeJobHandler, name='job_resume'),
-                url(r"/scheduler/job_remove", RemoveJobHandler, name='job_remove'),
-                url(r"/scheduler/job_remove_all", RemoveAllJobsHandler, name='job_remove_all'),
-                url(r"/scheduler/job_list", GetAllJobsHandler, name='job_list'),
-                # 定时器
-                url(r"/scheduler/start", StartHandler, name='scheduler_start'),
-                url(r"/scheduler/shutdown", ShutdownSchedHandler, name='scheduler_shutdown'),
-                url(r"/scheduler/pause", PauseSchedHandler, name='scheduler_pause'),
-                url(r"/scheduler/resume", ResumeSchedHandler, name='scheduler_resume'),
-                url(r"/scheduler/status", GetStatusHandler, name='scheduler_status'),
-                url(r"/scheduler/switch", SwitchSchedHandler, name='scheduler_switch'),
-            ]
+            from torstack.scheduler.handler import handlers
             self.settings['_handlers'] = handlers
 
 
