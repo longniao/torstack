@@ -37,21 +37,19 @@ A Simple Config
 
 .. code-block:: python
 
-# coding: utf-8
-
     [application]
     port : 8000
     max_threads_num : 500
     autoreload : True
     settings = {
-      'template_path' : '__website/template',
-      'static_path' : '__website/static',
+      'template_path' : 'website/template',
+      'static_path' : 'website/static',
       'compress_response' : True,
       'cookie_secret' : '__cookie_secret__',
       'xsrf_cookies' : False,
       'login_url' : '/login',
       'debug' : True,
-      'autoreload' : True
+      'autoreload' : False
       }
     log = {
       'log_level' : 'WARNING',
@@ -67,12 +65,12 @@ A Simple Config
     session = {
       'enable' : True,
       'prefix' : 'sid_',
-      'lifetime' : 1800,
+      'lifetime' : 1800
       }
     cookie = {
       'enable' : True,
       'name' : '_tsid',
-      'expires' : 88473600,
+      'expires' : 88473600
       }
 
     [rest]
@@ -80,18 +78,18 @@ A Simple Config
       'enable' : False,
       'allow_remote_access' : False,
       'token_prefix' : 'token_',
-      'token_lifetime' : 315360000,
+      'token_lifetime' : 315360000
       }
     rest_header = {
       'token' : '',
       'version' : '',
       'signature' : '',
-      'timestamp' : '',
+      'timestamp' : ''
       }
 
     [websocket]
     websocket = {
-      'enable' : False,
+      'enable' : False
       }
 
     [scheduler]
@@ -99,19 +97,19 @@ A Simple Config
       'enable' : False,
       'autorun' : False,
       'dbtype' : 'mysql',
-      'dbname' : 'test',
+      'dbname' : 'test'
       }
     executers = []
 
-    [storage]
-    mysql = [{
+    [mysql]
+    master = [{
       'host' : '127.0.0.1',
       'port' : 3306,
       'dbname' : 'test',
-      'username' : 'test',
-      'password' : 'test',
-      'type' : 'master',
-      }]
+      'username' : '',
+      'password' : '',
+      'type' : 'master'
+     }]
 
     [cache]
     redis = {
