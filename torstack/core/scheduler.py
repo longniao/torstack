@@ -25,7 +25,6 @@ class CoreScheduler(object):
                storage        － 数据库连接
                dbname         － 数据库名称
                dbType         － 数据库类型
-
         '''
 
         super(CoreScheduler, self).__init__()

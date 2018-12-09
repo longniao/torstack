@@ -129,3 +129,18 @@ class BaseHandler(tornado.web.RequestHandler):
         if 'user_messages' not in kwargs:
             kwargs['user_messages'] = self.read_messages()
         return self.render(template, **kwargs)
+
+    def get_json_data(self, data):
+        '''
+        解析post的json数据
+        :return:
+        '''
+        if data:
+            try:
+                # data_string = data.decode('utf-8')
+                data_json = json.loads(data)
+                return data_json
+            except Exception as e:
+                print('Unable to parse JSON. %s' % e)
+
+        return dict()

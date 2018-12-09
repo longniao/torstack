@@ -13,7 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class SchedulerExecutor(object):
+class SchedulerExecuter(object):
 
     def __init__(self):
         '''初始化

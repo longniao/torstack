@@ -93,6 +93,20 @@ class ConfigContainer(object):
                 config = None
         cls._CONFIG_DICT_['scheduler'] = config
 
+    @classmethod
+    def add_executers(cls, config=None):
+        if not config:
+            try:
+                config = ast.literal_eval(parser.get('scheduler', 'executers'))
+            except Exception as e:
+                config = []
+            cls._CONFIG_DICT_['executers'] = config
+        else:
+            if isinstance(config, list):
+                cls._CONFIG_DICT_['executers'].extend(config)
+            else:
+                cls._CONFIG_DICT_['executers'].append(config)
+
     # storage config ====================================
 
     @classmethod
@@ -167,6 +181,7 @@ class ConfigContainer(object):
         ConfigContainer.add_rest_header()
         ConfigContainer.add_websocket()
         ConfigContainer.add_scheduler()
+        ConfigContainer.add_executers()
         ConfigContainer.add_mysql()
         ConfigContainer.add_mongodb()
         ConfigContainer.add_redis()

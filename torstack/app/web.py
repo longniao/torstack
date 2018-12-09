@@ -75,10 +75,10 @@ class WebApplication(tornado.web.Application):
             scheduler_config.update(config['scheduler'])
         self.settings['_scheduler_config'] = scheduler_config
 
-        # scheduler config
-        if 'executors' in config:
-            scheduler_executors.update(config['executors'])
-        self.settings['_scheduler_executors'] = scheduler_executors
+        # scheduler executers
+        if 'executers' in config:
+            scheduler_executers.extend(config['executers'])
+        self.settings['_scheduler_executers'] = scheduler_executers
         self.settings['_handlers'] = []
 
         # ===================================================================
@@ -154,7 +154,7 @@ class WebApplication(tornado.web.Application):
                 raise BaseException('10001', 'error scheduler dbtype config.')
 
             from torstack.core.scheduler import CoreScheduler
-            taskmgr = CoreScheduler(self.settings['_scheduler_executors'], client, self.settings['_scheduler_config']['dbtype'], self.settings['_scheduler_config']['dbname'])
+            taskmgr = CoreScheduler(self.settings['_scheduler_executers'], client, self.settings['_scheduler_config']['dbtype'], self.settings['_scheduler_config']['dbname'])
             taskmgr.start()
             self.settings['_taskmgr'] = taskmgr
 

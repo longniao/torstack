@@ -90,7 +90,7 @@ scheduler_config = dict(
 )
 
 # scheduler executors
-scheduler_executors = []
+scheduler_executers = []
 
 # storage config ====================================
 

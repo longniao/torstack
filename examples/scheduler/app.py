@@ -25,6 +25,10 @@ ConfigContainer.store()
 ConfigContainer.set('scheduler', 'enable', True)
 ConfigContainer.set('scheduler', 'autorun', True)
 
+from executer import TestExecuter
+ConfigContainer.add_executers([TestExecuter])
+print(TestExecuter.id)
+
 class MainHandler(BaseHandler):
     def get(self):
         self.write("Hello, world")

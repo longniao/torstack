@@ -64,7 +64,7 @@ class AddJobHandler(SchedulerHandler):
         args = json_data.get('args', [])
         kwargs = json_data.get('kwargs', {})
         trigger_args = json_data.get('trigger_args', {})
-
+        print((func, trigger, args, kwargs, trigger_args))
         result = self.add_job(func, trigger, args, kwargs, **trigger_args)
         self.write("add job success")
 
