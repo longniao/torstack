@@ -10,10 +10,13 @@ helloworld app.py definition.
 '''
 
 import os
+import sys
 from os.path import abspath, dirname
 from torstack.config.container import ConfigContainer
 from torstack.server import TorStackServer
 from torstack.handler.base import BaseHandler
+sys.path.append('..')
+print(sys.path)
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')

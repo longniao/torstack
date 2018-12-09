@@ -52,10 +52,9 @@ class SchedulerHandler(AjaxHandler):
 
                 cron执行规则   参考：http://apscheduler.readthedocs.io/en/latest/modules/triggers/cron.html#module-apscheduler.triggers.cron
 
-
             eg:('CustomerExecuter','interval', ['123'],{"content":"456"}, seconds=2)
         '''
-        #return application.hisscheduler.add_job('sys:stdout.write', 'interval', seconds=3, args=args,kwargs=kwargs)
+        #return self.taskmgr.scheduler.add_job('sys:stdout.write', 'interval', seconds=3, args=args,kwargs=kwargs)
 
         funcPath = self.taskmgr.executers.get(func)
 

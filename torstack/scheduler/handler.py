@@ -14,7 +14,7 @@ class PauseJobHandler(SchedulerHandler):
     def post(self):
         job_id = self.get_argument('job_id')
         self.pause_job(job_id)
-        self.write("pause job:", job_id)
+        self.response_json("pause job:", job_id)
 
 class ResumeJobHandler(SchedulerHandler):
     '''
@@ -23,7 +23,7 @@ class ResumeJobHandler(SchedulerHandler):
     def post(self):
         jobId = self.get_argument('job_id')
         self.resume_job(job_id)
-        self.write("resume job:", job_id)
+        self.response_json("resume job:", job_id)
 
 class AddJobHandler(SchedulerHandler):
     '''
@@ -64,9 +64,9 @@ class AddJobHandler(SchedulerHandler):
         args = json_data.get('args', [])
         kwargs = json_data.get('kwargs', {})
         trigger_args = json_data.get('trigger_args', {})
-        print((func, trigger, args, kwargs, trigger_args))
         result = self.add_job(func, trigger, args, kwargs, **trigger_args)
-        self.write("add job success")
+        print(result)
+        self.response_json("add job success")
 
 
 class RemoveJobHandler(SchedulerHandler):
@@ -76,7 +76,7 @@ class RemoveJobHandler(SchedulerHandler):
     def post(self):
         job_id = self.get_argument('job_id')
         self.remove_job(job_id)
-        self.write("remove job: %s" % job_id)
+        self.response_json("remove job: %s" % job_id)
 
 class RemoveAllJobsHandler(SchedulerHandler):
     '''
@@ -84,7 +84,7 @@ class RemoveAllJobsHandler(SchedulerHandler):
     '''
     def post(self):
         self.remove_all_jobs()
-        self.write("remove all jobs")
+        self.response_json("remove all jobs")
 
 class GetAllJobsHandler(SchedulerHandler):
     '''
@@ -92,8 +92,7 @@ class GetAllJobsHandler(SchedulerHandler):
     '''
     def get(self):
         result = self.get_jobs()
-        self.set_header("Content-Type", "text/plain")
-        self.write("%s" % json.dumps(result))
+        self.response_json(result)
 
 
 class StartHandler(SchedulerHandler):
@@ -103,11 +102,11 @@ class StartHandler(SchedulerHandler):
     def post(self):
         status = self.get_status()
         if status == True:
-            self.write("Scheduler is already running")
+            self.response_json("Scheduler is already running")
         else:
             self.start_scheduler()
             result = self.get_status()
-            self.write("start scheduler: %s" % result)
+            self.response_json("start scheduler: %s" % result)
 
 class ShutdownSchedHandler(SchedulerHandler):
     '''
@@ -117,9 +116,9 @@ class ShutdownSchedHandler(SchedulerHandler):
         status = self.get_status()
         if status == True:
             self.shutdown_scheduler()
-            self.write("shutdown scheduler")
+            self.response_json("shutdown scheduler")
         else:
-            self.write("Scheduler is already shutdown")
+            self.response_json("Scheduler is already shutdown")
 
 class PauseSchedHandler(SchedulerHandler):
     '''
@@ -127,7 +126,7 @@ class PauseSchedHandler(SchedulerHandler):
     '''
     def post(self):
         self.pause_scheduler()
-        self.write("pause scheduler")
+        self.response_json("pause scheduler")
 
 class ResumeSchedHandler(SchedulerHandler):
     '''
@@ -135,7 +134,7 @@ class ResumeSchedHandler(SchedulerHandler):
     '''
     def post(self):
         self.resume_scheduler()
-        self.write("resume scheduler")
+        self.response_json("resume scheduler")
 
 class GetStatusHandler(SchedulerHandler):
     '''
@@ -143,7 +142,7 @@ class GetStatusHandler(SchedulerHandler):
     '''
     def get(self):
         status = self.get_status()
-        self.write("scheduler status: %s" % status)
+        self.response_json("scheduler status: %s" % status)
 
 class SwitchSchedHandler(SchedulerHandler):
     '''
@@ -153,8 +152,8 @@ class SwitchSchedHandler(SchedulerHandler):
         status = self.get_status()
         if status == True:
             self.shutdown_scheduler()
-            self.write("shutdown scheduler")
+            self.response_json("shutdown scheduler")
         else:
             self.start_scheduler()
-            self.write("start scheduler")
+            self.response_json("start scheduler")
 

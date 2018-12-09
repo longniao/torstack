@@ -19,7 +19,7 @@ class AjaxHandler(BaseHandler):
         self.set_header('Content-Type', 'text/json')
         self.taskmgr = self.settings['_taskmgr']
 
-    def write_error(self, status_code, **kwargs):
+    def response_error(self, status_code, **kwargs):
         self._status_code = 200
 
         if "exc_info" in kwargs:
@@ -33,7 +33,7 @@ class AjaxHandler(BaseHandler):
         else:
             self.write_json(None, status_code, self._reason)
 
-    def write_json(self, data, status_code=200, msg='success.'):
+    def response_json(self, data, status_code=200, msg='success.'):
         self.finish(json.dumps({
             'code': status_code,
             'msg': msg,

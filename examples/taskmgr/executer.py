@@ -9,7 +9,7 @@ scheduler executer definition.
 '''
 
 from torstack.scheduler.executer import SchedulerExecuter
-import time
+from datetime import datetime
 
 class TestExecuter(SchedulerExecuter):
     '''
@@ -17,7 +17,7 @@ class TestExecuter(SchedulerExecuter):
     '''
 
     id = "TestExecuter"
-    path = "scheduler.executer:TestExecuter.run"
+    path = "taskmgr.executer:TestExecuter.run"
 
     def __init__(self):
         '''
@@ -29,4 +29,4 @@ class TestExecuter(SchedulerExecuter):
     def run(cls, *args, **kwargs):
         ''' 执行
         '''
-        print('TestExecuter run @ %s' % time.time())
+        print('TestExecuter run @ %s' % datetime.now())
