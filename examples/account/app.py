@@ -2,8 +2,8 @@
 #  -*- coding: utf-8 -*-
 
 '''
-torstack.examples.helloworld.app.py
-helloworld app.py definition.
+torstack.examples.account
+a account example written by torstack
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.

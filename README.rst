@@ -37,19 +37,21 @@ A Simple Config
 
 .. code-block:: python
 
+# coding: utf-8
+
     [application]
     port : 8000
     max_threads_num : 500
     autoreload : True
     settings = {
-      'template_path' : 'website/template',
-      'static_path' : 'website/static',
+      'template_path' : '__website/template',
+      'static_path' : '__website/static',
       'compress_response' : True,
       'cookie_secret' : '__cookie_secret__',
       'xsrf_cookies' : False,
       'login_url' : '/login',
       'debug' : True,
-      'autoreload' : False
+      'autoreload' : True
       }
     log = {
       'log_level' : 'WARNING',
@@ -96,16 +98,20 @@ A Simple Config
     scheduler = {
       'enable' : False,
       'autorun' : False,
+      'dbtype' : 'mysql',
+      'dbname' : 'test',
       }
+    executers = []
 
-    [mysql]
-    master = {
+    [storage]
+    mysql = [{
       'host' : '127.0.0.1',
       'port' : 3306,
       'dbname' : 'test',
-      'username' : '',
-      'password' : ''
-      }
+      'username' : 'test',
+      'password' : 'test',
+      'type' : 'master',
+      }]
 
     [cache]
     redis = {
@@ -125,16 +131,8 @@ A Simple Example
 
     import os
     from os.path import abspath, dirname
-    from torstack.config.container import ConfigContainer
     from torstack.server import TorStackServer
     from torstack.handler.base import BaseHandler
-
-    PROJECT_DIR = dirname(dirname(abspath(__file__)))
-    CONF_DIR = os.path.join(PROJECT_DIR, 'conf')
-    CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
-
-    ConfigContainer.load_config(CONF_FILE)
-    ConfigContainer.store()
 
     class MainHandler(BaseHandler):
         def get(self):
@@ -142,6 +140,7 @@ A Simple Example
 
     def main():
         server = TorStackServer()
+        server.config.load('./dev.conf')
         server.run([(r"/", MainHandler)])
 
     if __name__ == "__main__":
