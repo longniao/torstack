@@ -3,7 +3,7 @@
 import logging
 
 from torstack.library.encipher import EncipherLibrary
-from models import UserAccount
+from account.models import UserAccount
 
 logger = logging.getLogger(__name__)
 

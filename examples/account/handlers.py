@@ -6,7 +6,7 @@ import tornado.web
 from tornado import gen
 from torstack.handler.base import BaseHandler
 from torstack.library.encipher import EncipherLibrary
-from user_account_service import UserAccountService
+from account.user_account_service import UserAccountService
 
 class HomeHandler(BaseHandler):
     '''

@@ -17,10 +17,7 @@ from torstack.server import TorStackServer
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
-
-sys.path.append(PROJECT_DIR)
-print(sys.path)
-from account import *
+sys.path.insert(0,PROJECT_DIR)
 
 from account.handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
 handlers = [
