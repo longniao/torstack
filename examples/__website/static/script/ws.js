@@ -1,4 +1,14 @@
 
+jQuery.fn.formToDict = function() {
+    var fields = this.serializeArray();
+    var json = {}
+    for (var i = 0; i < fields.length; i++) {
+        json[fields[i].name] = fields[i].value;
+    }
+    if (json.next) delete json.next;
+    return json;
+};
+
 var getWebsocketUrl = function () {
     var ishttps = 'https:' == document.location.protocol ? true: false;
     var url = window.location.host;
@@ -22,6 +32,13 @@ var renderItem = function (data) {
         tpl = "<p class='message normal " + style + "'>" + data.message + "</p>"
     }
     return tpl;
+}
+
+function newMessage(form) {
+    var message = form.formToDict();
+    console.log(message)
+    updater.socket.send(JSON.stringify(message));
+    form.find("input[type=text]").val("").select();
 }
 
 var handle = false;
@@ -84,6 +101,19 @@ var listener = {
 $(document).ready(function() {
     if (!window.console) window.console = {};
     if (!window.console.log) window.console.log = function() {};
+
+    $("#messageform").on("submit", function() {
+        newMessage($(this));
+        return false;
+    });
+    $("#messageform").on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            newMessage($(this));
+            return false;
+        }
+    });
+    $("#message").select();
+
     listener.start();
 });
 

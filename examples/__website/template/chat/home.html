@@ -15,17 +15,17 @@ var current_user = '{{ current_user['username'] }}'
   </div>
 </div>
 
-<form class="bs-example bs-example-form" data-example-id="input-group-with-button">
+<form class="bs-example bs-example-form" data-example-id="input-group-with-button" action="/" method="post" id="messageform">
     <div class="row">
       <div class="col-lg-6">
 
         <div class="input-group">
-          <input type="text" class="form-control" aria-label="Text input with dropdown button">
+          <input type="text" class="form-control" name="message" id="message">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button">Go!</button>
+            <button class="btn btn-default" type="submit">Send</button>
           </span>
         </div>
-
+        {% module xsrf_form_html() %}
       </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
   </form>
