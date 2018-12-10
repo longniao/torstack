@@ -70,7 +70,7 @@ class WebApplication(tornado.web.Application):
         # scheduler config
         if 'scheduler' in config:
             scheduler_config.update(config['scheduler'])
-        self.settings['_scheduler_config'] = scheduler_config
+        self.settings['_config_scheduler'] = scheduler_config
 
         # scheduler executers
         if 'executers' in config:
@@ -99,10 +99,12 @@ class WebApplication(tornado.web.Application):
         if 'redis' in config:
             from torstack.storage.redis import RedisStorage
             redis_storage = RedisStorage(config['redis'])
+            self.settings['_config_redis'] = config['redis']
             self.settings['_storage_redis'] = redis_storage
 
         # memcache
         if 'memcache' in config:
+            self.settings['_config_memcache'] = config['memcache']
             pass
 
         # ===================================================================
@@ -135,23 +137,23 @@ class WebApplication(tornado.web.Application):
         # websocket
         if self.settings['_config_websocket']['enable'] == True:
             from torstack.websocket.client import ClientListener
-            client = ClientListener(redis_storage.client, [self.settings['_config_websocket']['channel']])
+            client = ClientListener(redis_storage.client, [self.settings['_config_redis']['channel']])
             client.start()
 
         # ===================================================================
         # ======= scheduler =================================================
         # ===================================================================
 
-        if self.settings['_scheduler_config']['enable'] == True:
-            if self.settings['_scheduler_config']['dbtype'] == 'mysql':
+        if self.settings['_config_scheduler']['enable'] == True:
+            if self.settings['_config_scheduler']['dbtype'] == 'mysql':
                 client = self.settings['_storage_mysql']
-            elif self.settings['_scheduler_config']['dbtype'] == 'mongodb':
+            elif self.settings['_config_scheduler']['dbtype'] == 'mongodb':
                 client = self.settings['_storage_mysql']
             else:
                 raise BaseException('10001', 'error scheduler dbtype config.')
 
             from torstack.core.scheduler import CoreScheduler
-            taskmgr = CoreScheduler(self.settings['_scheduler_executers'], client, self.settings['_scheduler_config']['dbtype'], self.settings['_scheduler_config']['dbname'])
+            taskmgr = CoreScheduler(self.settings['_scheduler_executers'], client, self.settings['_config_scheduler']['dbtype'], self.settings['_config_scheduler']['dbname'])
             taskmgr.start()
             self.settings['_taskmgr'] = taskmgr
 

@@ -1,3 +1,8 @@
+CREATE database test;
+
+GRANT ALL privileges ON test.* to test@'127.0.0.1' identified by 'test';
+
+use test;
 
 CREATE TABLE `user_account` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

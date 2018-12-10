@@ -85,3 +85,12 @@ class RedisStorage(object):
         :return:
         '''
         return self.client.expire(key, lifetime)
+
+    def publish(self, channel, message):
+        '''
+        redis publish
+        :param channel:
+        :param message:
+        :return:
+        '''
+        return self.client.publish(channel, message)

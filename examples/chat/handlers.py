@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import json
 import tornado.web
 import tornado.websocket
 from tornado import gen
@@ -58,7 +59,7 @@ class WebSocketHandler(WebSocketHandler):
         else:
             clients = ClientManager.get_clients()
             # 保存客户端信息
-            ClientManager.add_client(str(id(self)), id=username, name=nickname, handler=self)
+            client = ClientManager.add_client(str(id(self)), id=username, name=nickname, handler=self)
             data = {
                 'type': 'add',
                 'clients': []
@@ -68,8 +69,8 @@ class WebSocketHandler(WebSocketHandler):
                 data['clients'].append({
                     "type": "add",
                     "id": client.identity,
-                    "username": client.username,
-                    "nickname": client.nickname,
+                    "username": client.id,
+                    "nickname": client.name,
                 })
             self.send_to_all(json.dumps(data))
 
@@ -94,4 +95,4 @@ class WebSocketHandler(WebSocketHandler):
             app_log.info("非有效连接，关闭页面不影响其他已经打开的页面")
 
     def send_to_all(self, data):
-        ClientManager.publish(self.settings['redis'], options.redis_channel, data)
+        ClientManager.publish(self.redis, self.settings['_config_redis']['channel'], data)
