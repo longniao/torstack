@@ -10,15 +10,19 @@ a account example written by torstack
 '''
 
 import os
-from os.path import abspath, dirname
+import sys
+from tornado.web import url
 from torstack.server import TorStackServer
 
-PROJECT_DIR = dirname(dirname(abspath(__file__)))
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
 
-from tornado.web import url
-from handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
+sys.path.append(PROJECT_DIR)
+print(sys.path)
+from account import *
+
+from account.handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
 handlers = [
     url(r"/", HomeHandler, name='home'),
     url(r"/login", LoginHandler, name='login'),
