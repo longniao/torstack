@@ -17,10 +17,11 @@ class UserAccountService(object):
             return session.query(UserAccount).filter(UserAccount.username == username).first()
 
     @staticmethod
-    def add_data(db_session, username, password):
+    def add_data(db_session, username, password, nickname):
         try:
             data = {
                 'username': username,
+                'nickname': nickname,
                 'status': '1',
             }
             data['salt'] = EncipherLibrary.gen_token(10)

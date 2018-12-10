@@ -14,8 +14,7 @@ class HomeHandler(BaseHandler):
     '''
     @tornado.web.authenticated
     def get(self):
-        messages = self.read_messages()
-        return self.render("account/home.html", messages=messages)
+        return self.response("account/home.html")
 
 class LoginHandler(BaseHandler):
     '''
@@ -57,6 +56,7 @@ class RegisterHandler(BaseHandler):
         next_url = self.get_argument('next', '/')
         register_data = dict(
             username='',
+            nickname='',
             password='',
             password2='',
             next_url=next_url,
@@ -69,12 +69,14 @@ class RegisterHandler(BaseHandler):
         username = self.get_argument('username')
         password = self.get_argument('password')
         password2 = self.get_argument('password2')
+        nickname = self.get_argument('nickname')
         next_url = self.get_argument('next', '/')
 
         register_data = dict(
             username=username,
             password=password,
             password2=password2,
+            nickname=nickname,
             next_url=next_url,
         )
 
@@ -84,7 +86,7 @@ class RegisterHandler(BaseHandler):
 
         userData = UserAccountService.get_one(self.db, username)
         if userData is None:
-            result = UserAccountService.add_data(self.db, username, password)
+            result = UserAccountService.add_data(self.db, username, password, nickname)
             if result:
                 userData = UserAccountService.get_one(self.db, username)
                 self.set_session(userData.session_data)

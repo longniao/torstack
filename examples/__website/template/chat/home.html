@@ -1,0 +1,36 @@
+{% extends "../layout/public.html" %}
+
+{% block public_script %}
+{% if current_user %}
+<script type="text/javascript">
+var current_user = '{{ current_user['username'] }}'
+</script>
+{% end %}
+{% end %}
+
+{% block content %}
+<div class="jumbotron masthead">
+  <div class="container chat-box" id="chat-box">
+
+  </div>
+</div>
+
+<form class="bs-example bs-example-form" data-example-id="input-group-with-button">
+    <div class="row">
+      <div class="col-lg-6">
+
+        <div class="input-group">
+          <input type="text" class="form-control" aria-label="Text input with dropdown button">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">Go!</button>
+          </span>
+        </div>
+
+      </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
+  </form>
+{% end %}
+
+{% block layout_extra_script_file %}
+<script type="text/javascript" src="{{ static_url("script/ws.js") }}"></script>
+{% end %}

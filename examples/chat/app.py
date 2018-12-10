@@ -19,12 +19,14 @@ CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
 sys.path.insert(0,PROJECT_DIR)
 
-from account.handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
+from chat.handlers import HomeHandler, WebSocketHandler
+from account.handlers import LoginHandler, RegisterHandler, LogoutHandler
 handlers = [
     url(r"/", HomeHandler, name='home'),
     url(r"/login", LoginHandler, name='login'),
     url(r"/register", RegisterHandler, name='register'),
     url(r"/logout", LogoutHandler, name='logout'),
+    url(r'/ws', WebSocketHandler, name='ws'),
 ]
 
 def main():
