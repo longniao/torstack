@@ -35,16 +35,16 @@ var listener = {
 
     start: function() {
         if(listener.socket == null) {
-            updater.socket = new WebSocket(ws_url);
+            listener.socket = new WebSocket(ws_url);
         }
-        updater.socket.onopen = function(event) {
-            updater.open(event);
+        listener.socket.onopen = function(event) {
+            listener.open(event);
         }
-        updater.socket.onmessage = function(event) {
-            updater.message(event);
+        listener.socket.onmessage = function(event) {
+            listener.message(event);
         }
-        updater.socket.onclose = function(event) {
-            console.close(event);
+        listener.socket.onclose = function(event) {
+            listener.close(event);
         }
     },
 

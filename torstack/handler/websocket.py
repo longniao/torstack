@@ -13,11 +13,14 @@ import json
 import tornado.websocket
 from tornado.log import app_log
 from tornado.options import options
+from torstack.handler.base import BaseHandler
+from torstack.websocket.manager import ClientManager
 
-from torstack.websocket import ClientManager
 
+class WebSocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
 
-class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    def initialize(self):
+        super(WebSocketHandler, self).initialize()
 
     def open(self):
         """

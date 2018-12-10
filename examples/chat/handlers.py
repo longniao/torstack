@@ -5,7 +5,8 @@ from __future__ import absolute_import, unicode_literals
 import tornado.web
 import tornado.websocket
 from tornado import gen
-from torstack.handler.base import BaseHandler
+from torstack.handler.websocket import BaseHandler
+from torstack.handler.websocket import WebSocketHandler
 from account.user_account_service import UserAccountService
 from tornado.log import app_log
 from torstack.websocket.manager import ClientManager
@@ -38,16 +39,16 @@ class HomeHandler(BaseHandler):
         self.redis.publish(self.settings['_config_websocket']['channel'], json.dumps(data))
 
 
-class WebSocketHandler(tornado.websocket.WebSocketHandler):
+class WebSocketHandler(WebSocketHandler):
 
     def open(self):
         """
         1, 检查当前客户端时候已经打开浏览器窗口，是，发送错误提示信息
         """
-        email = self.get_secure_cookie('email')
-        nickname = self.get_secure_cookie('nickname')
-        if ClientManager.is_client_connected(email):
-            app_log.exception("client[{0}] already connected!".format(email))
+        username = self.current_user['username']
+        nickname = self.current_user['nickname']
+        if ClientManager.is_client_connected(username):
+            app_log.exception("client[{0}] already connected!".format(username))
             self.write_message({
 
                 'type': 'system.error',
@@ -57,7 +58,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         else:
             clients = ClientManager.get_clients()
             # 保存客户端信息
-            ClientManager.add_client(str(id(self)), nickname=nickname, email=email, handler=self)
+            ClientManager.add_client(str(id(self)), id=username, name=nickname, handler=self)
             data = {
                 'type': 'add',
                 'clients': []
@@ -67,9 +68,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 data['clients'].append({
                     "type": "add",
                     "id": client.identity,
+                    "username": client.username,
                     "nickname": client.nickname,
-                    "avatar": client.avatar,
-                    "email": client.email
                 })
             self.send_to_all(json.dumps(data))
 
@@ -77,10 +77,11 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         app_log.info(message)
 
     def on_close(self):
-        email = self.get_secure_cookie('email')
+        print(self.current_user)
+        username = self.current_user['username']
         _id = str(id(self))
         if ClientManager.is_effective_connect(_id):
-            ClientManager.remove_client(email)
+            ClientManager.remove_client(username)
             try:
                 data = {
                     "type": "out",
