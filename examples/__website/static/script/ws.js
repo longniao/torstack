@@ -34,10 +34,10 @@ var renderItem = function (data) {
     return tpl;
 }
 
-function newMessage(form) {
+function sendMessage(form) {
     var message = form.formToDict();
     console.log(message)
-    updater.socket.send(JSON.stringify(message));
+    listener.socket.send(JSON.stringify(message));
     form.find("input[type=text]").val("").select();
 }
 
@@ -103,9 +103,10 @@ $(document).ready(function() {
     if (!window.console.log) window.console.log = function() {};
 
     $("#messageform").on("submit", function() {
-        newMessage($(this));
+        sendMessage($(this));
         return false;
     });
+
     $("#messageform").on("keypress", function(e) {
         if (e.keyCode == 13) {
             newMessage($(this));

@@ -1,5 +1,7 @@
 {% extends "../layout/public.html" %}
 
+{% block public_project_name %}TorStack Chat Example{% end %}
+
 {% block public_script %}
 {% if current_user %}
 <script type="text/javascript">
@@ -20,6 +22,7 @@ var current_user = '{{ current_user['username'] }}'
       <div class="col-lg-6">
 
         <div class="input-group">
+          <input type="hidden" class="form-control" name="to_name" value="all">
           <input type="text" class="form-control" name="message" id="message">
           <span class="input-group-btn">
             <button class="btn btn-default" type="submit">Send</button>

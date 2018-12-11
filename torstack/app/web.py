@@ -97,9 +97,10 @@ class WebApplication(tornado.web.Application):
 
         # redis
         if 'redis' in config:
-            from torstack.storage.redis import RedisStorage
-            redis_storage = RedisStorage(config['redis'])
             self.settings['_config_redis'] = config['redis']
+
+            from torstack.storage.redis import RedisStorage
+            redis_storage = RedisStorage(self.settings['_config_redis'])
             self.settings['_storage_redis'] = redis_storage
 
         # memcache

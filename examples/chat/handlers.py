@@ -37,7 +37,7 @@ class HomeHandler(BaseHandler):
             'to_name': to_name,
             'type': 'normal'
         }
-        self.redis.publish(self.settings['_config_websocket']['channel'], json.dumps(data))
+        self.redis.publish(self.settings['_config_redis']['channel'], json.dumps(data))
 
 
 class WebSocketHandler(WebSocketHandler):
@@ -59,7 +59,7 @@ class WebSocketHandler(WebSocketHandler):
         else:
             clients = ClientManager.get_clients()
             # 保存客户端信息
-            client = ClientManager.add_client(str(id(self)), id=username, name=nickname, handler=self)
+            ClientManager.add_client(str(id(self)), id=username, name=nickname, handler=self)
             data = {
                 'type': 'add',
                 'clients': []
