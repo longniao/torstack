@@ -9,6 +9,7 @@ redis storage definition.
 '''
 
 import redis
+import tornadoredis
 
 class RedisStorage(object):
     def __init__(self, options):

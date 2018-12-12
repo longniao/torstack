@@ -37,8 +37,10 @@ setup(
     ],
     install_requires=[
         'tornado',
-        'tornado-redis',
+        'git+https://github.com/leporo/tornado-redis.git@master#egg=/tornado-redis-0',
         'redis',
+        'aiomysql',
+        'aioredis',
         'sqlalchemy',
         'pyconvert',
     ])
