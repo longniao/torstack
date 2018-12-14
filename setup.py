@@ -37,7 +37,7 @@ setup(
     ],
     install_requires=[
         'tornado',
-        'git+https://github.com/leporo/tornado-redis.git@master#egg=/tornado-redis-0',
+        'git+https://github.com/longniao/tornado-redis.git@master#egg=/tornado-redis-0',
         'redis',
         'aiomysql',
         'aioredis',
