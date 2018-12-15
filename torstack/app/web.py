@@ -22,7 +22,7 @@ class WebApplication(tornado.web.Application):
 
     settings = {}
 
-    def __init__(self):
+    def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
 
         if hasattr(options, '_CONFIG_DICT_'):
             config = options._CONFIG_DICT_
@@ -36,6 +36,10 @@ class WebApplication(tornado.web.Application):
         # application settings
         if 'settings' in config:
             settings_config.update(config['settings'])
+
+        if settings and isinstance(settings, dict):
+            settings_config.update(settings)
+
         self.settings = settings_config
 
         # application log
@@ -161,21 +165,8 @@ class WebApplication(tornado.web.Application):
             from torstack.scheduler.handler import handlers
             self.settings['_handlers'] = handlers
 
-
-    def add_handlers(self, handlers):
-        '''
-        run application
-        :param handlers:
-        :return:
-        '''
-        if not handlers:
-            raise BaseException('10003', 'error application handlers.')
         self.settings['_handlers'].extend(handlers)
 
+        super(WebApplication, self).__init__(handlers=self.settings['_handlers'], default_host=default_host, transforms=transforms, **self.settings)
 
-    def ready(self):
-        '''
-        :return:
-        '''
-        tornado.web.Application.__init__(self, self.settings['_handlers'], **self.settings)
 

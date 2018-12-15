@@ -18,7 +18,6 @@ settings_config = dict(
     xsrf_cookies=True,
     compress_response=True,
     max_threads_num=500,
-    autoreload=True,
     login_url="/account",
     template_path='website/template',
     static_path='website/static',

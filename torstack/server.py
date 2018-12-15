@@ -25,16 +25,17 @@ class TorStackServer(object):
         '''
         return ConfigContainer
 
-    def run(self, handlers=[]):
+    def run(self, handlers=None, default_host=None, transforms=None, settings=None):
         '''
         run application
         :return:
         '''
         tornado.options.parse_command_line()
-        application = WebApplication()
-        application.add_handlers(handlers)
-        application.ready()
+        application = WebApplication(handlers=handlers, settings=settings)
         http_server = tornado.httpserver.HTTPServer(application)
+
+        # application = tornado.web.Application(handlers, **settings)
+        # http_server = tornado.httpserver.HTTPServer(application)
 
         # 判断是否为debug环境
         if application.settings['debug']:
