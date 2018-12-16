@@ -22,7 +22,7 @@ var current_user = '{{ current_user['username'] }}'
       <div class="col-lg-6">
 
         <div class="input-group">
-          <input type="hidden" class="form-control" name="to_name" value="all">
+          <input type="hidden" class="form-control" name="to_user" value="all">
           <input type="text" class="form-control" name="message" id="message">
           <span class="input-group-btn">
             <button class="btn btn-default" type="submit">Send</button>
@@ -35,5 +35,6 @@ var current_user = '{{ current_user['username'] }}'
 {% end %}
 
 {% block layout_extra_script_file %}
+<script type="text/javascript" src="//cdn.bootcss.com/jquery.form/4.2.2/jquery.form.min.js"></script>
 <script type="text/javascript" src="{{ static_url("script/ws.js") }}"></script>
 {% end %}

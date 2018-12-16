@@ -14,6 +14,7 @@ import sys
 importlib.reload(sys)
 from torstack.exception import BaseException
 import tornado.httpserver
+import asyncio
 import tornado.web
 from tornado.options import options
 from torstack.config.default import *
@@ -141,9 +142,10 @@ class WebApplication(tornado.web.Application):
 
         # websocket
         if self.settings['_config_websocket']['enable'] == True:
-            from torstack.websocket.client import ClientListener
-            client = ClientListener(redis_storage.client, [self.settings['_config_redis']['channel']])
-            client.start()
+            from torstack.websocket.listener import ClientListener
+            clientListener = ClientListener(redis_storage.client, [self.settings['_config_redis']['channel']])
+            clientListener.daemon = True
+            clientListener.start()
 
         # ===================================================================
         # ======= scheduler =================================================

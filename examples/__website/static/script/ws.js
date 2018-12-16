@@ -34,13 +34,6 @@ var renderItem = function (data) {
     return tpl;
 }
 
-function sendMessage(form) {
-    var message = form.formToDict();
-    console.log(message)
-    listener.socket.send(JSON.stringify(message));
-    form.find("input[type=text]").val("").select();
-}
-
 var handle = false;
 var try_time = 0;
 var ws_url = getWebsocketUrl();
@@ -98,12 +91,18 @@ var listener = {
 
 };
 
+function sendMessage() {
+    console.log($('#message').val());
+    $('#messageform').ajaxSubmit();
+    $('#message').val("");
+}
+
 $(document).ready(function() {
     if (!window.console) window.console = {};
     if (!window.console.log) window.console.log = function() {};
 
     $("#messageform").on("submit", function() {
-        sendMessage($(this));
+        sendMessage();
         return false;
     });
 

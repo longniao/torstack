@@ -13,15 +13,11 @@ import os
 import sys
 from tornado.web import url
 from torstack.server import TorStackServer
-import tornadoredis
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
 sys.path.insert(0,PROJECT_DIR)
-
-c = tornadoredis.Client(host='localhost', port=6379)
-c.connect()
 
 from chat.handlers import HomeHandler, WebSocketHandler
 from account.handlers import LoginHandler, RegisterHandler, LogoutHandler
@@ -43,6 +39,7 @@ def main():
     static_path = os.path.join(PROJECT_DIR, static_path)
     server.config.set('settings', 'template_path', template_path)
     server.config.set('settings', 'static_path', static_path)
+    server.config.set('websocket', 'enable', True)
 
     server.run(handlers)
 

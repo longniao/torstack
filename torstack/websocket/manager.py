@@ -75,6 +75,7 @@ class ClientManager(object):
         :return:
         '''
         clients = cls.get_clients()
+        print('clients', clients)
         for key in clients.keys():
             try:
                 clients[key].handler.write_message(json.dumps(data))
@@ -91,6 +92,7 @@ class ClientManager(object):
         '''
         from_client = cls.get_client_by_id(from_id)
         to_client = cls.get_client_by_id(to_id)
+        app_log.info("ClientManager:send_to:%s -> %s : %s" % (from_id, to_id, data))
         try:
             if from_id == to_id:
                 to_client.handler.write_message(json.dumps(data))
@@ -102,6 +104,7 @@ class ClientManager(object):
 
     @classmethod
     def publish(cls, redis=None, channel=None, message=None):
+        print(redis, channel, message)
         redis.publish(channel, message)
 
     @classmethod

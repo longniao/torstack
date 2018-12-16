@@ -19,11 +19,6 @@ PROJECT_DIR = dirname(dirname(abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
 CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
 
-settings = {
-    'debug': False,
-    'port': 8888,
-}
-
 class MainHandler(BaseHandler):
     @gen.coroutine
     def get(self):

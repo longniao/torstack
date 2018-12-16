@@ -10,7 +10,6 @@ websocket client listener definition.
 
 import json
 import threading
-
 from tornado.log import app_log
 from torstack.websocket.manager import ClientManager
 
@@ -19,6 +18,7 @@ class ClientListener(threading.Thread):
 
     def __init__(self, redis, channels):
         threading.Thread.__init__(self)
+        self.threadId = ''
         self.redis = redis
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(channels)
@@ -29,12 +29,11 @@ class ClientListener(threading.Thread):
         :param item: redis 消息对象
         :return:
         '''
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        print(">>>>>>>>>>>>>>>>>>>>", type(item))
         data = item['data']
         if not data or isinstance(data, int):
             return
 
-        app_log.info(data)
         try:
             data = json.loads(data)
             if data.get('to_user') and (data.get('type') != 'groups'):
