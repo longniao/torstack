@@ -13,8 +13,6 @@ import sys
 
 importlib.reload(sys)
 from torstack.exception import BaseException
-import tornado.httpserver
-import asyncio
 import tornado.web
 from tornado.options import options
 from torstack.config.default import *
@@ -23,7 +21,7 @@ class WebApplication(tornado.web.Application):
 
     settings = {}
 
-    def __init__(self, handlers=None, default_host=None, transforms=None, **settings):
+    def __init__(self, handlers=None, **settings):
 
         if hasattr(options, '_CONFIG_DICT_'):
             config = options._CONFIG_DICT_
@@ -169,6 +167,36 @@ class WebApplication(tornado.web.Application):
 
         self.settings['_handlers'].extend(handlers)
 
-        super(WebApplication, self).__init__(handlers=self.settings['_handlers'], default_host=default_host, transforms=transforms, **self.settings)
+        super(WebApplication, self).__init__(handlers=self.settings['_handlers'], **self.settings)
 
 
+    def run(self):
+
+        # 判断是否为debug环境
+        if self.settings['debug']:
+            # debug环境下，单进程模式
+            self.listen(self.settings['port'])
+        else:
+            # 加载日志管理
+            # CoreLog(options.log)
+
+            # 生产环境下，多进程模式
+            self.bind(self.settings['port'])
+            self.start(0)  # Forks multiple sub-processes
+
+        # app.listen(options.port,xheaders=True)
+        try:
+            print ('Server running on http://localhost:{}'.format(self.settings['port']))
+            # ioloop = tornado.ioloop.IOLoop.current()
+            ioloop = tornado.ioloop.IOLoop.instance()
+
+            # websocket 定时广播
+            # from interest.repository.package.websocket_service import *
+            # loop.spawn_callback(minute_loop2)
+
+            ioloop.start()
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            raise
+        finally:
+            tornado.ioloop.IOLoop.instance().stop()

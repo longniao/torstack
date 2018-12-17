@@ -14,7 +14,7 @@ default config definition.
 settings_config = dict(
     debug=True,
     port=8888,
-    cookie_secret="1qaz2wsx1qaz2wsx1qaz2wsx1qaz2wsx",
+    cookie_secret="__cookie_secret__",
     xsrf_cookies=True,
     compress_response=True,
     max_threads_num=500,

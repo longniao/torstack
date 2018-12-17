@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack..server
+torstack.server
 server definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
@@ -9,62 +9,69 @@ server definition.
 '''
 
 import tornado
+import asyncio
 from torstack.config.container import ConfigContainer
 from torstack.app.web import WebApplication
+from threading import Thread
+
+class DefaultHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("Hello TorStack!")
 
 class TorStackServer(object):
+    '''
+    torstack webserver
+    '''
+
+    handlers = None
+    application = None
 
     def __init__(self):
         pass
 
-    @property
-    def config(self):
+    def load_config(self, config_file=None):
         '''
-        get ConfigContainer
+        load config
+        :param config_file:
         :return:
         '''
-        return ConfigContainer
+        ConfigContainer.load(config_file)
 
-    def run(self, handlers=None, default_host=None, transforms=None, settings=None):
+    @property
+    def config(self):
+        return ConfigContainer.get()
+
+    def load_handlers(self, handlers=None):
+        '''
+        load handlers
+        :param handlers:
+        :return:
+        '''
+        if not handlers:
+            handlers = [(r'/', DefaultHandler),]
+        self.handlers = handlers
+
+    def init_application(self):
+        '''
+        init application
+        :return:
+        '''
+        self.application = WebApplication(handlers=self.handlers, settings=self.config['settings'])
+
+    def start_server(self):
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        self.application.run()
+
+    def run(self):
         '''
         run application
         :return:
         '''
-        tornado.options.parse_command_line()
-        application = WebApplication(handlers=handlers, settings=settings)
-        http_server = tornado.httpserver.HTTPServer(application)
-
-        # application = tornado.web.Application(handlers, **settings)
-        # http_server = tornado.httpserver.HTTPServer(application)
-
-        # 判断是否为debug环境
-        if application.settings['debug']:
-            # debug环境下，单进程模式
-            http_server.listen(application.settings['port'])
-        else:
-            # 加载日志管理
-            # CoreLog(options.log)
-
-            # 生产环境下，多进程模式
-            http_server.bind(application.settings['port'])
-            http_server.start(0)  # Forks multiple sub-processes
-
-        # app.listen(options.port,xheaders=True)
-        try:
-            print ('Server running on http://localhost:{}'.format(application.settings['port']))
-            # ioloop = tornado.ioloop.IOLoop.current()
-            ioloop = tornado.ioloop.IOLoop.instance()
-
-            # websocket 定时广播
-            # from interest.repository.package.websocket_service import *
-            # loop.spawn_callback(minute_loop2)
-
-            ioloop.start()
-        except:
-            print("Unexpected error:", sys.exc_info()[0])
-            raise
-        finally:
-            tornado.ioloop.IOLoop.instance().stop()
+        self.init_application()
+        t = Thread(target=self.start_server(), args=())
+        t.daemon = True
+        t.start()
+        t.join()
 
 
 

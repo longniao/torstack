@@ -20,7 +20,9 @@ class ConfigContainer(object):
     _CONFIG_DICT_ = dict()
 
     @classmethod
-    def load(cls, config_file):
+    def load(cls, config_file=None):
+        if not config_file:
+            raise BaseException('10010', 'Error config file')
         parser.read(config_file, encoding='UTF-8')
         ConfigContainer.store()
 

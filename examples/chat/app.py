@@ -31,17 +31,16 @@ handlers = [
 
 def main():
     server = TorStackServer()
-    server.config.load(CONF_FILE)
+    server.load_config(CONF_FILE)
 
-    template_path = server.config.get('settings', 'template_path')
-    static_path = server.config.get('settings', 'static_path')
-    template_path = os.path.join(PROJECT_DIR, template_path)
-    static_path = os.path.join(PROJECT_DIR, static_path)
-    server.config.set('settings', 'template_path', template_path)
-    server.config.set('settings', 'static_path', static_path)
-    server.config.set('websocket', 'enable', True)
+    template_path = server.config['settings']['template_path']
+    static_path = server.config['settings']['static_path']
+    server.config['settings']['template_path'] = os.path.join(PROJECT_DIR, template_path)
+    server.config['settings']['static_path'] = os.path.join(PROJECT_DIR, static_path)
+    server.config['websocket']['enable'] = True
 
-    server.run(handlers)
+    server.load_handlers(handlers)
+    server.run()
 
 
 if __name__ == "__main__":
