@@ -97,7 +97,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 message=message,
             )
             message_string = json.dumps(message)
-            self.redis.client.rpush(self.message_id, message_string)
+            self.storage['redis'].client.rpush(self.message_id, message_string)
 
     def read_messages(self, length=1):
         '''

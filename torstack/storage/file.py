@@ -16,35 +16,60 @@ class FileStorage(object):
 
     def __init__(self, path=None):
         if path:
-            FileStorage.path = path
+            self.path = path
 
-    @classmethod
-    def mkdir(cls, path):
+    def mkdir(self, path):
+        '''
+        make dir
+        :param path:
+        :return:
+        '''
         folder = os.path.exists(path)
         if not folder:
             os.makedirs(path)
 
-    @classmethod
-    def get(cls, file):
-        path = '%s/%s' % (FileStorage.path, file)
+    def get(self, file):
+        '''
+        get file content
+        :param file:
+        :return:
+        '''
+        path = '%s/%s' % (self.path, file)
         if os.path.exists(path):
             with open(path, 'r') as fp:
                 return fp.read()
         return None
 
-    @classmethod
-    def save(cls, file, content='', lifetime=None):
-        FileStorage.mkdir(FileStorage.path)
-        path = '%s/%s' % (FileStorage.path, file)
+    def save(self, file, content='', lifetime=None):
+        '''
+        save content to file
+        :param file:
+        :param content:
+        :param lifetime:
+        :return:
+        '''
+        self.mkdir(self.path)
+        path = '%s/%s' % (self.path, file)
         fp = open(path, 'w+')
         fp.write(content)
         fp.close()
         return True
 
-    @classmethod
-    def delete(cls, file):
-        path = '%s/%s' % (FileStorage.path, file)
+    def delete(self, file):
+        '''
+        delete file
+        :param file:
+        :return:
+        '''
+        path = '%s/%s' % (self.path, file)
         if os.path.exists(path):
             os.remove(path)
         else:
             return True
+
+    def expire(self, key, lifetime=0):
+        '''
+        do nothing
+        '''
+        pass
+

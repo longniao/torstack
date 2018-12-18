@@ -63,7 +63,7 @@ class WebApplication(tornado.web.Application):
             else:
                 from torstack.storage.file import FileStorage
                 config['base']['session']['storage'] = 'file'
-                driver = FileStorage
+                driver = FileStorage()
             from torstack.core.session import CoreSession
             self.session = CoreSession(driver, config_session)
 
