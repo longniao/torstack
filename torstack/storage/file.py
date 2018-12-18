@@ -33,7 +33,7 @@ class FileStorage(object):
         return None
 
     @classmethod
-    def save(cls, file, content=''):
+    def save(cls, file, content='', lifetime=None):
         FileStorage.mkdir(FileStorage.path)
         path = '%s/%s' % (FileStorage.path, file)
         fp = open(path, 'w+')

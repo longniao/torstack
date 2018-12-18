@@ -73,12 +73,15 @@ class Parser(object):
         :return:
         '''
         try:
-            if isinstance(self._dict[section][item], (bool, str, int)):
-                config = configParser.get(section, item)
-                self._dict[section][item] = config
-            else:
+            if isinstance(self._dict[section][item], dict):
                 config = ast.literal_eval(configParser.get(section, item))
                 self._dict[section][item].update(config)
+            elif isinstance(self._dict[section][item], (list, bool)):
+                config = ast.literal_eval(configParser.get(section, item))
+                self._dict[section][item] = config
+            else:
+                config = configParser.get(section, item)
+                self._dict[section][item] = config
 
         except Exception as e:
             # unexpected config

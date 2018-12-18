@@ -99,14 +99,14 @@ scheduler_executers = []
 
 # mysql
 config_mysql_enable = False
-config_mysql = dict(
+config_mysql = [dict(
     host='127.0.0.1',
     port=3306,
     dbname='',
     username='',
     password='',
     type='master',
-)
+)]
 
 # mongodb
 config_mongodb_enable = False

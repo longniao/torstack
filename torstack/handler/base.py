@@ -20,6 +20,8 @@ class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         self._session_id = None
         self._session_data = None
+        self.session = self.application.session
+        self.cookie = self.application.cookie
         self.storage = self.application.storage
 
     @property
@@ -86,6 +88,9 @@ class BaseHandler(tornado.web.RequestHandler):
         :param message:
         :return:
         '''
+        if 'redis' not in self.storage:
+            return False
+
         if category and message:
             message = dict(
                 category=category,
@@ -99,9 +104,12 @@ class BaseHandler(tornado.web.RequestHandler):
         read flash messages
         :return:
         '''
+        if 'redis' not in self.storage:
+            return False
+
         messages = []
         for i in range(length):
-            message_string = self.redis.client.lpop(self.message_id)
+            message_string = self.storage['redis'].client.lpop(self.message_id)
             if message_string:
                 if isinstance(message_string, str):
                     pass

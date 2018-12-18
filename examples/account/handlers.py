@@ -8,7 +8,15 @@ from torstack.handler.base import BaseHandler
 from torstack.library.encipher import EncipherLibrary
 from account.user_account_service import UserAccountService
 
-class HomeHandler(BaseHandler):
+class AccountHandler(BaseHandler):
+    '''
+    AccountHandler
+    '''
+    def initialize(self):
+        super(AccountHandler, self).initialize()
+        self.db = self.storage['mysql']
+
+class HomeHandler(AccountHandler):
     '''
     home
     '''
@@ -16,7 +24,7 @@ class HomeHandler(BaseHandler):
     def get(self):
         return self.response("account/home.html")
 
-class LoginHandler(BaseHandler):
+class LoginHandler(AccountHandler):
     '''
     login
     '''
@@ -45,7 +53,7 @@ class LoginHandler(BaseHandler):
             self.add_message("danger", u"Login failed, error username")
             return self.redirect("/")
 
-class RegisterHandler(BaseHandler):
+class RegisterHandler(AccountHandler):
     '''
     register
     '''
@@ -99,7 +107,7 @@ class RegisterHandler(BaseHandler):
             self.add_message("danger", u"Register failed, username is exist")
             return self.response("account/register.html", **register_data)
 
-class LogoutHandler(BaseHandler):
+class LogoutHandler(AccountHandler):
     '''
     logout
     '''
