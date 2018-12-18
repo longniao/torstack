@@ -10,10 +10,13 @@ default config definition.
 
 # application config ====================================
 
+# base
+
+config_port = 8000
+
 # settings
-settings_config = dict(
+config_settings = dict(
     debug=True,
-    port=8888,
     cookie_secret="__cookie_secret__",
     xsrf_cookies=True,
     compress_response=True,
@@ -24,7 +27,7 @@ settings_config = dict(
 )
 
 # log
-log_config = dict(
+config_log = dict(
     enable=False,
     log_level="WARNING",
     log_console=False,
@@ -39,14 +42,14 @@ log_config = dict(
 # base config ====================================
 
 # session
-session_config = dict(
+config_session = dict(
     enable=True,
     prefix='sid_',
     lifetime=1800,  # 60*30
     storage='redis',
 )
 # cookie
-cookie_config = dict(
+config_cookie = dict(
     enable=True,
     name='_tsid',
     expires=315360000, # 60*60*24*365*10
@@ -56,7 +59,7 @@ cookie_config = dict(
 # rest config ====================================
 
 # rest
-rest_config = dict(
+config_rest = dict(
     enable=False,
     allow_remote_access=True,
     token_prefix='token_',
@@ -64,7 +67,7 @@ rest_config = dict(
 )
 
 # rest header
-rest_header_config = dict(
+config_rest_header = dict(
     token='',
     version='',
     signature='',
@@ -74,14 +77,14 @@ rest_header_config = dict(
 # websocket config ====================================
 
 # websocket
-websocket_config = dict(
+config_websocket = dict(
     enable=False,
 )
 
 # scheduler config ====================================
 
 # scheduler config
-scheduler_config = dict(
+config_scheduler = dict(
     enable=False,
     autorun=True,
     dbtype='mysql',
@@ -94,8 +97,8 @@ scheduler_executers = []
 # storage config ====================================
 
 # mysql
-mysql_config = dict(
-    host='',
+config_mysql = dict(
+    host='127.0.0.1',
     port=3306,
     dbname='',
     username='',
@@ -104,7 +107,7 @@ mysql_config = dict(
 )
 
 # redis
-redis_config = dict(
+config_redis = dict(
     host='',
     port=6379,
     db=1,

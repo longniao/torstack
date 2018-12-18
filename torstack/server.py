@@ -10,7 +10,7 @@ server definition.
 
 import tornado
 import asyncio
-from torstack.config.container import ConfigContainer
+from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
 from threading import Thread
 
@@ -22,24 +22,13 @@ class TorStackServer(object):
     '''
     torstack webserver
     '''
+    config = ConfigParser
 
     handlers = None
     application = None
 
     def __init__(self):
         pass
-
-    def load_config(self, config_file=None):
-        '''
-        load config
-        :param config_file:
-        :return:
-        '''
-        ConfigContainer.load(config_file)
-
-    @property
-    def config(self):
-        return ConfigContainer.get()
 
     def load_handlers(self, handlers=None):
         '''
