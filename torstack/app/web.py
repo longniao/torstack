@@ -33,22 +33,22 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # mysql
-        if config['mysql']['enable'] == True:
+        if config['storage']['mysql_enable'] == True:
             from torstack.storage.mysql import MysqlStorage
-            self.storage['mysql'] = MysqlStorage(config['mysql'])
+            self.storage['mysql'] = MysqlStorage(config['storage']['mysql'])
 
         # mongodb
-        if config['mongodb']['enable'] == True:
+        if config['storage']['mongodb_enable'] == True:
             self.storage['mongodb'] = None
 
         # redis
-        if config['redis']['enable'] == True:
+        if config['storage']['redis_enable'] == True:
             from torstack.storage.redis import RedisStorage
-            redis_storage = RedisStorage(config['redis'])
+            redis_storage = RedisStorage(config['storage']['redis'])
             self.storage['redis'] = redis_storage
 
         # memcache
-        if config['memcache']['enable'] == True:
+        if config['storage']['memcache_enable'] == True:
             self.storage['memcache'] = None
 
         # ===================================================================
@@ -56,38 +56,39 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # session
-        if config['session']['enable'] == True:
-            if config['session']['storage'] in self.storage:
-                driver = self.settings['storage'].get(config['session']['storage'])
+        if config['base']['session']['enable'] == True:
+            config_session = config['base']['session']
+            if config_session['storage'] in self.storage:
+                driver = self.storage.get(config_session['storage'])
             else:
                 from torstack.storage.file import FileStorage
-                config['session']['storage'] = 'file'
+                config['base']['session']['storage'] = 'file'
                 driver = FileStorage
             from torstack.core.session import CoreSession
-            self.session = CoreSession(driver, config['session'])
+            self.session = CoreSession(driver, config_session)
 
         # cookie
-        if config['cookie']['enable'] == True:
+        if config['base']['cookie']['enable'] == True:
             from torstack.core.cookie import CoreCookie
-            self.cookie = CoreCookie(config['cookie'])
+            self.cookie = CoreCookie(config['base']['cookie'])
 
         # ===================================================================
         # ======= rest ======================================================
         # ===================================================================
 
         # rest
-        if config['rest']['enable'] == True:
+        if config['rest']['rest']['enable'] == True:
             from torstack.core.rest import CoreRest
-            self.rest = CoreRest(redis_storage, config['rest'], config['rest_header'])
+            self.rest = CoreRest(redis_storage, config['rest'], config['rest']['rest_header'])
 
         # ===================================================================
         # ======= websocket =================================================
         # ===================================================================
 
         # websocket
-        if config['websocket']['enable'] == True:
+        if config['websocket']['websocket']['enable'] == True:
             from torstack.websocket.listener import ClientListener
-            clientListener = ClientListener(redis_storage.client, [config['redis']['channel']])
+            clientListener = ClientListener(redis_storage.client, [config['base']['redis']['channel']])
             clientListener.daemon = True
             clientListener.start()
 
@@ -95,16 +96,15 @@ class WebApplication(tornado.web.Application):
         # ======= scheduler =================================================
         # ===================================================================
 
-        if config['scheduler']['enable'] == True:
-            if self.settings['_config_scheduler']['dbtype'] == 'mysql':
-                client = self.settings['_storage_mysql']
-            elif self.settings['_config_scheduler']['dbtype'] == 'mongodb':
-                client = self.settings['_storage_mysql']
+        if config['scheduler']['scheduler']['enable'] == True:
+            config_scheduler = config['scheduler']['scheduler']
+            if config_scheduler['dbtype'] in self.storage:
+                client = self.storage.get(config_scheduler['dbtype'])
             else:
                 raise BaseException('10001', 'error scheduler dbtype config.')
 
             from torstack.core.scheduler import CoreScheduler
-            taskmgr = CoreScheduler(config['scheduler_executers'], client, config['scheduler']['dbtype'], config['scheduler']['dbname'])
+            taskmgr = CoreScheduler(config['scheduler']['scheduler_executers'], client, config['scheduler']['scheduler']['dbtype'], config['scheduler']['scheduler']['dbname'])
             taskmgr.start()
 
             self.taskmgr = taskmgr
@@ -112,26 +112,26 @@ class WebApplication(tornado.web.Application):
             from torstack.scheduler.handler import scheduler_handlers
             handlers.extend(scheduler_handlers)
 
-        super(WebApplication, self).__init__(handlers=handlers, **config['settings'])
+        super(WebApplication, self).__init__(handlers=handlers, **config['application']['settings'])
 
 
     def run(self):
 
         # 判断是否为debug环境
-        if self.config['settings']['debug']:
+        if self.config['application']['settings']['debug']:
             # debug环境下，单进程模式
-            self.listen(self.config['port'])
+            self.listen(self.config['application']['port'])
         else:
             # 加载日志管理
             # CoreLog(options.log)
 
             # 生产环境下，多进程模式
-            self.bind(self.config['port'])
+            self.bind(self.config['application']['port'])
             self.start(0)  # Forks multiple sub-processes
 
         # app.listen(options.port,xheaders=True)
         try:
-            print ('Server running on http://localhost:{}'.format(self.config['port']))
+            print ('Server running on http://localhost:{}'.format(self.config['application']['port']))
             # ioloop = tornado.ioloop.IOLoop.current()
             ioloop = tornado.ioloop.IOLoop.instance()
 

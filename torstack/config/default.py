@@ -12,6 +12,7 @@ default config definition.
 
 # base
 
+config_project_path = ''
 config_port = 8000
 
 # settings
@@ -22,8 +23,8 @@ config_settings = dict(
     compress_response=True,
     max_threads_num=500,
     login_url="/account",
-    template_path='website/template',
-    static_path='website/static',
+    template_path="%(project_path)s/website/template",
+    static_path="%(project_path)s/website/static",
 )
 
 # log
@@ -97,8 +98,8 @@ scheduler_executers = []
 # storage config ====================================
 
 # mysql
+config_mysql_enable = False
 config_mysql = dict(
-    enable=False,
     host='127.0.0.1',
     port=3306,
     dbname='',
@@ -108,8 +109,8 @@ config_mysql = dict(
 )
 
 # mongodb
+config_mongodb_enable = False
 config_mongodb = dict(
-    enable=False,
     host='127.0.0.1',
     port=3306,
     dbname='',
@@ -119,8 +120,8 @@ config_mongodb = dict(
 )
 
 # redis
+config_redis_enable = False
 config_redis = dict(
-    enable=False,
     host='',
     port=6379,
     db=1,
@@ -132,8 +133,8 @@ config_redis = dict(
 )
 
 # memcache
+config_memcache_enable = False
 config_memcache = dict(
-    enable=False,
     host='',
     port=6379,
     db=1,

@@ -20,20 +20,37 @@ configParser = ConfigParser()
 class Parser(object):
 
     _dict = dict(
-        port=config_port,
-        settings=config_settings,
-        log=config_log,
-        session=config_session,
-        cookie=config_cookie,
-        rest=config_rest,
-        rest_header=config_rest_header,
-        websocket=config_websocket,
-        scheduler=config_scheduler,
-        scheduler_executers=scheduler_executers,
-        mysql=config_mysql,
-        mongodb=config_mongodb,
-        redis=config_redis,
-        memcache=config_memcache,
+        application=dict(
+            project_path=config_project_path,
+            port=config_port,
+            settings=config_settings,
+            log=config_log,
+        ),
+        base=dict(
+            session=config_session,
+            cookie=config_cookie,
+        ),
+        rest=dict(
+            rest=config_rest,
+            rest_header=config_rest_header,
+        ),
+        websocket=dict(
+            websocket=config_websocket,
+        ),
+        scheduler=dict(
+            scheduler=config_scheduler,
+            scheduler_executers=scheduler_executers,
+        ),
+        storage=dict(
+            mysql_enable=config_mysql_enable,
+            mysql=config_mysql,
+            mongodb_enable=config_mongodb_enable,
+            mongodb=config_mongodb,
+            redis_enable=config_redis_enable,
+            redis=config_redis,
+            memcache_enable=config_memcache_enable,
+            memcache=config_memcache,
+        ),
     )
 
     def load(self, config_file=None):
@@ -56,17 +73,20 @@ class Parser(object):
         :return:
         '''
         try:
-            config = ast.literal_eval(configParser.get(section, item))
-            if isinstance(config, dict):
-                self._dict[item].update(config)
+            if isinstance(self._dict[section][item], (bool, str, int)):
+                config = configParser.get(section, item)
+                self._dict[section][item] = config
             else:
-                self._dict[item] = config
+                config = ast.literal_eval(configParser.get(section, item))
+                self._dict[section][item].update(config)
+
         except Exception as e:
+            # unexpected config
+            config = configParser.get(section, item)
+            self._dict[section][item] = config
+            # exception log
             logging.error(traceback.format_exc())
 
-            varName = 'config_%s' % item
-            if varName in locals() or varName in globals():
-                self._dict[item] = varName
 
     def assemble(self):
         '''

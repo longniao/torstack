@@ -11,13 +11,12 @@ a helloworld example written by torstack
 
 import os
 from tornado import gen
-from os.path import abspath, dirname
 from torstack.server import TorStackServer
 from torstack.handler.base import BaseHandler
 
-PROJECT_DIR = dirname(dirname(abspath(__file__)))
-CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
-CONF_FILE = CONF_DIR + os.path.sep + 'helloworld.conf'
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONF_PATH = os.path.join(PROJECT_PATH, '__conf')
+CONF_FILE = CONF_PATH + os.path.sep + 'helloworld.conf'
 
 class MainHandler(BaseHandler):
     @gen.coroutine
@@ -30,7 +29,6 @@ def main():
     print(server.config._dict)
     server.add_handlers([(r"/", MainHandler)])
     server.run()
-
 
 if __name__ == "__main__":
     main()

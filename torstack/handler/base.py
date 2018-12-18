@@ -20,11 +20,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def initialize(self):
         self._session_id = None
         self._session_data = None
-        self.db = self.settings['_storage_mysql']
-        self.redis = self.settings['_storage_redis']
-
-        self.session = self.settings['session']
-        self.cookie = self.settings['cookie']
+        self.storage = self.application.storage
 
     @property
     def session_id(self):

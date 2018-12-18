@@ -14,10 +14,10 @@ import sys
 from tornado.web import url
 from torstack.server import TorStackServer
 
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
-CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
-sys.path.insert(0,PROJECT_DIR)
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONF_PATH = os.path.join(PROJECT_PATH, '__conf')
+CONF_FILE = os.path.join(CONF_PATH, 'account.conf')
+sys.path.insert(0,PROJECT_PATH)
 
 from account.handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
 handlers = [
@@ -30,16 +30,13 @@ handlers = [
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
+    server.config._dict['project_path'] = PROJECT_PATH
+    server.config._dict['settings']['template_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['settings']['template_path'])
+    server.config._dict['settings']['static_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['settings']['static_path'])
+    print(server.config._dict)
 
-    template_path = server.config.get('settings', 'template_path')
-    static_path = server.config.get('settings', 'static_path')
-    template_path = os.path.join(PROJECT_DIR, template_path)
-    static_path = os.path.join(PROJECT_DIR, static_path)
-    server.config.set('settings', 'template_path', template_path)
-    server.config.set('settings', 'static_path', static_path)
-
-    server.run(handlers)
-
+    server.add_handlers(handlers)
+    server.run()
 
 if __name__ == "__main__":
     main()
