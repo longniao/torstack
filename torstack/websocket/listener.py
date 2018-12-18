@@ -18,7 +18,6 @@ class ClientListener(threading.Thread):
 
     def __init__(self, redis, channels):
         threading.Thread.__init__(self)
-        self.threadId = ''
         self.redis = redis
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(channels)
@@ -29,7 +28,7 @@ class ClientListener(threading.Thread):
         :param item: redis 消息对象
         :return:
         '''
-        print(">>>>>>>>>>>>>>>>>>>>", type(item))
+        print(">>>>>>>>>>>>>>>>>>>>")
         data = item['data']
         if not data or isinstance(data, int):
             return

@@ -17,7 +17,7 @@ from torstack.handler.base import BaseHandler
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
-CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
+CONF_FILE = CONF_DIR + os.path.sep + 'helloworld.conf'
 
 class MainHandler(BaseHandler):
     @gen.coroutine
@@ -27,7 +27,9 @@ class MainHandler(BaseHandler):
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
-    server.run([(r"/", MainHandler)])
+    print(server.config._dict)
+    server.add_handlers([(r"/", MainHandler)])
+    server.run()
 
 
 if __name__ == "__main__":

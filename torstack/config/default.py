@@ -46,7 +46,7 @@ config_session = dict(
     enable=True,
     prefix='sid_',
     lifetime=1800,  # 60*30
-    storage='redis',
+    storage='file', # redis|memcache|file, default redis
 )
 # cookie
 config_cookie = dict(
@@ -98,6 +98,18 @@ scheduler_executers = []
 
 # mysql
 config_mysql = dict(
+    enable=False,
+    host='127.0.0.1',
+    port=3306,
+    dbname='',
+    username='',
+    password='',
+    type='master',
+)
+
+# mongodb
+config_mongodb = dict(
+    enable=False,
     host='127.0.0.1',
     port=3306,
     dbname='',
@@ -108,6 +120,7 @@ config_mysql = dict(
 
 # redis
 config_redis = dict(
+    enable=False,
     host='',
     port=6379,
     db=1,
@@ -118,3 +131,11 @@ config_redis = dict(
     autoconnect=True,
 )
 
+# memcache
+config_memcache = dict(
+    enable=False,
+    host='',
+    port=6379,
+    db=1,
+    password=None,
+)

@@ -12,136 +12,82 @@ import importlib
 import sys
 
 importlib.reload(sys)
-from torstack.exception import BaseException
 import tornado.web
-from tornado.options import options
-from torstack.config.default import *
+from torstack.exception import BaseException
 
 class WebApplication(tornado.web.Application):
 
-    settings = {}
+    config = None
+    session = None
+    cookie = None
+    storage = dict()
+    taskmgr = None
+    rest = None
 
-    def __init__(self, handlers=None, **settings):
+    def __init__(self, handlers=None, config=None):
 
-        if hasattr(options, '_CONFIG_DICT_'):
-            config = options._CONFIG_DICT_
-        else:
-            raise BaseException('10001', 'error config.')
-
-        # ===================================================================
-        # ======= config ====================================================
-        # ===================================================================
-
-        # application settings
-        if 'settings' in config:
-            settings_config.update(config['settings'])
-
-        if settings and isinstance(settings, dict):
-            settings_config.update(settings)
-
-        self.settings = settings_config
-
-        # application log
-        if 'log' in config:
-            log_config.update(config['log'])
-        self.settings['_config_log'] = log_config
-
-        # session config
-        if 'session' in config:
-            session_config.update(config['session'])
-        self.settings['_config_session'] = session_config
-
-        # cookie config
-        if 'cookie' in config:
-            cookie_config.update(config['cookie'])
-        self.settings['_config_cookie'] = cookie_config
-
-        # rest config
-        if 'rest' in config:
-            rest_config.update(config['rest'])
-        self.settings['_config_rest'] = rest_config
-
-        if 'rest_header' in config:
-            rest_header_config.update(config['rest_header'])
-        self.settings['_config_rest_header'] = rest_header_config
-
-        # websocket config
-        if 'websocket' in config:
-            websocket_config.update(config['websocket'])
-        self.settings['_config_websocket'] = websocket_config
-
-        # scheduler config
-        if 'scheduler' in config:
-            scheduler_config.update(config['scheduler'])
-        self.settings['_config_scheduler'] = scheduler_config
-
-        # scheduler executers
-        if 'executers' in config:
-            scheduler_executers.extend(config['executers'])
-        self.settings['_scheduler_executers'] = scheduler_executers
-        self.settings['_handlers'] = []
+        self.config = config
 
         # ===================================================================
         # ======= storage ===================================================
         # ===================================================================
 
         # mysql
-        if 'mysql' in config:
+        if config['mysql']['enable'] == True:
             from torstack.storage.mysql import MysqlStorage
-            self.settings['_storage_mysql'] = MysqlStorage(config['mysql'])
+            self.storage['mysql'] = MysqlStorage(config['mysql'])
 
         # mongodb
-        if 'mongodb' in config:
-            pass
-
-        # ===================================================================
-        # ======= cache =====================================================
-        # ===================================================================
+        if config['mongodb']['enable'] == True:
+            self.storage['mongodb'] = None
 
         # redis
-        if 'redis' in config:
-            self.settings['_config_redis'] = config['redis']
-
+        if config['redis']['enable'] == True:
             from torstack.storage.redis import RedisStorage
-            redis_storage = RedisStorage(self.settings['_config_redis'])
-            self.settings['_storage_redis'] = redis_storage
+            redis_storage = RedisStorage(config['redis'])
+            self.storage['redis'] = redis_storage
 
         # memcache
-        if 'memcache' in config:
-            self.settings['_config_memcache'] = config['memcache']
-            pass
+        if config['memcache']['enable'] == True:
+            self.storage['memcache'] = None
 
         # ===================================================================
         # ======= session and cookie ========================================
         # ===================================================================
 
         # session
-        if self.settings['_config_session']['enable'] == True:
+        if config['session']['enable'] == True:
+            if config['session']['storage'] in self.storage:
+                driver = self.settings['storage'].get(config['session']['storage'])
+            else:
+                from torstack.storage.file import FileStorage
+                config['session']['storage'] = 'file'
+                driver = FileStorage
             from torstack.core.session import CoreSession
-            self.settings['session'] = CoreSession(redis_storage, self.settings['_config_session'])
+            self.session = CoreSession(driver, config['session'])
 
         # cookie
-        if self.settings['_config_cookie']['enable'] == True:
+        if config['cookie']['enable'] == True:
             from torstack.core.cookie import CoreCookie
-            self.settings['cookie'] = CoreCookie(self.settings['_config_cookie'])
+            self.cookie = CoreCookie(config['cookie'])
 
         # ===================================================================
         # ======= rest ======================================================
         # ===================================================================
 
         # rest
-        if self.settings['_config_rest']['enable'] == True:
+        if config['rest']['enable'] == True:
             from torstack.core.rest import CoreRest
-            self.settings['rest'] = CoreRest(redis_storage, self.settings['_config_rest'], self.settings['_config_rest_header'])
+            self.rest = CoreRest(redis_storage, config['rest'], config['rest_header'])
 
         # ===================================================================
         # ======= websocket =================================================
         # ===================================================================
 
         # websocket
-        if self.settings['_config_websocket']['enable'] == True:
+        if config['websocket']['enable'] == True:
             from torstack.websocket.listener import ClientListener
-            clientListener = ClientListener(redis_storage.client, [self.settings['_config_redis']['channel']])
+            clientListener = ClientListener(redis_storage.client, [config['redis']['channel']])
             clientListener.daemon = True
             clientListener.start()
 
@@ -149,7 +95,7 @@ class WebApplication(tornado.web.Application):
         # ======= scheduler =================================================
         # ===================================================================
 
-        if self.settings['_config_scheduler']['enable'] == True:
+        if config['scheduler']['enable'] == True:
             if self.settings['_config_scheduler']['dbtype'] == 'mysql':
                 client = self.settings['_storage_mysql']
             elif self.settings['_config_scheduler']['dbtype'] == 'mongodb':
@@ -158,35 +104,34 @@ class WebApplication(tornado.web.Application):
                 raise BaseException('10001', 'error scheduler dbtype config.')
 
             from torstack.core.scheduler import CoreScheduler
-            taskmgr = CoreScheduler(self.settings['_scheduler_executers'], client, self.settings['_config_scheduler']['dbtype'], self.settings['_config_scheduler']['dbname'])
+            taskmgr = CoreScheduler(config['scheduler_executers'], client, config['scheduler']['dbtype'], config['scheduler']['dbname'])
             taskmgr.start()
-            self.settings['_taskmgr'] = taskmgr
 
-            from torstack.scheduler.handler import handlers
-            self.settings['_handlers'] = handlers
+            self.taskmgr = taskmgr
 
-        self.settings['_handlers'].extend(handlers)
+            from torstack.scheduler.handler import scheduler_handlers
+            handlers.extend(scheduler_handlers)
 
-        super(WebApplication, self).__init__(handlers=self.settings['_handlers'], **self.settings)
+        super(WebApplication, self).__init__(handlers=handlers, **config['settings'])
 
 
     def run(self):
 
         # 判断是否为debug环境
-        if self.settings['debug']:
+        if self.config['settings']['debug']:
             # debug环境下，单进程模式
-            self.listen(self.settings['port'])
+            self.listen(self.config['port'])
         else:
             # 加载日志管理
             # CoreLog(options.log)
 
             # 生产环境下，多进程模式
-            self.bind(self.settings['port'])
+            self.bind(self.config['port'])
             self.start(0)  # Forks multiple sub-processes
 
         # app.listen(options.port,xheaders=True)
         try:
-            print ('Server running on http://localhost:{}'.format(self.settings['port']))
+            print ('Server running on http://localhost:{}'.format(self.config['port']))
             # ioloop = tornado.ioloop.IOLoop.current()
             ioloop = tornado.ioloop.IOLoop.instance()
 

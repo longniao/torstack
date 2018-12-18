@@ -22,30 +22,28 @@ class TorStackServer(object):
     '''
     torstack webserver
     '''
-    config = ConfigParser
-
-    handlers = None
+    config = ConfigParser()
+    handlers = [(r'/', DefaultHandler),]
     application = None
 
     def __init__(self):
         pass
 
-    def load_handlers(self, handlers=None):
+    def add_handlers(self, handlers=None):
         '''
         load handlers
         :param handlers:
         :return:
         '''
-        if not handlers:
-            handlers = [(r'/', DefaultHandler),]
-        self.handlers = handlers
+        if handlers:
+            self.handlers = handlers
 
     def init_application(self):
         '''
         init application
         :return:
         '''
-        self.application = WebApplication(handlers=self.handlers, settings=self.config['settings'])
+        self.application = WebApplication(handlers=self.handlers, config=self.config._dict)
 
     def start_server(self):
         asyncio.set_event_loop(asyncio.new_event_loop())
