@@ -22,8 +22,10 @@ class TorStackServer(object):
     '''
     torstack webserver
     '''
+
     config = ConfigParser()
     handlers = [(r'/', DefaultHandler),]
+    executers = []
     application = None
 
     def __init__(self):
@@ -37,6 +39,15 @@ class TorStackServer(object):
         '''
         if handlers:
             self.handlers = handlers
+
+    def add_executers(self, executers=[]):
+        '''
+        add executers
+        :param executers:
+        :return:
+        '''
+        if executers:
+            self.config._dict['scheduler']['scheduler_executers'].extend(executers)
 
     def init_application(self):
         '''

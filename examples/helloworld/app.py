@@ -26,7 +26,6 @@ class MainHandler(BaseHandler):
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
-    print(server.config._dict)
     server.add_handlers([(r"/", MainHandler)])
     server.run()
 

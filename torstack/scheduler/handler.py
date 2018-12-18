@@ -166,7 +166,7 @@ class SwitchSchedHandler(SchedulerHandler):
             self.response_json("start scheduler")
 
 
-handlers = [
+scheduler_handlers = [
     # job
     url(r"/scheduler/job_add", AddJobHandler, name='job_add'),
     url(r"/scheduler/job_pause", PauseJobHandler, name='job_pause'),

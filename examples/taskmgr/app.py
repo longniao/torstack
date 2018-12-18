@@ -11,17 +11,15 @@ helloworld app.py definition.
 
 import os
 import sys
-from os.path import abspath, dirname
 from torstack.server import TorStackServer
 from torstack.handler.base import BaseHandler
 sys.path.append('..')
 
-PROJECT_DIR = dirname(dirname(abspath(__file__)))
-CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
-CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONF_PATH = os.path.join(PROJECT_PATH, '__conf')
+CONF_FILE = os.path.join(CONF_PATH, 'taskmgr.conf')
 
 from executer import TestExecuter
-print(TestExecuter.id)
 
 class MainHandler(BaseHandler):
     def get(self):
@@ -30,11 +28,10 @@ class MainHandler(BaseHandler):
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
-    server.config.set('scheduler', 'enable', True)
-    server.config.set('scheduler', 'autorun', True)
-    server.config.add_executers([TestExecuter])
-
-    server.run([(r"/", MainHandler)])
+    server.add_executers([TestExecuter])
+    server.add_handlers([(r"/", MainHandler)])
+    print(server.config._dict)
+    server.run()
 
 
 if __name__ == "__main__":

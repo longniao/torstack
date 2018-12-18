@@ -30,7 +30,6 @@ handlers = [
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
-    print(server.config._dict)
     server.config._dict['application']['project_path'] = PROJECT_PATH
     server.config._dict['application']['settings']['template_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['application']['settings']['template_path'])
     server.config._dict['application']['settings']['static_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['application']['settings']['static_path'])
