@@ -22,6 +22,9 @@ class SchedulerHandler(AjaxHandler):
         Init
         '''
         super(SchedulerHandler, self).initialize()
+        self.taskmgr = self.application.taskmgr
+        self.dbname = 'test'
+        self.db = self.storage['mysql']
 
     def get_status(self):
         '''

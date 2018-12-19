@@ -19,12 +19,13 @@ CONF_PATH = os.path.join(PROJECT_PATH, '__conf')
 CONF_FILE = os.path.join(CONF_PATH, 'account.conf')
 sys.path.insert(0,PROJECT_PATH)
 
-from account.handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler
+from account.handlers import HomeHandler, LoginHandler, RegisterHandler, LogoutHandler, ErrorHandler
 handlers = [
     url(r"/", HomeHandler, name='home'),
     url(r"/login", LoginHandler, name='login'),
     url(r"/register", RegisterHandler, name='register'),
     url(r"/logout", LogoutHandler, name='logout'),
+    url(r"/(.*)", ErrorHandler, name='error'),
 ]
 
 def main():

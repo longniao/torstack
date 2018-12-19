@@ -17,7 +17,6 @@ class AjaxHandler(BaseHandler):
     def initialize(self):
         super(AjaxHandler, self).initialize()
         self.set_header('Content-Type', 'text/json')
-        self.taskmgr = self.settings['_taskmgr']
 
     def response_error(self, status_code, **kwargs):
         self._status_code = 200

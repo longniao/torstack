@@ -14,6 +14,7 @@ class AccountHandler(BaseHandler):
     '''
     def initialize(self):
         super(AccountHandler, self).initialize()
+        self.dbname = 'test'
         self.db = self.storage['mysql']
 
 class HomeHandler(AccountHandler):
@@ -116,3 +117,11 @@ class LogoutHandler(AccountHandler):
         self.add_message("success", u"Logout success.")
         return self.redirect("/")
 
+class ErrorHandler(AccountHandler):
+    '''
+    error handler
+    '''
+    def prepare(self):
+        # raise tornado.web.HTTPError(404)
+        self.set_status(404)
+        self.response("public/404.html")
