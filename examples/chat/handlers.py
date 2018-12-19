@@ -34,7 +34,7 @@ class HomeHandler(BaseHandler):
         to_id = to_name = self.get_argument('to_user')
         message = self.get_argument('message')
 
-        userData = UserAccountService.get_one(self.db, to_id)
+        userData = UserAccountService.get_one(self.storage['mysql'], to_id)
         if userData is not None:
             to_name = userData.nickname
 
