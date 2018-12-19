@@ -8,8 +8,8 @@ server definition.
 :license: MIT, see LICENSE for more details.
 '''
 
-import tornado
 import asyncio
+import tornado, tornado.options
 from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
 from threading import Thread
@@ -56,20 +56,62 @@ class TorStackServer(object):
         '''
         self.application = WebApplication(handlers=self.handlers, config=self.config._dict)
 
+    def run(self):
+
+        tornado.options.parse_command_line()
+        application = WebApplication(handlers=self.handlers, config=self.config._dict)
+        http_server = tornado.httpserver.HTTPServer(application)
+
+        # 判断是否为debug环境
+        if self.config._dict['application']['settings']['debug']:
+            # debug环境下，单进程模式
+            http_server.listen(self.config._dict['application']['port'])
+        else:
+            # 加载日志管理
+            # CoreLog(options.log)
+
+            # 生产环境下，多进程模式
+            http_server.bind(self.config._dict['application']['port'])
+            http_server.start(0)  # Forks multiple sub-processes
+
+        # app.listen(options.port,xheaders=True)
+        try:
+            print ('Server running on http://localhost:{}'.format(self.config._dict['application']['port']))
+            # ioloop = tornado.ioloop.IOLoop.current()
+            ioloop = tornado.ioloop.IOLoop.instance()
+
+            # websocket 定时广播
+            # from interest.repository.package.websocket_service import *
+            # loop.spawn_callback(minute_loop2)
+
+            ioloop.start()
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            raise
+        finally:
+            tornado.ioloop.IOLoop.instance().stop()
+
+
+
+
+
+
+
     def start_server(self):
         asyncio.set_event_loop(asyncio.new_event_loop())
         self.application.run()
 
-    def run(self):
+    def run_server(self):
         '''
         run application
         :return:
         '''
         self.init_application()
-        t = Thread(target=self.start_server(), args=())
-        t.daemon = True
-        t.start()
-        t.join()
+        self.application.run()
+        #t = Thread(target=self.start_server(), args=())
+        #t.daemon = True
+        #t.start()
+        #t.join()
 
 
 
