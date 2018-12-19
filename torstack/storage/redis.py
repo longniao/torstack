@@ -94,4 +94,5 @@ class RedisStorage(object):
         :param message:
         :return:
         '''
+        print('RedisStorage:publish:', self.client, channel, message)
         return self.client.publish(channel, message)

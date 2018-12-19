@@ -86,9 +86,11 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # websocket
-        if config['websocket']['websocket']['enable'] == True:
+        if config['websocket']['enable'] == True:
+            if 'redis' not in self.storage:
+                raise BaseException('10110', 'Redis storage is necessary for websocket')
             from torstack.websocket.listener import ClientListener
-            clientListener = ClientListener(redis_storage.client, config['websocket']['websocket']['redis_channel'])
+            clientListener = ClientListener(self.storage['redis'], config['websocket']['redis_channel'])
             clientListener.daemon = True
             clientListener.start()
 

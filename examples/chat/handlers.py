@@ -25,7 +25,6 @@ class HomeHandler(BaseHandler):
             'nickname': self.current_user['nickname'],
             'clients': []
         }
-        print(self.application.config)
         return self.response('chat/home.html', **params)
 
     @tornado.web.authenticated
@@ -46,7 +45,7 @@ class HomeHandler(BaseHandler):
             'message': message,
             'type': 'normal'
         }
-        self.storage['redis'].publish(self.config['websocket']['websocket']['redis_channel'], json.dumps(data))
+        self.storage['redis'].publish(self.config['websocket']['redis_channel'], json.dumps(data))
 
 
 class WebSocketHandler(WebSocketHandler):
@@ -101,4 +100,4 @@ class WebSocketHandler(WebSocketHandler):
             app_log.info("非有效连接，关闭页面不影响其他已经打开的页面")
 
     def send_to_all(self, data):
-        ClientManager.publish(self.storage['redis'], self.config['websocket']['websocket']['redis_channel'], data)
+        ClientManager.publish(self.storage['redis'], self.config['websocket']['redis_channel'], data)

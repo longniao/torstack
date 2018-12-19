@@ -34,9 +34,7 @@ class Parser(object):
             rest=config_rest,
             rest_header=config_rest_header,
         ),
-        websocket=dict(
-            websocket=config_websocket,
-        ),
+        websocket=config_websocket,
         scheduler=dict(
             scheduler=config_scheduler,
             scheduler_executers=scheduler_executers,

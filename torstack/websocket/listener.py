@@ -18,7 +18,7 @@ class ClientListener(threading.Thread):
 
     def __init__(self, redis, channels):
         threading.Thread.__init__(self)
-        self.redis = redis
+        self.redis = redis.client
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(channels)
 
@@ -28,13 +28,13 @@ class ClientListener(threading.Thread):
         :param item: redis 消息对象
         :return:
         '''
-        print(">>>>>>>>>>>>>>>>>>>>")
         data = item['data']
         if not data or isinstance(data, int):
             return
 
         try:
             data = json.loads(data)
+            print("ClientListener:work:", data)
             if data.get('to_user') and (data.get('type') != 'groups'):
                 ClientManager.send_to(data.get('from_user'), data.get('to_user'), data)
             else:
@@ -43,6 +43,7 @@ class ClientListener(threading.Thread):
             app_log.exception(ex)
 
     def run(self):
+        print("ClientListener:run:", self.pubsub)
         for item in self.pubsub.listen():
             if item['data'] == 'KILL':
                 self.pubsub.unsubscribe()
