@@ -80,6 +80,7 @@ config_rest_header = dict(
 # websocket
 config_websocket = dict(
     enable=False,
+    redis_channel=['channel'],
 )
 
 # scheduler config ====================================

@@ -14,10 +14,10 @@ import sys
 from tornado.web import url
 from torstack.server import TorStackServer
 
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONF_DIR = os.path.join(PROJECT_DIR, '__conf')
-CONF_FILE = CONF_DIR + os.path.sep + 'dev.conf'
-sys.path.insert(0,PROJECT_DIR)
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONF_PATH = os.path.join(PROJECT_PATH, '__conf')
+CONF_FILE = os.path.join(CONF_PATH, 'chat.conf')
+sys.path.insert(0,PROJECT_PATH)
 
 from chat.handlers import HomeHandler, WebSocketHandler
 from account.handlers import LoginHandler, RegisterHandler, LogoutHandler
@@ -31,15 +31,11 @@ handlers = [
 
 def main():
     server = TorStackServer()
-    server.load_config(CONF_FILE)
-
-    template_path = server.config['settings']['template_path']
-    static_path = server.config['settings']['static_path']
-    server.config['settings']['template_path'] = os.path.join(PROJECT_DIR, template_path)
-    server.config['settings']['static_path'] = os.path.join(PROJECT_DIR, static_path)
-    server.config['websocket']['enable'] = True
-
-    server.load_handlers(handlers)
+    server.config.load(CONF_FILE)
+    server.config._dict['application']['project_path'] = PROJECT_PATH
+    server.config._dict['application']['settings']['template_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['application']['settings']['template_path'])
+    server.config._dict['application']['settings']['static_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['application']['settings']['static_path'])
+    server.add_handlers(handlers)
     server.run()
 
 

@@ -61,66 +61,6 @@ A Simple Config
       'backupCount' : '30'
       }
 
-    [base]
-    session = {
-      'enable' : True,
-      'prefix' : 'sid_',
-      'lifetime' : 1800
-      }
-    cookie = {
-      'enable' : True,
-      'name' : '_tsid',
-      'expires' : 88473600
-      }
-
-    [rest]
-    rest = {
-      'enable' : False,
-      'allow_remote_access' : False,
-      'token_prefix' : 'token_',
-      'token_lifetime' : 315360000
-      }
-    rest_header = {
-      'token' : '',
-      'version' : '',
-      'signature' : '',
-      'timestamp' : ''
-      }
-
-    [websocket]
-    websocket = {
-      'enable' : False
-      }
-
-    [scheduler]
-    scheduler = {
-      'enable' : False,
-      'autorun' : False,
-      'dbtype' : 'mysql',
-      'dbname' : 'test'
-      }
-    executers = []
-
-    [mysql]
-    master = [{
-      'host' : '127.0.0.1',
-      'port' : 3306,
-      'dbname' : 'test',
-      'username' : '',
-      'password' : '',
-      'type' : 'master'
-     }]
-
-    [cache]
-    redis = {
-      'host' : '127.0.0.1',
-      'port' : 6379,
-      'db' : 2,
-      'channel' : 'channel',
-      'user' : '',
-      'password' : None
-      }
-
 
 A Simple Example
 -------------
@@ -128,7 +68,7 @@ A Simple Example
 .. code-block:: python
 
     import os
-    from os.path import abspath, dirname
+    from tornado import gen
     from torstack.server import TorStackServer
     from torstack.handler.base import BaseHandler
 
@@ -139,7 +79,8 @@ A Simple Example
     def main():
         server = TorStackServer()
         server.config.load('./dev.conf')
-        server.run([(r"/", MainHandler)])
+        server.add_handlers([(r"/", MainHandler)])
+        server.run()
 
     if __name__ == "__main__":
         main()
@@ -148,7 +89,12 @@ A Simple Example
 Features
 --------
 
-* to be continued
+* session
+* cookie
+* mysql
+* redis
+* apscheduler
+* websocket
 
 
 .. _Tornado: http://www.tornadoweb.org

@@ -88,7 +88,7 @@ class WebApplication(tornado.web.Application):
         # websocket
         if config['websocket']['websocket']['enable'] == True:
             from torstack.websocket.listener import ClientListener
-            clientListener = ClientListener(redis_storage.client, [config['base']['redis']['channel']])
+            clientListener = ClientListener(redis_storage.client, config['websocket']['websocket']['redis_channel'])
             clientListener.daemon = True
             clientListener.start()
 
