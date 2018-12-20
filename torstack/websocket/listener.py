@@ -22,31 +22,35 @@ class ClientListener(threading.Thread):
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(channels)
 
-    def work(self, item):
+    def broadcast(self, message):
         '''
-        发送消息
-        :param item: redis 消息对象
+        broadcast message
+        :param message:
         :return:
         '''
-        data = item['data']
-        if not data or isinstance(data, int):
+        channel = message['channel']
+        message = message['data']
+        if not message or isinstance(message, int):
             return
 
         try:
-            data = json.loads(data)
-            print("ClientListener:work:", data)
-            if data.get('to_user') and (data.get('type') != 'groups'):
-                ClientManager.send_to(data.get('from_user'), data.get('to_user'), data)
+            message = json.loads(message)
+            print("ClientListener:work:", message)
+            if message.get('to_user') and (message.get('type') != 'groups'):
+                ClientManager.send_to(message.get('from_user'), message.get('to_user'), message)
             else:
-                ClientManager.send_to_all(data)
+                ClientManager.send_to_all(message)
         except Exception as ex:
             app_log.exception(ex)
 
     def run(self):
         print("ClientListener:run:", self.pubsub)
-        for item in self.pubsub.listen():
-            if item['data'] == 'KILL':
-                self.pubsub.unsubscribe()
-                break
+        for message in self.pubsub.listen():
+            if message['type'] != 'message':
+                continue
             else:
-                self.work(item)
+                if message['data'] == 'KILL':
+                    self.pubsub.unsubscribe()
+                    break
+                else:
+                    self.broadcast(message)

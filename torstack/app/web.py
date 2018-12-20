@@ -10,7 +10,6 @@ Basic application definition.
 
 import importlib
 import sys
-
 importlib.reload(sys)
 import tornado.web
 from torstack.exception import BaseException
@@ -80,19 +79,6 @@ class WebApplication(tornado.web.Application):
         if config['rest']['rest']['enable'] == True:
             from torstack.core.rest import CoreRest
             self.rest = CoreRest(redis_storage, config['rest'], config['rest']['rest_header'])
-
-        # ===================================================================
-        # ======= websocket =================================================
-        # ===================================================================
-
-        # websocket
-        if config['websocket']['enable'] == True:
-            if 'redis' not in self.storage:
-                raise BaseException('10110', 'Redis storage is necessary for websocket')
-            from torstack.websocket.listener import ClientListener
-            clientListener = ClientListener(self.storage['redis'], config['websocket']['redis_channel'])
-            clientListener.daemon = True
-            clientListener.start()
 
         # ===================================================================
         # ======= scheduler =================================================

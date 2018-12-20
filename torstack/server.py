@@ -12,7 +12,8 @@ import asyncio
 import tornado, tornado.options
 from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
-from threading import Thread
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
 
 class DefaultHandler(tornado.web.RequestHandler):
     def get(self):
@@ -23,6 +24,7 @@ class TorStackServer(object):
     torstack webserver
     '''
 
+    executor = ThreadPoolExecutor(4)
     config = ConfigParser()
     handlers = [(r'/', DefaultHandler),]
     executers = []
@@ -56,11 +58,27 @@ class TorStackServer(object):
         '''
         self.application = WebApplication(handlers=self.handlers, config=self.config._dict)
 
+    @run_on_executor
+    def add_websocket(self, channel=['websocket']):
+        '''
+        add websocket service
+        :param channel:
+        :return:
+        '''
+        if 'redis' not in self.application.storage:
+            raise BaseException('10110', 'Redis storage is necessary for websocket')
+
+        from torstack.websocket.listener import ClientListener
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        clientListener = ClientListener(self.application.storage['redis'], channel)
+        clientListener.daemon = True
+        clientListener.start()
+
     def run(self):
 
         tornado.options.parse_command_line()
-        application = WebApplication(handlers=self.handlers, config=self.config._dict)
-        http_server = tornado.httpserver.HTTPServer(application)
+        # application = WebApplication(handlers=self.handlers, config=self.config._dict)
+        http_server = tornado.httpserver.HTTPServer(self.application)
 
         # 判断是否为debug环境
         if self.config._dict['application']['settings']['debug']:
