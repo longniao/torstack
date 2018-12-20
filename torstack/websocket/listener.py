@@ -9,6 +9,7 @@ websocket client listener definition.
 '''
 
 import json
+import asyncio
 import threading
 from tornado.log import app_log
 from torstack.websocket.manager import ClientManager
@@ -35,7 +36,6 @@ class ClientListener(threading.Thread):
 
         try:
             message = json.loads(message)
-            print("ClientListener:work:", message)
             if message.get('to_user') and (message.get('type') != 'groups'):
                 ClientManager.send_to(message.get('from_user'), message.get('to_user'), message)
             else:
@@ -44,7 +44,7 @@ class ClientListener(threading.Thread):
             app_log.exception(ex)
 
     def run(self):
-        print("ClientListener:run:", self.pubsub)
+        asyncio.set_event_loop(asyncio.new_event_loop())
         for message in self.pubsub.listen():
             if message['type'] != 'message':
                 continue

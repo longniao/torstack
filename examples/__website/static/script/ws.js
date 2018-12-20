@@ -29,7 +29,9 @@ var renderItem = function (data) {
         } else {
             style = "";
         }
-        tpl = "<p class='message normal " + style + "'>" + data.message + "</p>"
+        tpl = "<p class='message normal'><span class='label label-name'>" + data.from_name + " :</span> <span class='label label-message'>" + data.message + "</span></p>"
+    } else {
+        tpl = "";
     }
     return tpl;
 }
@@ -87,6 +89,7 @@ var listener = {
         // console.log(data)
         content = renderItem(data);
         chat_box.append(content);
+        chat_box.scrollTop = chat_box.scrollHeight;
     }
 
 };

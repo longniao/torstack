@@ -32,7 +32,11 @@ async def setup():
     connection = await aioredis.create_redis('redis://localhost')
     channel = await connection.subscribe('channel')
     print('channel:', channel)
-    asyncio.ensure_future(consumer(channel))
+    if isinstance(channel, list):
+        for c in channel:
+            asyncio.ensure_future(consumer(c))
+    else:
+        asyncio.ensure_future(consumer(channel))
 
 
 application = web.Application([

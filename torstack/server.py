@@ -8,12 +8,9 @@ server definition.
 :license: MIT, see LICENSE for more details.
 '''
 
-import asyncio
 import tornado, tornado.options
 from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
-from tornado.concurrent import run_on_executor
-from concurrent.futures import ThreadPoolExecutor
 
 class DefaultHandler(tornado.web.RequestHandler):
     def get(self):
@@ -24,7 +21,6 @@ class TorStackServer(object):
     torstack webserver
     '''
 
-    executor = ThreadPoolExecutor(4)
     config = ConfigParser()
     handlers = [(r'/', DefaultHandler),]
     executers = []
@@ -58,8 +54,7 @@ class TorStackServer(object):
         '''
         self.application = WebApplication(handlers=self.handlers, config=self.config._dict)
 
-    @run_on_executor
-    def add_websocket(self, channel=['websocket']):
+    def add_websocket(self, channel=None):
         '''
         add websocket service
         :param channel:
@@ -67,9 +62,9 @@ class TorStackServer(object):
         '''
         if 'redis' not in self.application.storage:
             raise BaseException('10110', 'Redis storage is necessary for websocket')
-
+        if not channel:
+            channel = 'websocket'
         from torstack.websocket.listener import ClientListener
-        asyncio.set_event_loop(asyncio.new_event_loop())
         clientListener = ClientListener(self.application.storage['redis'], channel)
         clientListener.daemon = True
         clientListener.start()
@@ -108,31 +103,5 @@ class TorStackServer(object):
             raise
         finally:
             tornado.ioloop.IOLoop.instance().stop()
-
-
-
-
-
-
-
-    def start_server(self):
-        asyncio.set_event_loop(asyncio.new_event_loop())
-        self.application.run()
-
-    def run_server(self):
-        '''
-        run application
-        :return:
-        '''
-        self.init_application()
-        self.application.run()
-        #t = Thread(target=self.start_server(), args=())
-        #t.daemon = True
-        #t.start()
-        #t.join()
-
-
-
-
 
 

@@ -83,3 +83,23 @@ code {
   border-radius: 4px;
   font-weight: bold;
 }
+
+.chat-box {
+  background-color: #e7e7e7;
+  margin: 0 15px 15px 15px;
+  padding: 15px;
+  height: 350px;
+  overflow: scroll;
+}
+.label-name {
+  background-color: #e1faee;
+  color: black;
+}
+.label-message {
+  font-weight: normal;
+  background-color: white;
+  color: black;
+}
+
+
+

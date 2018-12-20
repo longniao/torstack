@@ -37,7 +37,7 @@ def main():
     server.config._dict['application']['settings']['static_path'] = '%s%s' % (PROJECT_PATH, server.config._dict['application']['settings']['static_path'])
     server.add_handlers(handlers)
     server.init_application()
-    server.add_websocket(['channel'])
+    server.add_websocket('channel')
     server.run()
 
 

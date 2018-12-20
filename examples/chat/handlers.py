@@ -12,6 +12,7 @@ from tornado.log import app_log
 from torstack.websocket.manager import ClientManager
 from account.user_account_service import UserAccountService
 
+redis_channel = 'channel'
 
 class HomeHandler(BaseHandler):
     '''
@@ -45,7 +46,7 @@ class HomeHandler(BaseHandler):
             'message': message,
             'type': 'normal'
         }
-        self.storage['redis'].publish(self.config['websocket']['redis_channel'], json.dumps(data))
+        self.storage['redis'].publish(redis_channel, json.dumps(data))
 
 
 class WebSocketHandler(WebSocketHandler):
@@ -100,4 +101,4 @@ class WebSocketHandler(WebSocketHandler):
             app_log.info("非有效连接，关闭页面不影响其他已经打开的页面")
 
     def send_to_all(self, data):
-        ClientManager.publish(self.storage['redis'], self.config['websocket']['redis_channel'], data)
+        ClientManager.publish(self.storage['redis'], redis_channel, data)

@@ -25,7 +25,6 @@ class ClientManager(object):
         get all clients
         :return:
         '''
-        print('ClientManager:get_clients:', cls._CLIENTS_MAP)
         return cls._CLIENTS_MAP
 
     @classmethod
@@ -54,7 +53,6 @@ class ClientManager(object):
         :return:
         '''
         client = Client(identity, id=id, name=name, handler=handler)
-        print("ClientManager:add_client", identity, id, name, handler, client)
         cls._CLIENTS_MAP[id] = client
         return client
 
@@ -76,7 +74,6 @@ class ClientManager(object):
         :return:
         '''
         clients = cls.get_clients()
-        print ("ClientManager:send_to_all:", clients, data)
         for key in clients.keys():
             try:
                 clients[key].handler.write_message(json.dumps(data))
@@ -105,7 +102,6 @@ class ClientManager(object):
 
     @classmethod
     def publish(cls, redis=None, channel=None, message=None):
-        print('ClientManager:publish:', redis, channel, message)
         redis.publish(channel, message)
 
     @classmethod
@@ -123,7 +119,6 @@ class ClientManager(object):
         :param id:
         :return:
         '''
-        print('ClientManager:is_client_connected:', id)
         try:
             client = cls.get_client_by_id(id)
             if client:
