@@ -24,12 +24,13 @@ var renderItem = function (data) {
     if (data.type == "system") {
         tpl = ""
     } else if (data.type == "normal") {
-        if (data.from_user == current_user) {
-            style = "author";
+        console.log(data.from_id)
+        console.log(current_id)
+        if (data.from_id == current_id) {
+            tpl = "<p class='message normal text-right'><span class='label label-message'>" + data.message + "</span> <span class='label label-name'>: " + data.from_name + "</span></p>"
         } else {
-            style = "";
+            tpl = "<p class='message normal'><span class='label label-name'>" + data.from_name + " :</span> <span class='label label-message'>" + data.message + "</span></p>"
         }
-        tpl = "<p class='message normal'><span class='label label-name'>" + data.from_name + " :</span> <span class='label label-message'>" + data.message + "</span></p>"
     } else {
         tpl = "";
     }
@@ -111,7 +112,7 @@ $(document).ready(function() {
 
     $("#messageform").on("keypress", function(e) {
         if (e.keyCode == 13) {
-            newMessage($(this));
+            sendMessage();
             return false;
         }
     });

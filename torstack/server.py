@@ -8,7 +8,9 @@ server definition.
 :license: MIT, see LICENSE for more details.
 '''
 
+import asyncio
 import tornado, tornado.options
+import tornado.platform.asyncio
 from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
 
@@ -85,7 +87,7 @@ class TorStackServer(object):
 
             # 生产环境下，多进程模式
             http_server.bind(self.config._dict['application']['port'])
-            http_server.start(0)  # Forks multiple sub-processes
+            http_server.start(1)  # Forks multiple sub-processes
 
         # app.listen(options.port,xheaders=True)
         try:
@@ -104,4 +106,15 @@ class TorStackServer(object):
         finally:
             tornado.ioloop.IOLoop.instance().stop()
 
+
+    def run_asyncio(self):
+        tornado.options.parse_command_line()
+
+        tornado.platform.asyncio.AsyncIOMainLoop().install()
+
+        http_server = tornado.httpserver.HTTPServer(self.application)
+        http_server.bind(self.config._dict['application']['port'])
+        http_server.start(1)  # Forks multiple sub-processes
+
+        asyncio.get_event_loop().run_forever()
 

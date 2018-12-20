@@ -91,10 +91,22 @@ Features
 
 * session
 * cookie
-* mysql
+* database
 * redis
-* apscheduler
+* taskmgr
 * websocket
+
+
+Python libraries
+----------------
+
+* redis
+* aioredis
+* sqlalchemy
+* aiomysql
+* asyncpg
+* motor
+* apscheduler
 
 
 .. _Tornado: http://www.tornadoweb.org
