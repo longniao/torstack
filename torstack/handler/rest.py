@@ -42,9 +42,9 @@ class RestHandler(BaseHandler):
         '''
         :return: headers
         '''
-        headers = []
+        headers = dict()
         for name in self.rest.headers:
-            headers.append(self.request.headers.get(name, ''))
+            headers[name] = self.request.headers.get(name, '')
         return headers
 
     def response(self, **kwargs):

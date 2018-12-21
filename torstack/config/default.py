@@ -74,10 +74,10 @@ config_rest = dict(
 
 # rest header
 config_rest_header = dict(
-    token='',
-    version='',
-    signature='',
-    timestamp='',
+    Token='',
+    Version='',
+    Signature='',
+    Timestamp='',
 )
 
 # rest_response

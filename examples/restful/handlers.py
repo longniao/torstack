@@ -23,9 +23,7 @@ class InitHandler(RestfulHandler):
     initialize
     '''
     def get(self):
-        result = dict(
-            a='b'
-        )
+        result = self.headers
         return self.response(code=200, data=result)
 
 

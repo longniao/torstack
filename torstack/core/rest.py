@@ -19,19 +19,8 @@ class CoreRest(object):
         token_lifetime=315360000,  # 60*60*24*365*10
     )
 
-    HEADER_CONFIG = dict(
-        token='',
-        version='',
-        signature='',
-        timestamp='',
-    )
-
-    RESPONSE_CONFIG = dict(
-        code='200',
-        data={},
-        message='',
-        timestamp='',
-    )
+    HEADER_CONFIG = dict()
+    RESPONSE_CONFIG = dict()
 
 
     def __init__(self, driver, config={}):
