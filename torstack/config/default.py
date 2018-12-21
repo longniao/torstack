@@ -83,7 +83,7 @@ config_rest_header = dict(
 # rest_response
 config_rest_response = dict(
     code='',
-    data='',
+    data={},
     message='',
     timestamp='',
 )

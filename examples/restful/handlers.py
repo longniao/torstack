@@ -34,6 +34,4 @@ class ErrorHandler(RestHandler):
     error handler
     '''
     def prepare(self):
-        # raise tornado.web.HTTPError(404)
-        self.set_status(404)
-        self.response({})
+        return self.response(code=500, message='uri not found')

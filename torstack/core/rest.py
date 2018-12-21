@@ -28,7 +28,7 @@ class CoreRest(object):
 
     RESPONSE_CONFIG = dict(
         code='200',
-        data='',
+        data={},
         message='',
         timestamp='',
     )
