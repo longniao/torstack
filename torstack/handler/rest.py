@@ -10,11 +10,9 @@ rest handler definition.
 
 from __future__ import absolute_import, unicode_literals
 
-import traceback
 import json
 from torstack.handler.base import BaseHandler
 from torstack.exception import BaseException
-from pyconvert.pyconv import convertXML2OBJ, convert2XML, convertJSON2OBJ, convert2JSON
 
 class RestHandler(BaseHandler):
 
@@ -48,13 +46,12 @@ class RestHandler(BaseHandler):
             headers.append(self.request.headers.get(name, ''))
         return headers
 
-    def response(self, data):
+    def response(self, result):
         '''
         response result
-        :param data:
+        :param result:
         :return:
         '''
-        result = convert2JSON(data)
         if isinstance(result, dict):
             self.set_header('Content-Type', 'text/json')
             self.write(result)

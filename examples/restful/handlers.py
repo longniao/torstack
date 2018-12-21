@@ -17,17 +17,33 @@ class RestfulHandler(RestHandler):
         self.dbname = 'test'
         self.db = self.storage['mysql']
 
-class InitHandler(RestHandler):
+    def output(self, code=200, data=None, message=None):
+        '''
+        output result
+        :param code:
+        :param data:
+        :return:
+        '''
+        result = dict(
+            code=code,
+            data=data,
+            message=message,
+        )
+        self.response(result)
+
+class InitHandler(RestfulHandler):
     '''
     initialize
     '''
+    def initialize(self):
+        super(InitHandler, self).initialize()
+
     def get(self):
         result = dict(
             a='b'
         )
-        print(result)
-        return self.write("abc")
-        return self.response(result)
+        return self.output(data=result)
+
 
 class ErrorHandler(RestHandler):
     '''
