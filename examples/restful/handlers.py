@@ -23,10 +23,10 @@ class InitHandler(RestHandler):
     '''
     def get(self):
         result = dict(
-            a=b
+            a='b'
         )
         print(result)
-        return self.write(result)
+        return self.write("abc")
         return self.response(result)
 
 class ErrorHandler(RestHandler):

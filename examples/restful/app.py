@@ -29,8 +29,8 @@ def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
     print(server.config._dict)
-    server.config._dict['application']['project_path'] = PROJECT_PATH
-    #server.add_handlers(handlers)
+    server.add_handlers(handlers)
+    server.init_application()
     server.run()
 
 if __name__ == "__main__":

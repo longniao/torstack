@@ -27,6 +27,7 @@ def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
     server.add_handlers([(r"/", MainHandler)])
+    server.init_application()
     server.run()
 
 if __name__ == "__main__":

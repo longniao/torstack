@@ -24,10 +24,10 @@ class RestHandler(BaseHandler):
         self._token = None
         self._token_data = None
 
-        if self.config._dict['rest']['enable'] == False:
+        if self.config['rest']['rest']['enable'] == False:
             raise BaseException('10105', 'error rest config.')
 
-        if self.config._dict['rest']['allow_remote_access'] == True:
+        if self.config['rest']['rest']['allow_remote_access'] == True:
             self.access_control_allow()
 
     def access_control_allow(self):
@@ -47,18 +47,6 @@ class RestHandler(BaseHandler):
         for name in self.rest.headers:
             headers.append(self.request.headers.get(name, ''))
         return headers
-
-    def __getattr__(self, name):
-        '''
-        get header data
-        :param name:
-        :return:
-        '''
-        if name in self.headers:
-            return self.headers[name]
-        else:
-            return None
-
 
     def response(self, data):
         '''

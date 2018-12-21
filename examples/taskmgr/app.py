@@ -30,6 +30,7 @@ def main():
     server.config.load(CONF_FILE)
     server.add_executers([TestExecuter])
     server.add_handlers([(r"/", MainHandler)])
+    server.init_application()
     server.run()
 
 

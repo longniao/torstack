@@ -28,7 +28,7 @@ class CoreRest(object):
 
     def __init__(self, driver, config={}, header_config={}):
         self.__init_config(config, header_config)
-        self.__init_rest(driver)
+        self.__init_driver(driver)
 
 
     def __init_config(self, config={}, header_config={}):
