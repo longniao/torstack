@@ -10,25 +10,24 @@ rest handler definition.
 
 from __future__ import absolute_import, unicode_literals
 
-import sys
+import traceback
 import json
-import tornado.web
+from torstack.handler.base import BaseHandler
 from torstack.exception import BaseException
 from pyconvert.pyconv import convertXML2OBJ, convert2XML, convertJSON2OBJ, convert2JSON
 
-class RestHandler(tornado.web.RequestHandler):
+class RestHandler(BaseHandler):
 
     def initialize(self):
+        super(RestHandler, self).initialize()
+
         self._token = None
         self._token_data = None
-        self.db = self.settings['_storage_mysql']
-        self.redis = self.settings['_storage_redis']
 
-        if self.settings['_config_rest']['enable'] == False:
+        if self.config._dict['rest']['enable'] == False:
             raise BaseException('10105', 'error rest config.')
 
-        self.rest = self.settings['rest']
-        if self.settings['_config_rest']['allow_remote_access'] == True:
+        if self.config._dict['rest']['allow_remote_access'] == True:
             self.access_control_allow()
 
     def access_control_allow(self):

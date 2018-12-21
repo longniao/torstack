@@ -28,7 +28,7 @@ class CoreRest(object):
 
     def __init__(self, driver, config={}, header_config={}):
         self.__init_config(config, header_config)
-        self.__init_session(driver)
+        self.__init_rest(driver)
 
 
     def __init_config(self, config={}, header_config={}):
@@ -44,32 +44,78 @@ class CoreRest(object):
             self.REST_HEADER_CONFIG.update(header_config)
 
 
-    def __init_session(self, driver):
+    def __init_driver(self, driver):
         '''
-        Init session
+        setup rest driver.
         :return:
         '''
-        session_config = dict(
-            enable=True,
-        )
-        session_config['prefix'] = self.REST_CONFIG['token_prefix']
-        session_config['lifetime'] = self.REST_CONFIG['token_lifetime']
-        self.session = CoreSession(driver, session_config)
+        if driver:
+            self.driver = driver
+        else:
+            from torstack.storage.file import FileStorage
+            self.driver = FileStorage()
+
+
+    def _generate_token(self, blength=36):
+        '''
+        generate token
+        :param blength:
+        :return:
+        '''
+        return EncipherLibrary.gen_token(blength)
+
 
     def get(self, key, default=None):
-        return self.session.get(key, default)
+        '''
+        Return token value with name as key.
+        :param key:
+        :param default:
+        :return:
+        '''
+        value = self.driver.get(key)
+        if value:
+            if isinstance(value, str):
+                return value
+            else:
+                return value.decode('utf-8')
+        else:
+            return default
+
 
     def set(self, key, value):
-        self.session.save(key, value)
+        '''
+        Add/Update token value
+        :param key:
+        :param value:
+        :return:
+        '''
+        if isinstance(value, str):
+            token_string = value
+        elif isinstance(value, dict):
+            token_string = json.dumps(value)
+        elif isinstance(value, object):
+            token_string = json.dumps(value.__dict__)
+        else:
+            raise BaseException('10001', 'error data format: %s.' % str(value))
+
+        self.driver.save(key, token_string, self.REST_CONFIG['lifetime'])
+
 
     def delete(self, key):
-        return self.session.delete(key)
+        '''
+        Delete token key-value pair
+        :param key:
+        :return:
+        '''
+        return self.driver.delete(key)
+
 
     def new_token(self):
         '''
         :return: new token
         '''
-        return self.session.new_id()
+        return self._generate_token(36)
+
 
     @property
     def headers(self):

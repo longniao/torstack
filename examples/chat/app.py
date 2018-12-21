@@ -38,7 +38,7 @@ def main():
     server.add_handlers(handlers)
     server.init_application()
     server.add_websocket('channel')
-    server.run(8889)
+    server.run(8888)
 
 
 if __name__ == "__main__":
