@@ -33,7 +33,7 @@ Install and update using `pip`_:
 
 
 A Simple Config
--------------
+---------------
 
 .. code-block:: python
 
@@ -63,7 +63,7 @@ A Simple Config
 
 
 A Simple Example
--------------
+----------------
 
 .. code-block:: python
 
