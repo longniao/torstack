@@ -9,8 +9,9 @@ rest handler definition.
 '''
 
 from __future__ import absolute_import, unicode_literals
-
+import sys
 import json
+import time
 from torstack.handler.base import BaseHandler
 from torstack.exception import BaseException
 
@@ -18,14 +19,14 @@ class RestHandler(BaseHandler):
 
     def initialize(self):
         super(RestHandler, self).initialize()
-
+        self.rest = self.application.rest
         self._token = None
         self._token_data = None
 
-        if self.config['rest']['rest']['enable'] == False:
+        if self.config['rest']['rest_enable'] == False:
             raise BaseException('10105', 'error rest config.')
 
-        if self.config['rest']['rest']['allow_remote_access'] == True:
+        if self.config['rest']['allow_remote_access'] == True:
             self.access_control_allow()
 
     def access_control_allow(self):
@@ -46,23 +47,21 @@ class RestHandler(BaseHandler):
             headers.append(self.request.headers.get(name, ''))
         return headers
 
-    def response(self, result):
+    def response(self, **kwargs):
         '''
         response result
-        :param result:
+        :param args:
+        :param kwargs:
         :return:
         '''
-        if isinstance(result, dict):
-            self.set_header('Content-Type', 'text/json')
-            self.write(result)
-            self.finish()
-        elif isinstance(result, list):
-            self.set_header('Content-Type', 'text/json')
+        try:
+            result = self.rest.response.copy()
+            result.update(kwargs)
+            result['timestamp'] = time.time()
             self.write(json.dumps(result))
             self.finish()
-        else:
-            self.gen_http_error(500, 'Internal Server Error : response is not json document')
-
+        except:
+            self.gen_http_error(500, "Unexpected error:", sys.exc_info()[0])
 
     def gen_http_error(self, status, msg):
         '''

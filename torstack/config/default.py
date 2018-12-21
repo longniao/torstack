@@ -59,6 +59,11 @@ config_cookie = dict(
 
 # rest config ====================================
 
+config_rest_enable = False
+config_allow_remote_access = False
+config_token_prefix = 'token_'
+config_token_lifetime = 315360000
+
 # rest
 config_rest = dict(
     enable=False,
@@ -72,6 +77,14 @@ config_rest_header = dict(
     token='',
     version='',
     signature='',
+    timestamp='',
+)
+
+# rest_response
+config_rest_response = dict(
+    code='',
+    data='',
+    message='',
     timestamp='',
 )
 

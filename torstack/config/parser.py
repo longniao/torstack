@@ -31,8 +31,12 @@ class Parser(object):
             cookie=config_cookie,
         ),
         rest=dict(
-            rest=config_rest,
+            rest_enable=config_rest_enable,
+            allow_remote_access=config_allow_remote_access,
+            token_prefix=config_token_prefix,
+            token_lifetime=config_token_lifetime,
             rest_header=config_rest_header,
+            rest_response=config_rest_response,
         ),
         websocket=config_websocket,
         scheduler=dict(

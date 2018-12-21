@@ -76,9 +76,9 @@ class WebApplication(tornado.web.Application):
         # ===================================================================
 
         # rest
-        if config['rest']['rest']['enable'] == True:
+        if config['rest']['rest_enable'] == True:
             from torstack.core.rest import CoreRest
-            self.rest = CoreRest(redis_storage, config['rest'], config['rest']['rest_header'])
+            self.rest = CoreRest(redis_storage, config['rest'])
 
         # ===================================================================
         # ======= scheduler =================================================

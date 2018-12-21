@@ -19,30 +19,46 @@ class CoreRest(object):
         token_lifetime=315360000,  # 60*60*24*365*10
     )
 
-    REST_HEADER_CONFIG = dict(
+    HEADER_CONFIG = dict(
         token='',
         version='',
         signature='',
         timestamp='',
     )
 
-    def __init__(self, driver, config={}, header_config={}):
-        self.__init_config(config, header_config)
+    RESPONSE_CONFIG = dict(
+        code='200',
+        data='',
+        message='',
+        timestamp='',
+    )
+
+
+    def __init__(self, driver, config={}):
+        self.__init_config(config)
         self.__init_driver(driver)
 
-
-    def __init_config(self, config={}, header_config={}):
+    def __init_config(self, config={}):
         '''
-        Init session configurations.
+        Init rest configurations.
         :param self:
         :param config:
         :return:
         '''
+        rest_config = dict(
+            enable=config['rest_enable'],
+            allow_remote_access=config['allow_remote_access'],
+            token_prefix=config['token_prefix'],
+            token_lifetime=config['token_lifetime'],
+        )
+        header_config = config['rest_header']
+        response_config = config['rest_response']
         if config:
-            self.REST_CONFIG.update(config)
+            self.REST_CONFIG.update(rest_config)
         if header_config:
-            self.REST_HEADER_CONFIG.update(header_config)
-
+            self.HEADER_CONFIG.update(header_config)
+        if response_config:
+            self.RESPONSE_CONFIG.update(response_config)
 
     def __init_driver(self, driver):
         '''
@@ -55,7 +71,6 @@ class CoreRest(object):
             from torstack.storage.file import FileStorage
             self.driver = FileStorage()
 
-
     def _generate_token(self, blength=36):
         '''
         generate token
@@ -63,7 +78,6 @@ class CoreRest(object):
         :return:
         '''
         return EncipherLibrary.gen_token(blength)
-
 
     def get(self, key, default=None):
         '''
@@ -80,7 +94,6 @@ class CoreRest(object):
                 return value.decode('utf-8')
         else:
             return default
-
 
     def set(self, key, value):
         '''
@@ -100,7 +113,6 @@ class CoreRest(object):
 
         self.driver.save(key, token_string, self.REST_CONFIG['lifetime'])
 
-
     def delete(self, key):
         '''
         Delete token key-value pair
@@ -109,14 +121,16 @@ class CoreRest(object):
         '''
         return self.driver.delete(key)
 
-
     def new_token(self):
         '''
         :return: new token
         '''
         return self._generate_token(36)
 
-
     @property
     def headers(self):
-        return self.REST_HEADER_CONFIG
+        return self.HEADER_CONFIG
+
+    @property
+    def response(self):
+        return self.RESPONSE_CONFIG
