@@ -4,7 +4,7 @@ import io
 from setuptools import setup, find_packages
 from collections import OrderedDict
 
-version = "0.0.2"
+version = "0.0.3"
 
 readme = ''
 with io.open('README.rst', 'rt', encoding='utf8') as f:
@@ -13,7 +13,7 @@ with io.open('README.rst', 'rt', encoding='utf8') as f:
 setup(
     name='torstack',
     version=version,
-    description='A full stack framework base on tornado.',
+    description='Torstack is a bundle for Tornado. it is designed to make getting started quick and easy, so you can focus on writing your app without needing to reinvent the wheel.',
     long_description=readme,
     url='https://github.com/longniao/torstack',
     author='Longniao',
@@ -37,8 +37,8 @@ setup(
     ],
     install_requires=[
         'tornado',
-        # 'git+https://github.com/longniao/tornado-redis.git@master#egg=/tornado-redis-0',
         'redis',
+        'apscheduler',
         'aiomysql',
         'aioredis',
         'sqlalchemy',
