@@ -84,9 +84,9 @@ code {
   font-weight: bold;
 }
 
-.chat-box {
+.chat-container {
   background-color: #e7e7e7;
-  margin: 0 15px 15px 15px;
+  margin: 0;
   padding: 15px;
   height: 350px;
   overflow: scroll;

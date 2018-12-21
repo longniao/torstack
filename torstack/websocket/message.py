@@ -8,11 +8,26 @@ message model definition.
 :license: MIT, see LICENSE for more details.
 '''
 
+import json
 
 class Message(object):
     '''
     message for websocket
     '''
+
+    MESSAGE_TYPE = [
+        'system:error',
+        'system:action'
+        'system:in',
+        'system:out',
+        'message:text',
+        'message:image',
+        'message:audio',
+        'message:video',
+        'message:emoji',
+        'message:file',
+        'message:link',
+    ]
 
     def __init__(self, from_id=None, from_name=None, to_id=None, to_name=None, type=None, content=None, extra=None):
         self.from_id = from_id
@@ -25,3 +40,6 @@ class Message(object):
 
     def to_json(self):
         return self.__dict__
+
+    def to_string(self):
+        return json.dumps(self.to_json())

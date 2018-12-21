@@ -71,7 +71,15 @@ class TorStackServer(object):
         clientListener.daemon = True
         clientListener.start()
 
-    def run(self):
+    def run(self, port=None):
+        '''
+        run with ioloop
+        :param port:
+        :return:
+        '''
+
+        if not port:
+            port = self.config._dict['application']['port']
 
         tornado.options.parse_command_line()
         # application = WebApplication(handlers=self.handlers, config=self.config._dict)
@@ -80,25 +88,20 @@ class TorStackServer(object):
         # 判断是否为debug环境
         if self.config._dict['application']['settings']['debug']:
             # debug环境下，单进程模式
-            http_server.listen(self.config._dict['application']['port'])
+            http_server.listen(port)
         else:
             # 加载日志管理
             # CoreLog(options.log)
 
             # 生产环境下，多进程模式
-            http_server.bind(self.config._dict['application']['port'])
+            http_server.bind(port)
             http_server.start(1)  # Forks multiple sub-processes
 
         # app.listen(options.port,xheaders=True)
         try:
-            print ('Server running on http://localhost:{}'.format(self.config._dict['application']['port']))
+            print ('Server running on http://localhost:{}'.format(port))
             # ioloop = tornado.ioloop.IOLoop.current()
             ioloop = tornado.ioloop.IOLoop.instance()
-
-            # websocket 定时广播
-            # from interest.repository.package.websocket_service import *
-            # loop.spawn_callback(minute_loop2)
-
             ioloop.start()
         except:
             print("Unexpected error:", sys.exc_info()[0])
@@ -107,13 +110,22 @@ class TorStackServer(object):
             tornado.ioloop.IOLoop.instance().stop()
 
 
-    def run_asyncio(self):
+    def run_asyncio(self, port=None):
+        '''
+        run with asyncio
+        :param port:
+        :return:
+        '''
+
+        if not port:
+            port = self.config._dict['application']['port']
+
         tornado.options.parse_command_line()
 
         tornado.platform.asyncio.AsyncIOMainLoop().install()
 
         http_server = tornado.httpserver.HTTPServer(self.application)
-        http_server.bind(self.config._dict['application']['port'])
+        http_server.bind(port)
         http_server.start(1)  # Forks multiple sub-processes
 
         asyncio.get_event_loop().run_forever()

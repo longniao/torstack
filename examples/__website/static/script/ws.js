@@ -20,19 +20,16 @@ var getWebsocketUrl = function () {
     return url;
 }
 
+var system_type = ["system:in", "system:out", "system:error"];
 var renderItem = function (data) {
-    if (data.type == "system") {
-        tpl = ""
-    } else if (data.type == "normal") {
-        console.log(data.from_id)
-        console.log(current_id)
-        if (data.from_id == current_id) {
-            tpl = "<p class='message normal text-right'><span class='label label-message'>" + data.message + "</span> <span class='label label-name'>: " + data.from_name + "</span></p>"
-        } else {
-            tpl = "<p class='message normal'><span class='label label-name'>" + data.from_name + " :</span> <span class='label label-message'>" + data.message + "</span></p>"
-        }
+    if ($.inArray(data.type, system_type) >= 0) {
+        tpl = "<p class='message normal text-center'>" + data.content + "</p>"
     } else {
-        tpl = "";
+        if (data.from_id == current_id) {
+            tpl = "<p class='message normal text-right'><span class='label label-message'>" + data.content + "</span> <span class='label label-name'>: " + data.from_name + "</span></p>"
+        } else {
+            tpl = "<p class='message normal'><span class='label label-name'>" + data.from_name + " :</span> <span class='label label-message'>" + data.content + "</span></p>"
+        }
     }
     return tpl;
 }
@@ -90,13 +87,16 @@ var listener = {
         // console.log(data)
         content = renderItem(data);
         chat_box.append(content);
-        chat_box.scrollTop = chat_box.scrollHeight;
+        console.log($(".chat-container").offset().top);
+        console.log(chat_box.get(0).scrollHeight);
+        $(".chat-container").animate({
+            scrollTop: chat_box.get(0).scrollHeight - $(".chat-container").offset().top
+        }, 500);
     }
-
 };
 
 function sendMessage() {
-    console.log($('#message').val());
+    // console.log($('#message').val());
     $('#messageform').ajaxSubmit();
     $('#message').val("");
 }

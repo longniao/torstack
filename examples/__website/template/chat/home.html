@@ -11,8 +11,8 @@ var current_id = '{{ current_user['username'] }}'
 {% end %}
 
 {% block content %}
-<div class="row">
-  <div class="lead chat-box" id="chat-box">
+<div class="row chat-container">
+  <div class="lead" id="chat-box">
 
   </div>
 </div>
@@ -22,7 +22,6 @@ var current_id = '{{ current_user['username'] }}'
       <div class="col-lg-6">
 
         <div class="input-group">
-          <input type="hidden" class="form-control" name="to_user" value="all">
           <input type="text" class="form-control" name="message" id="message">
           <span class="input-group-btn">
             <button class="btn btn-default" type="submit">Send</button>
