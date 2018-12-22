@@ -49,8 +49,8 @@ class CoreSession(object):
         if driver:
             self.driver = driver
         else:
-            from torstack.storage.file import FileStorage
-            self.driver = FileStorage()
+            from torstack.storage.sync_file import SyncFile
+            self.driver = SyncFile()
 
 
     def _generate_session_id(self, blength=36):

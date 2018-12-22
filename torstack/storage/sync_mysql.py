@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.storage.mysql
-mysql storage definition.
+torstack.storage.sync_mysql
+sync mysql storage definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
@@ -31,7 +31,7 @@ engine_setting=dict(
         max_overflow=20,
     )
 
-class MysqlStorage(object):
+class SyncMysql(object):
 
     def __init__(self, configs=[]):
         if not configs:

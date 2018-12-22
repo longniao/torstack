@@ -28,7 +28,6 @@ handlers = [
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
-    print(server.config._dict)
     server.add_handlers(handlers)
     server.init_application()
     server.run()

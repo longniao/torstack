@@ -33,8 +33,8 @@ class WebApplication(tornado.web.Application):
 
         # mysql
         if config['storage']['mysql_enable'] == True:
-            from torstack.storage.mysql import MysqlStorage
-            self.storage['mysql'] = MysqlStorage(config['storage']['mysql'])
+            from torstack.storage.sync_mysql import SyncMysql
+            self.storage['mysql'] = SyncMysql(config['storage']['mysql'])
 
         # mongodb
         if config['storage']['mongodb_enable'] == True:
@@ -42,8 +42,8 @@ class WebApplication(tornado.web.Application):
 
         # redis
         if config['storage']['redis_enable'] == True:
-            from torstack.storage.redis import RedisStorage
-            redis_storage = RedisStorage(config['storage']['redis'])
+            from torstack.storage.sync_redis import SyncRedis
+            redis_storage = SyncRedis(config['storage']['redis'])
             self.storage['redis'] = redis_storage
 
         # memcache
@@ -60,9 +60,9 @@ class WebApplication(tornado.web.Application):
             if config_session['storage'] in self.storage:
                 driver = self.storage.get(config_session['storage'])
             else:
-                from torstack.storage.file import FileStorage
+                from torstack.storage.sync_file import SyncFile
                 config['base']['session']['storage'] = 'file'
-                driver = FileStorage()
+                driver = SyncFile()
             from torstack.core.session import CoreSession
             self.session = CoreSession(driver, config_session)
 

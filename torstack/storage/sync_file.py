@@ -10,7 +10,7 @@ redis storage definition.
 
 import os
 
-class FileStorage(object):
+class SyncFile(object):
 
     path = '/tmp'
 

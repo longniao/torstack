@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.storage.tornadoredis
-tornadoredis definition.
+torstack.storage.async_redis
+async redis storage definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
@@ -10,7 +10,7 @@ tornadoredis definition.
 
 import tornadoredis
 
-class TornadoRedisStorage(object):
+class AsyncRedis(object):
 
     def __init__(self, options):
         if not options:

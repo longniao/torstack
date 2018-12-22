@@ -57,8 +57,8 @@ class CoreRest(object):
         if driver:
             self.driver = driver
         else:
-            from torstack.storage.file import FileStorage
-            self.driver = FileStorage()
+            from torstack.storage.sync_file import SyncFile
+            self.driver = SyncFile()
 
     def _generate_token(self, blength=36):
         '''

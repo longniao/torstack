@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.storage.redis
-redis storage definition.
+torstack.storage.async_redis
+async redis storage definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
 '''
 
 import redis
-import tornadoredis
 
-class RedisStorage(object):
+class SyncRedis(object):
     def __init__(self, options):
         if not options:
             raise BaseException('100001', 'error redis config.')
