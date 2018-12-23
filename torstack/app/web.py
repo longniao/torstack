@@ -38,7 +38,8 @@ class WebApplication(tornado.web.Application):
 
         # mongodb
         if config['storage']['mongodb_enable'] == True:
-            self.storage['mongodb'] = None
+            from torstack.storage.async_mongodb import AsyncMongodb
+            self.storage['mongodb'] = AsyncMongodb(config['storage']['mongodb'])
 
         # redis
         if config['storage']['redis_enable'] == True:

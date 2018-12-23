@@ -124,14 +124,14 @@ config_mysql = [dict(
 
 # mongodb
 config_mongodb_enable = False
-config_mongodb = dict(
+config_mongodb = [dict(
     host='127.0.0.1',
-    port=3306,
+    port=27017,
     dbname='',
     username='',
     password='',
     type='master',
-)
+)]
 
 # redis
 config_redis_enable = False

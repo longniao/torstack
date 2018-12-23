@@ -10,6 +10,8 @@ async mongodb storage definition.
 
 import motor
 from torstack.exception import BaseException
+from contextlib import contextmanager
+from random import choice
 
 class AsyncMongodb(object):
 
@@ -23,7 +25,8 @@ class AsyncMongodb(object):
 
         self.init_configs(configs)
         self.init_pool()
-
+        self.create_pool()
+        self.check_pool()
 
     def init_configs(self, configs=[]):
         '''
@@ -72,22 +75,35 @@ class AsyncMongodb(object):
         '''
         for config in self.config_list:
             instance = '%s_%s' % (config['dbname'], config['type'])
-            engine, session = self.__create_single_client(config)
-            self.clientPool[instance].append(engine)
+            client = self.__create_single_client(config)
+            self.clientPool[instance].append(client)
 
-    def __create_single_client(self, config, async=True):
+    def check_pool(self):
+        '''
+        fix pool
+        :return:
+        '''
+        for dbname in self.clientPool:
+            if not self.clientPool[dbname]:
+                raise ValueError('database [%s] have no instance' % dbname)
+
+    def __create_single_client(self, config):
         '''
         create single client
         :param config:
         :param async:
         :return:
         '''
-        client_url = 'mongodb://%s:%s@%s:%s/%s' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
-        client = motor.motor_tornado.MotorClient(client_url)
-        if async:
-            return client.open_sync()
+        if not config['username']:
+            client_url = 'mongodb://%s:%s' % (config['host'], config['port'])
+        elif not config['password']:
+            client_url = 'mongodb://%s@%s:%s' % (config['username'], config['host'], config['port'])
         else:
-            return client
+            client_url = 'mongodb://%s:%s@%s:%s' % (config['username'], config['password'], config['host'], config['port'])
+        if config['dbname']:
+            return motor.motor_tornado.MotorClient(client_url)[config['dbname']]
+        else:
+            return motor.motor_tornado.MotorClient(client_url)
 
     def close(self, instance):
         '''
