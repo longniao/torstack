@@ -101,6 +101,7 @@ class AsyncMongodb(object):
         else:
             client_url = 'mongodb://%s:%s@%s:%s' % (config['username'], config['password'], config['host'], config['port'])
         if config['dbname']:
+            print(motor.motor_tornado.MotorClient(client_url)['dbname'])
             return motor.motor_tornado.MotorClient(client_url)[config['dbname']]
         else:
             return motor.motor_tornado.MotorClient(client_url)
@@ -138,14 +139,11 @@ class AsyncMongodb(object):
 
     @contextmanager
     def session_ctx(self, dbname=None, dbtype='master'):
-        DBSession = self.get_session(dbname, dbtype)
-        session = DBSession()
+        session = self.get_session(dbname, dbtype)
         try:
             yield session
-            session.commit()
         except:
             session.rollback()
             raise
         finally:
-            session.expunge_all()
-            session.close()
+            pass

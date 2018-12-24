@@ -6,7 +6,8 @@ import tornado.web
 from tornado import gen
 from torstack.handler.base import BaseHandler
 from torstack.library.encipher import EncipherLibrary
-from account.user_account_service import UserAccountService
+from mongo.user_account_service import UserAccountService
+import pprint
 
 class AccountHandler(BaseHandler):
     '''
@@ -14,8 +15,7 @@ class AccountHandler(BaseHandler):
     '''
     def initialize(self):
         super(AccountHandler, self).initialize()
-        self.dbname = 'test'
-        self.db = self.storage['mongodb']
+        self.db = self.storage['mongodb'].test
 
 class HomeHandler(AccountHandler):
     '''
@@ -42,6 +42,7 @@ class LoginHandler(AccountHandler):
         next_url = self.get_argument('next', '/')
 
         userData = UserAccountService.get_one(self.db, username)
+        pprint.pprint(userData)
         if userData is not None:
             if userData.password == EncipherLibrary.encrypt(password, userData.salt):
                 self.set_session(userData.session_data)

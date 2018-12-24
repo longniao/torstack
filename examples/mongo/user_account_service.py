@@ -3,7 +3,8 @@
 import logging
 
 from torstack.library.encipher import EncipherLibrary
-from account.models import UserAccount
+from mongo.models import UserAccount
+import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +13,11 @@ dbname = 'test'
 class UserAccountService(object):
 
     @staticmethod
-    def get_one(db_session, username):
+    async def get_one(db_session, username):
         with db_session.session_ctx(dbname) as session:
-            return session.query(UserAccount).filter(UserAccount.username == username).first()
+            document = await session.find_one({'i': 7})
+            pprint.pprint(document)
+            return document
 
     @staticmethod
     def add_data(db_session, username, password, nickname):
