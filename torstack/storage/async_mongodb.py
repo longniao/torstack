@@ -96,12 +96,9 @@ class AsyncMongodb(object):
         '''
         if not config['username']:
             client_url = 'mongodb://%s:%s' % (config['host'], config['port'])
-        elif not config['password']:
-            client_url = 'mongodb://%s@%s:%s' % (config['username'], config['host'], config['port'])
         else:
             client_url = 'mongodb://%s:%s@%s:%s' % (config['username'], config['password'], config['host'], config['port'])
         if config['dbname']:
-            print(motor.motor_tornado.MotorClient(client_url)['dbname'])
             return motor.motor_tornado.MotorClient(client_url)[config['dbname']]
         else:
             return motor.motor_tornado.MotorClient(client_url)

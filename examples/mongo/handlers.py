@@ -15,7 +15,7 @@ class AccountHandler(BaseHandler):
     '''
     def initialize(self):
         super(AccountHandler, self).initialize()
-        self.db = self.storage['mongodb'].test
+        self.db = self.storage['mongodb']
 
 class HomeHandler(AccountHandler):
     '''

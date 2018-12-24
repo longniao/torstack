@@ -23,11 +23,11 @@ async def do_insert():
     print('result %s' % repr(result.inserted_id))
 
 async def do_insert():
-    for i in range(2000):
-        await db.test_collection.insert_one({'i': i})
+    for i in range(10):
+        await db.test_collection.insert_one({'id': i, 'name':'name_%s' % i})
 
 async def do_find_one():
-    document = await db.test_collection.find_one({'i': {'$lt': 1}})
+    document = await db.test_collection.find_one({'id': 7})
     pprint.pprint(document)
 
 class MainHandler(tornado.web.RequestHandler):
@@ -39,5 +39,5 @@ application = tornado.web.Application([
     (r'/', MainHandler)
 ], db=db)
 
-application.listen(8888)
+#application.listen(8888)
 tornado.ioloop.IOLoop.current().run_sync(do_find_one)

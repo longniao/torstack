@@ -8,16 +8,15 @@ import pprint
 
 logger = logging.getLogger(__name__)
 
-dbname = 'test'
+collection = 'test_collection'
 
 class UserAccountService(object):
 
     @staticmethod
-    async def get_one(db_session, username):
-        with db_session.session_ctx(dbname) as session:
-            document = await session.find_one({'i': 7})
-            pprint.pprint(document)
-            return document
+    async def get_one(db, username):
+        document = await db.test_collection.find_one({'id': 7})
+        pprint.pprint(document)
+        return document
 
     @staticmethod
     def add_data(db_session, username, password, nickname):
