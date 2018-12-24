@@ -16,7 +16,7 @@ class AjaxHandler(BaseHandler):
 
     def initialize(self):
         super(AjaxHandler, self).initialize()
-        self.set_header('Content-Type', 'text/json')
+        self.set_header("Content-Type", "application/json; charset=UTF-8")
 
     def response_error(self, status_code, **kwargs):
         self._status_code = 200

@@ -29,6 +29,8 @@ class RestHandler(BaseHandler):
         if self.config['rest']['allow_remote_access'] == True:
             self.access_control_allow()
 
+        self.set_header("Content-Type", "application/json; charset=UTF-8")
+
     def access_control_allow(self):
         # 允许 JS 跨域调用
         self.set_header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")

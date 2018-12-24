@@ -24,7 +24,8 @@ class InitHandler(RestfulHandler):
     '''
     def get(self):
         result = self.headers
-        return self.response(code=200, data=result)
+        result = None
+        return self.response(code=0, data=result, message=u'操作成功')
 
 
 class ErrorHandler(RestHandler):
