@@ -7,6 +7,7 @@ from tornado import gen
 from torstack.handler.base import BaseHandler
 from torstack.library.encipher import EncipherLibrary
 from mongo.user_account_service import UserAccountService
+from mongo.models import user_data, user_session_data
 import pprint
 
 class AccountHandler(BaseHandler):
@@ -41,11 +42,12 @@ class LoginHandler(AccountHandler):
         password = self.get_argument('password')
         next_url = self.get_argument('next', '/')
 
-        userData = UserAccountService.get_one(self.db, username)
+        userData = yield UserAccountService.get_one(self.db, username)
         pprint.pprint(userData)
         if userData is not None:
-            if userData.password == EncipherLibrary.encrypt(password, userData.salt):
-                self.set_session(userData.session_data)
+            if userData['password'] == EncipherLibrary.encrypt(password, userData['salt']):
+                session_data = {x: userData[x] for x in userData if x in user_session_data}
+                self.set_session(session_data)
                 self.add_message("success", u"Login success, Wellcome back，{0}!".format(username))
                 return self.redirect(next_url)
             else:
@@ -94,12 +96,13 @@ class RegisterHandler(AccountHandler):
             self.add_message("danger", u"Password confirm failed")
             return self.response("account/register.html", **register_data)
 
-        userData = UserAccountService.get_one(self.db, username)
+        userData = yield UserAccountService.get_one(self.db, username)
         if userData is None:
-            result = UserAccountService.add_data(self.db, username, password, nickname)
+            result = yield UserAccountService.add_data(self.db, username, password, nickname)
             if result:
-                userData = UserAccountService.get_one(self.db, username)
-                self.set_session(userData.session_data)
+                userData = yield UserAccountService.get_one(self.db, username)
+                session_data = {x: userData[x] for x in userData if x in user_session_data}
+                self.set_session(session_data)
                 self.add_message("success", u"Register success, Wellcome，{0}!".format(username))
                 return self.redirect(next_url)
             else:
