@@ -71,6 +71,16 @@ class TorStackServer(object):
         clientListener.daemon = True
         clientListener.start()
 
+    def add_service(self, service_name='', service=None):
+        '''
+        add service to torstack server
+        :param service_name:
+        :param service:
+        :return:
+        '''
+        if service_name and service:
+            setattr(self.application, service_name, service)
+
     def run(self, port=None):
         '''
         run with ioloop

@@ -136,7 +136,7 @@ config_mongodb = [dict(
 # redis
 config_redis_enable = False
 config_redis = dict(
-    host='',
+    host='127.0.0.1',
     port=6379,
     db=1,
     password=None,
@@ -149,8 +149,19 @@ config_redis = dict(
 # memcache
 config_memcache_enable = False
 config_memcache = dict(
-    host='',
+    host='127.0.0.1',
     port=6379,
     db=1,
     password=None,
+)
+
+# es
+config_elasticsearch_enable = False
+config_elasticsearch = dict(
+    use_ssl=False,
+    host='127.0.0.1',
+    port=9200,
+    http_auth=None,
+    request_timeout=None,
+    max_clients=10,
 )

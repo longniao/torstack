@@ -101,6 +101,15 @@ class WebApplication(tornado.web.Application):
             from torstack.scheduler.handler import scheduler_handlers
             handlers.extend(scheduler_handlers)
 
+        # ===================================================================
+        # ======= elasticsearch =============================================
+        # ===================================================================
+
+        # elasticsearch
+        if config['elasticsearch']['elasticsearch_enable'] == True:
+            from elasticsearch_async import AsyncElasticsearch
+            self.elasticsearch = AsyncElasticsearch(**config['elasticsearch']['elasticsearch'])
+
         super(WebApplication, self).__init__(handlers=handlers, **config['application']['settings'])
 
 

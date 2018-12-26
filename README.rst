@@ -107,6 +107,7 @@ Python libraries
 * asyncpg
 * motor
 * apscheduler
+* elasticsearch
 
 
 .. _Tornado: http://www.tornadoweb.org

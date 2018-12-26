@@ -39,9 +39,12 @@ setup(
     install_requires=[
         'tornado',
         'redis',
-        'apscheduler',
-        'aiomysql',
         'aioredis',
+        'aiomysql',
         'sqlalchemy',
+        'motor',
         'pyconvert',
+        'apscheduler',
+        'elasticsearch',
+        'elasticsearch_async'
     ])

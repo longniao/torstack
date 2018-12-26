@@ -53,6 +53,10 @@ class Parser(object):
             memcache_enable=config_memcache_enable,
             memcache=config_memcache,
         ),
+        elasticsearch=dict(
+            elasticsearch_enable=config_elasticsearch_enable,
+            elasticsearch=config_elasticsearch,
+        )
     )
 
     def load(self, config_file=None):
