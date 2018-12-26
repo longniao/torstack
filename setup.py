@@ -4,7 +4,7 @@ import io
 from setuptools import setup, find_packages
 from collections import OrderedDict
 
-version = "0.0.4"
+version = "0.0.5"
 
 readme = ''
 with io.open('README.rst', 'rt', encoding='utf8') as f:
