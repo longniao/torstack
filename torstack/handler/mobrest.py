@@ -15,10 +15,10 @@ import time
 from torstack.handler.base import BaseHandler
 from torstack.exception import BaseException
 
-class RestHandler(BaseHandler):
+class MobRestHandler(BaseHandler):
 
     def initialize(self):
-        super(RestHandler, self).initialize()
+        super(MobRestHandler, self).initialize()
         self.rest = self.application.rest
         self._token = None
         self._token_data = None
@@ -49,31 +49,38 @@ class RestHandler(BaseHandler):
             headers[name] = self.request.headers.get(name, '')
         return headers
 
-    def response(self, **kwargs):
+    def response(self, code=0, data={}, message='', **kwargs):
         '''
-        response result
-        :param args:
+        rest api result
+        :param code:
+        :param data:
+        :param message:
         :param kwargs:
         :return:
         '''
         try:
-            result = self.rest.response.copy()
-            result.update(kwargs)
-            result['timestamp'] = time.time()
-            self.write(json.dumps(result))
-            self.finish()
+            self.response_json(code, data, message, **kwargs)
         except:
-            self.gen_http_error(500, "Unexpected error:", sys.exc_info()[0])
+            message = str(sys.exc_info()[0])
+            self.set_status(500)
+            self.response_json(code=500, message=message, **kwargs)
 
-    def gen_http_error(self, status, msg):
+    def response_json(self, code=0, data={}, message='success.', **kwargs):
         '''
-        Generates the custom HTTP error
-        :param status:
-        :param msg:
+        rest api result
+        :param code:
+        :param data:
+        :param message:
+        :param kwargs:
         :return:
         '''
-        self.clear()
-        self.set_status(status)
-        self.write('<html><body>' + str(msg) + '</body></html>')
+        result = self.rest.response.copy()
+        result.update(kwargs)
+        result['code'] = code
+        result['data'] = data
+        result['message'] = message
+        result['timestamp'] = time.time()
+        self.write(json.dumps(result))
         self.finish()
+
 

@@ -8,6 +8,7 @@ server definition.
 :license: MIT, see LICENSE for more details.
 '''
 
+import sys
 import asyncio
 import tornado, tornado.options
 import tornado.platform.asyncio

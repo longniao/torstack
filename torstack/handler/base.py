@@ -130,14 +130,29 @@ class BaseHandler(tornado.web.RequestHandler):
         :param kwargs:
         :return:
         '''
-        kwargs['current_user'] = self.current_user
-        if 'user_messages' not in kwargs:
-            kwargs['user_messages'] = self.read_messages()
-        return self.render(template, **kwargs)
+        try:
+            kwargs['current_user'] = self.current_user
+            if 'user_messages' not in kwargs:
+                kwargs['user_messages'] = self.read_messages()
+            return self.render(template, **kwargs)
+        except:
+            self.gen_http_error(500, "Unexpected error:", sys.exc_info()[0])
+
+    def gen_http_error(self, status, msg):
+        '''
+        generate the custom HTTP error
+        :param status:
+        :param msg:
+        :return:
+        '''
+        self.clear()
+        self.set_status(status)
+        self.write('<html><body>' + str(msg) + '</body></html>')
+        self.finish()
 
     def get_json_data(self, data):
         '''
-        解析post的json数据
+        parse request json body
         :return:
         '''
         if data:

@@ -10,12 +10,12 @@ job scheduler definition.
 
 import logging
 import pickle
-from torstack.handler.ajax import AjaxHandler
+from torstack.handler.webrest import WebRestHandler
 from torstack.scheduler.service import SchedulerService
 
 logger = logging.getLogger(__name__)
 
-class SchedulerHandler(AjaxHandler):
+class SchedulerHandler(WebRestHandler):
 
     def initialize(self):
         '''
