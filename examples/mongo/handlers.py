@@ -43,7 +43,7 @@ class LoginHandler(AccountHandler):
         next_url = self.get_argument('next', '/')
 
         userData = yield UserAccountService.get_one(self.db, username)
-        pprint.pprint(userData)
+        # pprint.pprint(userData)
         if userData is not None:
             if userData['password'] == EncipherLibrary.encrypt(password, userData['salt']):
                 session_data = {x: userData[x] for x in userData if x in user_session_data}

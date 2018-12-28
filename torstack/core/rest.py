@@ -12,16 +12,9 @@ from torstack.core.session import CoreSession
 
 class CoreRest(object):
 
-    REST_CONFIG = dict(
-        enable=False,
-        allow_remote_access=True,
-        token_prefix='token_',
-        token_lifetime=315360000,  # 60*60*24*365*10
-    )
-
+    REST_CONFIG = dict()
     HEADER_CONFIG = dict()
     RESPONSE_CONFIG = dict()
-
 
     def __init__(self, driver, config={}):
         self.__init_config(config)
@@ -34,12 +27,7 @@ class CoreRest(object):
         :param config:
         :return:
         '''
-        rest_config = dict(
-            enable=config['rest_enable'],
-            allow_remote_access=config['allow_remote_access'],
-            token_prefix=config['token_prefix'],
-            token_lifetime=config['token_lifetime'],
-        )
+        rest_config = config['rest']
         header_config = config['rest_header']
         response_config = config['rest_response']
         if config:

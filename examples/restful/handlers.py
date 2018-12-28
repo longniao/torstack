@@ -14,7 +14,7 @@ class RestfulHandler(MobRestHandler):
     def initialize(self):
         super(RestfulHandler, self).initialize()
         self.dbname = 'test'
-        self.db = self.storage['mysql']
+        self.db = self.storage['sync_mysql']
 
 
 class InitHandler(RestfulHandler):

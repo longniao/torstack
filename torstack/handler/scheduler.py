@@ -24,7 +24,7 @@ class SchedulerHandler(WebRestHandler):
         super(SchedulerHandler, self).initialize()
         self.taskmgr = self.application.taskmgr
         self.dbname = 'test'
-        self.db = self.storage['mysql']
+        self.db = self.storage['sync_mysql']
 
     def get_status(self):
         '''
@@ -120,13 +120,13 @@ class SchedulerHandler(WebRestHandler):
         查询任务列表
         :return:
         '''
-        if self.taskmgr.dbType=="mysql":
+        if self.taskmgr.storage=="sync_mysql":
             datas = SchedulerService.list_data(self.db)
             return self.modeltoJson(datas)
-        elif self.taskmgr.dbType=="mongodb":
+        elif self.taskmgr.storage=="mongodb":
             results = []
             dbname = self.taskmgr.dbname
-            for doc in self.taskmgr.dbClient[dbname]['scheduler_tasks'].find():
+            for doc in self.taskmgr.driver[dbname]['scheduler_tasks'].find():
                 doc["id"] = doc.get("_id")
                 results.append(doc)
             return results

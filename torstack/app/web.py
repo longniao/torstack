@@ -34,7 +34,16 @@ class WebApplication(tornado.web.Application):
         # mysql
         if config['storage']['mysql_enable'] == True:
             from torstack.storage.sync_mysql import SyncMysql
-            self.storage['mysql'] = SyncMysql(config['storage']['mysql'])
+            from torstack.storage.async_mysql import AsyncMysql
+            if config['storage']['mysql_drive'] == 'sync':
+                self.storage['sync_mysql'] = SyncMysql(config['storage']['mysql'])
+            elif config['storage']['mysql_drive'] == 'async':
+                self.storage['async_mysql'] = AsyncMysql(config['storage']['mysql'])
+            elif config['storage']['mysql_drive'] == 'both':
+                self.storage['sync_mysql'] = SyncMysql(config['storage']['mysql'])
+                self.storage['async_mysql'] = AsyncMysql(config['storage']['mysql'])
+            else:
+                raise BaseException('10001', 'error mysql storage config.')
 
         # mongodb
         if config['storage']['mongodb_enable'] == True:
@@ -51,24 +60,27 @@ class WebApplication(tornado.web.Application):
         if config['storage']['memcache_enable'] == True:
             self.storage['memcache'] = None
 
+        # file default
+        from torstack.storage.sync_file import SyncFile
+        self.storage['file'] = SyncFile()
+
         # ===================================================================
         # ======= session and cookie ========================================
         # ===================================================================
 
         # session
-        if config['base']['session']['enable'] == True:
+        if config['base']['session_enable'] == True:
             config_session = config['base']['session']
             if config_session['storage'] in self.storage:
                 driver = self.storage.get(config_session['storage'])
             else:
-                from torstack.storage.sync_file import SyncFile
-                config['base']['session']['storage'] = 'file'
-                driver = SyncFile()
+                raise BaseException('10001', 'error session storage config.')
+
             from torstack.core.session import CoreSession
             self.session = CoreSession(driver, config_session)
 
         # cookie
-        if config['base']['cookie']['enable'] == True:
+        if config['base']['cookie_enable'] == True:
             from torstack.core.cookie import CoreCookie
             self.cookie = CoreCookie(config['base']['cookie'])
 
@@ -78,22 +90,28 @@ class WebApplication(tornado.web.Application):
 
         # rest
         if config['rest']['rest_enable'] == True:
+            config_rest = config['rest']['rest']
+            if config_rest['storage'] in self.storage:
+                driver = self.storage.get(config_rest['storage'])
+            else:
+                raise BaseException('10001', 'error rest storage config.')
+
             from torstack.core.rest import CoreRest
-            self.rest = CoreRest(redis_storage, config['rest'])
+            self.rest = CoreRest(driver, config['rest'])
 
         # ===================================================================
         # ======= scheduler =================================================
         # ===================================================================
 
-        if config['scheduler']['scheduler']['enable'] == True:
+        if config['scheduler']['scheduler_enable'] == True:
             config_scheduler = config['scheduler']['scheduler']
-            if config_scheduler['dbtype'] in self.storage:
-                client = self.storage.get(config_scheduler['dbtype'])
+            if config_scheduler['storage'] in self.storage:
+                driver = self.storage.get(config_scheduler['storage'])
             else:
-                raise BaseException('10001', 'error scheduler dbtype config.')
+                raise BaseException('10001', 'error scheduler storage config.')
 
             from torstack.core.scheduler import CoreScheduler
-            taskmgr = CoreScheduler(config['scheduler']['scheduler_executers'], client, config['scheduler']['scheduler']['dbtype'], config['scheduler']['scheduler']['dbname'])
+            taskmgr = CoreScheduler(config['scheduler']['scheduler_executers'], driver, config_scheduler)
             taskmgr.start()
 
             self.taskmgr = taskmgr

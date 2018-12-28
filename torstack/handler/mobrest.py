@@ -26,7 +26,7 @@ class MobRestHandler(BaseHandler):
         if self.config['rest']['rest_enable'] == False:
             raise BaseException('10105', 'error rest config.')
 
-        if self.config['rest']['allow_remote_access'] == True:
+        if self.config['rest']['rest']['allow_remote_access'] == True:
             self.access_control_allow()
 
         self.set_header("Content-Type", "application/json; charset=UTF-8")

@@ -15,7 +15,7 @@ class AccountHandler(BaseHandler):
     def initialize(self):
         super(AccountHandler, self).initialize()
         self.dbname = 'test'
-        self.db = self.storage['mysql']
+        self.db = self.storage['sync_mysql']
 
 class HomeHandler(AccountHandler):
     '''

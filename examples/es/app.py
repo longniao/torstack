@@ -23,6 +23,7 @@ from es.handlers import MainHandler
 def main():
     server = TorStackServer()
     server.config.load(CONF_FILE)
+    print(server.config._dict)
     server.add_handlers([(r"/", MainHandler)])
     server.init_application()
     server.run()
