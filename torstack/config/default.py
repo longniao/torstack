@@ -162,3 +162,14 @@ elasticsearch = dict(
     request_timeout=None,
     max_clients=10,
 )
+
+# smtp config
+
+smtp_enable = False
+smtp = dict(
+    use_ssl=False,
+    host='',
+    port=25,
+    username='',
+    password='',
+)

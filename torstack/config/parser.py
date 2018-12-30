@@ -61,6 +61,10 @@ class Parser(object):
         elasticsearch=dict(
             elasticsearch_enable=elasticsearch_enable,
             elasticsearch=elasticsearch,
+        ),
+        smtp=dict(
+            smtp_enable=smtp_enable,
+            smtp=smtp,
         )
     )
 
