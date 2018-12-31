@@ -59,36 +59,23 @@ class SmtpListener(threading.Thread):
         if self.smtp == None:
             self.smtp = aiosmtplib.SMTP(hostname=host, port=port, loop=loop)
 
-    def send_email(self, from_email, to_email, subject, content):
+    def send(self, email):
         '''
         send email
-        :param to:
-        :param subject:
-        :param content:
         :return:
         '''
-        message = MIMEText(content)
-        message['From'] = from_email
-        message['To'] = to_email
-        message['Subject'] = subject
-        return self.smtp.send_message(message)
-
-    def broadcast(self, message):
-        '''
-        broadcast message
-        :param message:
-        :return:
-        '''
-        if not message or isinstance(message, int):
+        if not email or isinstance(email, int):
             return
 
         try:
-            message = json.loads(message)
-            if message.get('to_id'):
-                ClientManager.send_to(message.get('from_id'), message.get('to_id'), message)
-            else:
-                ClientManager.send_to_all(message)
+            from_email, to_email, subject, content = email['from_email'], email['to_email'], email['subject'], email['content']
+            message = MIMEText(content)
+            message['From'] = from_email
+            message['To'] = to_email
+            message['Subject'] = subject
+            self.smtp.send_message(message)
         except Exception as ex:
+            MAIL_LIST.append(email)
             app_log.exception(ex)
 
     def run(self):
@@ -96,6 +83,6 @@ class SmtpListener(threading.Thread):
         self._create_smtp_client()
 
         if len(MAIL_LIST) > 0:
-            mail = MAIL_LIST[0]
+            mail = MAIL_LIST.pop(0)
             self.send_email(mail)
-            MAIL_LIST.pop(0)
+
