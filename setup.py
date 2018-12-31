@@ -46,5 +46,6 @@ setup(
         'pyconvert',
         'apscheduler',
         'elasticsearch',
-        'elasticsearch_async'
+        'elasticsearch_async',
+        'aiosmtplib'
     ])

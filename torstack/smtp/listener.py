@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.vendor.smtp
-smtp definition.
+torstack.websocket.listener
+websocket client listener definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
 '''
 
+import asyncio
 import threading
+from tornado.log import app_log
+from torstack.websocket.manager import ClientManager
 import aiosmtplib
 from email.mime.text import MIMEText
-from tornado.log import app_log
 
+MAIL_LIST = []
 
-class SmtpService(object):
+class SmtpListener(threading.Thread):
 
+    config = None
     smtp = None
 
     def __init__(self, config={}):
@@ -31,7 +35,7 @@ class SmtpService(object):
         :param config:
         :return:
         '''
-        if not isinstance(configs, dict):
+        if not isinstance(config, dict):
             raise BaseException('10101', 'error mysql config.')
 
         try:
@@ -43,9 +47,17 @@ class SmtpService(object):
             if not port:
                 raise ValueError('Invalid port')
 
-            self.smtp = aiosmtplib.SMTP(hostname=host, port=port, loop=loop)
+            self.config = config
         except Exception as e:
             raise Exception('error: %s', str(e))
+
+    def _create_smtp_client(self):
+        '''
+        create smtp client
+        :return:
+        '''
+        if self.smtp == None:
+            self.smtp = aiosmtplib.SMTP(hostname=host, port=port, loop=loop)
 
     def send_email(self, from_email, to_email, subject, content):
         '''
@@ -60,3 +72,30 @@ class SmtpService(object):
         message['To'] = to_email
         message['Subject'] = subject
         return self.smtp.send_message(message)
+
+    def broadcast(self, message):
+        '''
+        broadcast message
+        :param message:
+        :return:
+        '''
+        if not message or isinstance(message, int):
+            return
+
+        try:
+            message = json.loads(message)
+            if message.get('to_id'):
+                ClientManager.send_to(message.get('from_id'), message.get('to_id'), message)
+            else:
+                ClientManager.send_to_all(message)
+        except Exception as ex:
+            app_log.exception(ex)
+
+    def run(self):
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        self._create_smtp_client()
+
+        if len(MAIL_LIST) > 0:
+            mail = MAIL_LIST[0]
+            self.send_email(mail)
+            MAIL_LIST.pop(0)

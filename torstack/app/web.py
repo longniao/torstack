@@ -123,7 +123,6 @@ class WebApplication(tornado.web.Application):
         # ======= elasticsearch =============================================
         # ===================================================================
 
-        # elasticsearch
         if config['elasticsearch']['elasticsearch_enable'] == True:
             from elasticsearch_async import AsyncElasticsearch
             self.elasticsearch = AsyncElasticsearch(**config['elasticsearch']['elasticsearch'])

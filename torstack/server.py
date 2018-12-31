@@ -72,6 +72,16 @@ class TorStackServer(object):
         clientListener.daemon = True
         clientListener.start()
 
+    def add_smtp(self, config):
+        '''
+        add smtp service
+        :return:
+        '''
+        from torstack.smtp.listener import SmtpListener
+        smtpListener = SmtpListener(config)
+        smtpListener.daemon = True
+        smtpListener.start()
+
     def add_service(self, service_name='', service=None):
         '''
         add service to torstack server
