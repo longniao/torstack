@@ -72,11 +72,13 @@ class TorStackServer(object):
         clientListener.daemon = True
         clientListener.start()
 
-    def add_smtp(self, config):
+    def add_smtp(self, config=None):
         '''
         add smtp service
         :return:
         '''
+        if not config:
+            config = self.application.config['smtp']['smtp']
         from torstack.smtp.listener import SmtpListener
         smtpListener = SmtpListener(config)
         smtpListener.daemon = True

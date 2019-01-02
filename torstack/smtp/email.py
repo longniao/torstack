@@ -12,11 +12,12 @@ import json
 
 class Email(object):
 
-    def __init__(self, from_mail=None, from_name=None, to_mail=None, to_name=None, content=None, extra=None):
+    def __init__(self, from_mail=None, from_name=None, to_mail=None, to_name=None, subject=None, content=None, extra=None):
         self.from_mail = from_mail
         self.from_name = from_name
         self.to_mail = to_mail
         self.to_name = to_name
+        self.subject = subject
         self.content = content
         self.extra = extra
 

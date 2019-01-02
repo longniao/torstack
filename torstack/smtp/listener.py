@@ -12,8 +12,10 @@ import asyncio
 import threading
 from tornado.log import app_log
 import aiosmtplib
-import torstack.smtp.manager
+from torstack.smtp.manager import SmtpManager
 from email.mime.text import MIMEText
+import time
+from tornado import gen
 
 class SmtpListener(threading.Thread):
 
@@ -21,6 +23,8 @@ class SmtpListener(threading.Thread):
     smtp = None
 
     def __init__(self, config={}):
+        threading.Thread.__init__(self)
+
         if not config:
             raise BaseException('10101', 'error smtp config.')
 
@@ -55,9 +59,9 @@ class SmtpListener(threading.Thread):
         :return:
         '''
         if self.smtp == None:
-            self.smtp = aiosmtplib.SMTP(hostname=host, port=port, loop=loop)
+            self.smtp = aiosmtplib.SMTP(hostname=self.config.get('host'), port=self.config.get('port'))
 
-    def send(self, email):
+    async def send(self, email):
         '''
         send email
         :return:
@@ -66,21 +70,22 @@ class SmtpListener(threading.Thread):
             return
 
         try:
-            from_email, to_email, subject, content = email['from_email'], email['to_email'], email['subject'], email['content']
+            from_email, to_email, subject, content = email['from_mail'], email['to_mail'], email['subject'], email['content']
             message = MIMEText(content)
             message['From'] = from_email
             message['To'] = to_email
             message['Subject'] = subject
-            self.smtp.send_message(message)
+            await self.smtp.send_message(message)
         except Exception as ex:
-            manager.MAIL_LIST.append(email)
+            SmtpManager.MAIL_LIST.append(email)
             app_log.exception(ex)
 
     def run(self):
         asyncio.set_event_loop(asyncio.new_event_loop())
         self._create_smtp_client()
-
-        if len(manager.MAIL_LIST) > 0:
-            mail = manager.MAIL_LIST.pop(0)
-            self.send_email(mail)
+        while True:
+            if len(SmtpManager.MAIL_LIST) > 0:
+                mail = SmtpManager.MAIL_LIST.pop(0)
+                self.send(mail)
+            time.sleep(1)
 

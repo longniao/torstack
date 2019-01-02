@@ -14,6 +14,7 @@ from torstack.exception import BaseException
 import asyncio
 import sqlalchemy as sa
 from aiomysql.sa import create_engine
+from contextlib import contextmanager
 
 engine_setting = dict(
     echo=False,  # print sql
