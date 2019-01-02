@@ -172,4 +172,5 @@ smtp = dict(
     port=25,
     username='',
     password='',
+    timeout=3,
 )
