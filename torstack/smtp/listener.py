@@ -11,11 +11,9 @@ websocket client listener definition.
 import asyncio
 import threading
 from tornado.log import app_log
-from torstack.websocket.manager import ClientManager
 import aiosmtplib
+import torstack.smtp.manager
 from email.mime.text import MIMEText
-
-MAIL_LIST = []
 
 class SmtpListener(threading.Thread):
 
@@ -75,14 +73,14 @@ class SmtpListener(threading.Thread):
             message['Subject'] = subject
             self.smtp.send_message(message)
         except Exception as ex:
-            MAIL_LIST.append(email)
+            manager.MAIL_LIST.append(email)
             app_log.exception(ex)
 
     def run(self):
         asyncio.set_event_loop(asyncio.new_event_loop())
         self._create_smtp_client()
 
-        if len(MAIL_LIST) > 0:
-            mail = MAIL_LIST.pop(0)
+        if len(manager.MAIL_LIST) > 0:
+            mail = manager.MAIL_LIST.pop(0)
             self.send_email(mail)
 
