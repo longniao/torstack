@@ -61,21 +61,20 @@ class SmtpListener(threading.Thread):
         if self.smtp == None:
             self.smtp = aiosmtplib.SMTP(hostname=self.config.get('host'), port=self.config.get('port'))
 
-    async def send(self, email):
+    def send(self, email):
         '''
         send email
         :return:
         '''
         if not email or isinstance(email, int):
             return
-
         try:
             from_email, to_email, subject, content = email['from_mail'], email['to_mail'], email['subject'], email['content']
             message = MIMEText(content)
             message['From'] = from_email
             message['To'] = to_email
             message['Subject'] = subject
-            await self.smtp.send_message(message)
+            self.smtp.send_message(message)
         except Exception as ex:
             SmtpManager.MAIL_LIST.append(email)
             app_log.exception(ex)

@@ -24,7 +24,7 @@ class MainHandler(BaseHandler):
 
     @gen.coroutine
     def get(self):
-        yield SmtpManager.send(from_mail='from_mail', from_name='from_name', to_mail='to_mail', to_name='to_name', subject='subject', content='content')
+        SmtpManager.send(from_mail='from_mail', from_name='from_name', to_mail='to_mail', to_name='to_name', subject='subject', content='content')
         self.write("Mail sended")
 
 def main():
