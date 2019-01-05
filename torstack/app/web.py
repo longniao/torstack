@@ -58,7 +58,8 @@ class WebApplication(tornado.web.Application):
 
         # memcache
         if config['storage']['memcache_enable'] == True:
-            self.storage['memcache'] = None
+            from torstack.storage.sync_memcache import SyncMemcahhe
+            self.storage['memcache'] = SyncMemcahhe(config['storage']['memcache'])
 
         # file default
         from torstack.storage.sync_file import SyncFile

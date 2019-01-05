@@ -42,11 +42,11 @@ class SyncMemcahhe(object):
                 if not isinstance(host, str):
                     raise ValueError('Invalid host')
                 if not port:
-                    config['port'] = port = 11211
+                    port = 11211
                 elif not isinstance(port, int):
                     raise ValueError('Invalid port')
 
-                engine_url = '%s:%d' % (self.options['host'], self.options['port'])
+                engine_url = '%s:%d' % (host, port)
                 self.config_list.append((engine_url, weight))
             except Exception as e:
                 raise Exception('error: %s', str(e))

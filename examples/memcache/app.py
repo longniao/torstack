@@ -19,9 +19,17 @@ CONF_PATH = os.path.join(PROJECT_PATH, '__conf')
 CONF_FILE = CONF_PATH + os.path.sep + 'memcache.conf'
 
 class MainHandler(BaseHandler):
+
+    def initialize(self):
+        super(MainHandler, self).initialize()
+        self.memcache = self.storage['memcache']
+
     @gen.coroutine
     def get(self):
-        self.write("Hello, memcache")
+        self.memcache.save('key', 'Hello, memcache')
+        msg = self.memcache.get('key')
+        print(msg, type(msg))
+        self.write(msg)
 
 def main():
     server = TorStackServer()
