@@ -47,5 +47,6 @@ setup(
         'apscheduler',
         'elasticsearch',
         'elasticsearch_async',
-        'python-memcached'
+        'python-memcached',
+        'aiofiles'
     ])
