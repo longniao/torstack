@@ -144,12 +144,11 @@ redis = dict(
 
 # memcache
 memcache_enable = False
-memcache = dict(
+memcache = [dict(
     host='127.0.0.1',
-    port=6379,
-    db=1,
-    password=None,
-)
+    port=11211,
+    weight=1,
+)]
 
 # elasticsearch config ====================================
 

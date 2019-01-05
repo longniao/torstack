@@ -47,5 +47,5 @@ setup(
         'apscheduler',
         'elasticsearch',
         'elasticsearch_async',
-        'smtplib'
+        'python-memcached'
     ])
