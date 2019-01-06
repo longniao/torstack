@@ -129,6 +129,18 @@ mongodb = [dict(
     type='master',
 )]
 
+# postgresql
+postgresql_enable = False
+postgresql_drive = 'sync' # sync|async|both
+postgresql = [dict(
+    host='127.0.0.1',
+    port=5432,
+    dbname='',
+    username='',
+    password='',
+    type='master',
+)]
+
 # redis
 redis_enable = False
 redis = dict(

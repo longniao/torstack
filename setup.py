@@ -48,5 +48,6 @@ setup(
         'elasticsearch',
         'elasticsearch_async',
         'python-memcached',
-        'aiofiles'
+        'aiofiles',
+        'psycopg2',
     ])
