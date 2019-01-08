@@ -23,8 +23,7 @@ class SyncPostgresql(object):
 
         self.current_db = None
         self.config_list = []
-        self.enginePool = {}
-        self.sessionPool = {}
+        self.connPool = {}
 
         self.init_configs(configs)
         self.init_pool()
@@ -67,10 +66,8 @@ class SyncPostgresql(object):
         '''
         for config in self.config_list:
             if config['dbname'] not in self.enginePool:
-                self.enginePool[config['dbname']+'_master'] = []
-                self.enginePool[config['dbname']+'_slave'] = []
-                self.sessionPool[config['dbname']+'_master'] = []
-                self.sessionPool[config['dbname']+'_slave'] = []
+                self.connPool[config['dbname']+'_master'] = []
+                self.connPool[config['dbname']+'_slave'] = []
 
     def create_pool(self):
         '''
@@ -80,9 +77,8 @@ class SyncPostgresql(object):
         '''
         for config in self.config_list:
             instance = '%s_%s' % (config['dbname'], config['type'])
-            engine, session = self.__create_single_session(config)
-            self.enginePool[instance].append(engine)
-            self.sessionPool[instance].append(session)
+            connection = self.__create_single_connection(config)
+            self.connPool[instance].append(connection)
 
     def check_pool(self):
         '''
@@ -93,22 +89,9 @@ class SyncPostgresql(object):
             if not self.enginePool[dbname]:
                 raise ValueError('database [%s] have no instance' % dbname)
 
-    def __create_single_session(self, config, scopefunc=None):
-        engine = self.__create_single_engine(config)
-        return engine, scoped_session(
-            sessionmaker(
-                autocommit=False,
-                autoflush=True,
-                expire_on_commit=False,
-                bind=engine
-            ),
-            scopefunc=scopefunc
-        )
-
-    def __create_single_engine(self, config):
-        engine_url = 'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
-        engine = create_engine(engine_url, **engine_setting)
-        return engine
+    def __create_single_connection(self, config):
+        connection = psycopg2.connect(host=config['host'], port=config['port'], dbname=config['dbname'], user=config['username'], password=config['password'])
+        return connection
 
     def close(self, instance):
         '''
@@ -135,21 +118,7 @@ class SyncPostgresql(object):
                 else:
                     self.use(dbname, dbtype)
 
-            return choice(self.sessionPool[self.current_db])
-        except KeyError:
-            raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
-        except IndexError:
-            raise IndexError('cannot get names from DB_SETTINGS')
-
-    def get_engine(self, dbname=None, dbtype='master'):
-        try:
-            if not self.current_db:
-                if not dbname:
-                    raise KeyError('error dbname')
-                else:
-                    self.use(dbname, dbtype)
-
-            return choice(self.enginePool[self.current_db])
+            return choice(self.connPool[self.current_db])
         except KeyError:
             raise KeyError('{} not created, check your DB_SETTINGS'.format(self.current_db))
         except IndexError:
