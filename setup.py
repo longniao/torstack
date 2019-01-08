@@ -4,7 +4,7 @@ import io
 from setuptools import setup, find_packages
 from collections import OrderedDict
 
-version = "0.0.5"
+version = "0.0.6"
 
 readme = ''
 with io.open('README.rst', 'rt', encoding='utf8') as f:
@@ -16,6 +16,7 @@ setup(
     description='Torstack is a bundle for Tornado. it is designed to make getting started quick and easy, so you can focus on writing your app without needing to reinvent the wheel.',
     long_description=readme,
     url='https://github.com/longniao/torstack',
+    keywords='tornado torstack',
     author='Longniao',
     author_email='longniao@gmail.com',
     maintainer='Longniao',
