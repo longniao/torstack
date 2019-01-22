@@ -14,6 +14,7 @@ import tornado, tornado.options
 import tornado.platform.asyncio
 from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
+import tornado.locale
 
 class DefaultHandler(tornado.web.RequestHandler):
     def get(self):
@@ -93,6 +94,17 @@ class TorStackServer(object):
         '''
         if service_name and service:
             setattr(self.application, service_name, service)
+
+    def add_locale(self, locale_path='.', default=None):
+        '''
+        add locale support
+        :param locale_path:
+        :param default:
+        :return:
+        '''
+        tornado.locale.load_translations(locale_path)
+        if default:
+            tornado.locale.set_default_locale(default)
 
     def run(self, port=None):
         '''
