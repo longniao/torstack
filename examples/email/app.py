@@ -24,7 +24,16 @@ class MainHandler(BaseHandler):
 
     @gen.coroutine
     def get(self):
-        SmtpManager.send(from_mail='from_mail', from_name='from_name', to_mail='to_mail', to_name='to_name', subject='subject', content='content')
+        from_mail = 'example@mail.com'
+        from_name = 'from_name'
+        to_mail = 'example@mail.com'
+        to_name = 'to_name'
+        subject = ' subject'
+        content = '''
+            <p>Torstack mail test</p>
+            <p><a href="http://github.com/longniao/torstack">Torstack</a></p>
+        '''
+        SmtpManager.send(from_mail=from_mail, from_name=from_name, to_mail=to_mail, to_name=to_name, subject=subject, content=content, mimetype='html')
         self.write("Mail sended")
 
 def main():

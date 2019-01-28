@@ -14,6 +14,8 @@ from tornado.log import app_log
 import smtplib
 from torstack.smtp.manager import SmtpManager
 from email.mime.text import MIMEText
+from email.header import Header
+from email.utils import formataddr
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.utils import COMMASPACE,formatdate
@@ -32,6 +34,7 @@ class SmtpListener(threading.Thread):
             raise BaseException('10101', 'error smtp config.')
 
         self.init_configs(config)
+        self._create_smtp_client()
 
     def init_configs(self, config={}):
         '''
@@ -41,7 +44,7 @@ class SmtpListener(threading.Thread):
         :return:
         '''
         if not isinstance(config, dict):
-            raise BaseException('10101', 'error mysql config.')
+            raise BaseException('10101', 'error smtp config.')
 
         try:
             use_ssl, host, port, username, password = config.get('use_ssl'), config.get('host'), config.get(
@@ -80,14 +83,14 @@ class SmtpListener(threading.Thread):
         if not email or isinstance(email, int):
             return
         try:
-            from_email, to_email, subject, content = email['from_mail'], email['to_mail'], email['subject'], email['content']
-            message = MIMEText(content)
-            message['From'] = from_email
-            message['To'] = to_email
-            message['Subject'] = subject
-            self.client.sendmail(message)
+            from_email, from_name, to_email, to_name, subject, content, mimetype = email['from_mail'], email['from_name'], email['to_mail'], email['to_name'], email['subject'], email['content'], email['mimetype']
+            message = MIMEText(content, mimetype, 'utf-8')
+            message['From'] = formataddr([from_name, from_email])
+            message['To'] = formataddr([to_name, to_email])
+            message['Subject'] = Header(subject, 'utf-8')
+            self.client.sendmail(from_email, [to_email], message.as_string())
         except Exception as ex:
-            SmtpManager.MAIL_LIST.append(email)
+            # SmtpManager.MAIL_LIST.append(email, [to_email], message.as_string())
             app_log.exception(ex)
 
     def run(self):
