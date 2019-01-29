@@ -136,7 +136,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 kwargs['user_messages'] = self.read_messages()
             return self.render(template, **kwargs)
         except:
-            self.gen_http_error(500, "Unexpected error:", sys.exc_info()[0])
+            self.gen_http_error(500, "Unexpected error: %s" % sys.exc_info()[0])
 
     def gen_http_error(self, status, msg):
         '''
