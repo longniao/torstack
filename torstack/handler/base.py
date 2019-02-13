@@ -73,7 +73,12 @@ class BaseHandler(tornado.web.RequestHandler):
         :param data:
         :return:
         '''
-        self.session.set(self.session_id, data)
+        try:
+            if not isinstance(data, dict):
+                data = dict(data)
+            self.session.set(self.session_id, data)
+        except:
+            self.session.set(self.session_id, data)
 
     def clean_session(self):
         '''
