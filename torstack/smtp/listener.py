@@ -34,7 +34,7 @@ class SmtpListener(threading.Thread):
             raise BaseException('10101', 'error smtp config.')
 
         self.init_configs(config)
-        self._create_smtp_client()
+        # self._create_smtp_client()
 
     def init_configs(self, config={}):
         '''
