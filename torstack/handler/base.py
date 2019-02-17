@@ -12,6 +12,7 @@ from __future__ import absolute_import, unicode_literals
 
 import sys
 import json
+import time
 import tornado.web
 from torstack.exception import BaseException
 
@@ -142,6 +143,24 @@ class BaseHandler(tornado.web.RequestHandler):
             return self.render(template, **kwargs)
         except:
             self.gen_http_error(500, "Unexpected error: %s" % sys.exc_info()[0])
+
+    def response_json(self, code=0, data={}, message='success.', **kwargs):
+        '''
+        rest api result
+        :param code:
+        :param data:
+        :param message:
+        :param kwargs:
+        :return:
+        '''
+        self.set_header("Content-Type", "application/json; charset=UTF-8")
+        result = dict()
+        result['code'] = code
+        result['data'] = data
+        result['message'] = message
+        result['timestamp'] = time.time()
+        self.write(json.dumps(result))
+        self.finish()
 
     def gen_http_error(self, status, msg):
         '''
