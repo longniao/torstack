@@ -122,7 +122,7 @@ class SyncMysql(object):
         )
 
     def __create_single_engine(self, config):
-        engine_url = 'mysql+mysqldb://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
+        engine_url = 'mysql+pymysql://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
         engine = create_engine(engine_url, **engine_setting)
         return engine
 
