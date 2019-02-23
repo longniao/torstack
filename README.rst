@@ -95,6 +95,8 @@ Features
 * redis
 * taskmgr
 * websocket
+* smtp
+* elasticsearch
 
 
 Python libraries
@@ -104,10 +106,12 @@ Python libraries
 * aioredis
 * sqlalchemy
 * aiomysql
+* pymysql
 * asyncpg
 * motor
 * apscheduler
 * elasticsearch
+* psycopg2
 
 
 .. _Tornado: http://www.tornadoweb.org
