@@ -1,161 +1,147 @@
 # -*- coding: utf-8 -*-
 
 '''
-torstack.core.session
-Basic session definition.
+torstack.core.log
+Basic log definition.
 
 :copyright: (c) 2018 by longniao <longniao@gmail.com>
 :license: MIT, see LICENSE for more details.
 '''
 
-from __future__ import (absolute_import, division, print_function,
-                        with_statement)
+from __future__ import (absolute_import, division, print_function, with_statement)
 
-import json
-from datetime import datetime, timedelta
-from torstack.library.encipher import EncipherLibrary
+import os
+import logging
 
-class CoreSession(object):
 
-    SESSION_CONFIG = dict(
-        enable=True,
-        prefix='sid_',
-        lifetime=1800, # 60*30
+class CoreLog(object):
+
+    LOG_CONFIG = dict(
+        filepath='/var/log',
     )
 
-    def __init__(self, driver, config={}):
-        self.__init_driver(driver)
-        self.__init_config(config)
-
-        self._expires = datetime.utcnow() + timedelta(seconds=self.SESSION_CONFIG.get('lifetime'))
-
-
-    def __init_config(self, config={}):
-        '''
-        Init session configurations.
-        :param self:
-        :param config:
-        :return:
-        '''
+    def __init__(self, config={}):
         if config:
-            self.SESSION_CONFIG.update(config)
+            self.LOG_CONFIG.update(config)
 
+        folder = os.path.exists(self.LOG_CONFIG['filepath'])
+        if not folder:
+            os.makedirs(self.LOG_CONFIG['filepath'])
 
-    def __init_driver(self, driver):
+    def parse_msg(self, msg):
         '''
-        setup session driver.
+        parse msg
+        :param msg:
         :return:
         '''
-        if driver:
-            self.driver = driver
+        if isinstance(msg, str):
+            ret = '[STRING] [%s]' % msg
+        elif isinstance(msg, dict):
+            ret = '[DICT]'
+            for key, value in msg.items():
+                ret += ' [%s:%s]' % (key, str(value))
+        elif isinstance(msg, list):
+            ret = '[LIST]'
+            for item in msg:
+                ret += ' [%s]' % item
+        elif isinstance(msg, tuple):
+            ret = '[TUPLE]'
+            for item in msg:
+                ret += ' [%s]' % item
         else:
-            from torstack.storage.sync_file import SyncFile
-            self.driver = SyncFile()
+            ret = '[OTHER] [%s]' % msg
 
+        return ret
 
-    def _generate_session_id(self, blength=36):
+    def genLogDict(self):
         '''
-        generate session id
-        :param blength:
-        :return:
+        default log config dict
         '''
-        return EncipherLibrary.gen_token(blength)
+        logDict = {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "simple": {
+                    'format': '%(asctime)s [%(name)s:%(lineno)d] [%(levelname)s] - %(message)s'
+                },
+                'standard': {
+                    'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(levelname)s] - %(message)s'
+                },
+                'detail': {
+                    'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s] [%(levelname)s] [%(pathname)s:%(lineno)d:%(funcName)s] - %(message)s'
+                },
+                'collect': {
+                    'format': '%(asctime)s - %(message)s'
+                }
+            },
+
+            "handlers": {
+                "console": {
+                    "class": "logging.StreamHandler",
+                    "level": "DEBUG",
+                    "formatter": "simple",
+                },
+                "access": {
+                    "class": "logging.handlers.TimedRotatingFileHandler",
+                    "level": "DEBUG",
+                    "formatter": "standard",
+                    "when": "midnight",
+                    "filename": self.LOG_CONFIG['filepath'] + "/access_log.log",
+                    # 'mode': 'a',
+                    # "maxBytes": 1024*1024*10,  # 5 MB
+                    "interval": 1,
+                    "backupCount": 180,
+                    "encoding": "utf-8"
+                },
+                "error": {
+                    "class": "logging.handlers.TimedRotatingFileHandler",
+                    "level": "WARNING",
+                    "formatter": "detail",
+                    "filename": self.LOG_CONFIG['filepath'] + "/error_log.log",
+                    "when": "midnight",
+                    "interval": 1,
+                    "backupCount": 180,
+                    "encoding": "utf-8",
+                },
+                "collect": {
+                    "class": "logging.handlers.TimedRotatingFileHandler",
+                    "level": "DEBUG",
+                    "formatter": "collect",
+                    "filename": self.LOG_CONFIG['filepath'] + "/collect_log.log",
+                    "when": "midnight",
+                    "interval": 1,
+                    "backupCount": 180,
+                    "encoding": "utf-8",
+                },
+            },
+            "loggers": {
+                "root": {
+                    'handlers': ['console'],
+                    'level': "INFO",
+                    'propagate': False
+                },
+                "tornado.access": {
+                    "level": "DEBUG",
+                    "handlers": ["console", "access"],
+                    "propagate": False
+                },
+                "error": {
+                    "level": "DEBUG",
+                    "handlers": ["console", "error"],
+                    "propagate": False,
+                },
+                "collect": {
+                    "level": "DEBUG",
+                    "handlers": ["console", "collect"],
+                    "propagate": False,
+                },
+            },
+        }
+        return logDict
 
 
-    def get(self, key, default=None):
-        '''
-        Return session value with name as key.
-        :param key:
-        :param default:
-        :return:
-        '''
-        value = self.driver.get(key)
-        if value:
-            if isinstance(value, str):
-                return value
-            else:
-                return value.decode('utf-8')
-        else:
-            return default
 
-
-    def set(self, key, value):
-        '''
-        Add/Update session value
-        :param key:
-        :param value:
-        :return:
-        '''
-        if isinstance(value, str):
-            session_string = value
-        elif isinstance(value, dict):
-            session_string = json.dumps(value)
-        elif isinstance(value, object):
-            session_string = json.dumps(value.__dict__)
-        else:
-            raise BaseException('10001', 'error data format: %s.' % str(value))
-
-        self.driver.save(key, session_string, self.SESSION_CONFIG['lifetime'])
-
-
-    def delete(self, key):
-        '''
-        Delete session key-value pair
-        :param key:
-        :return:
-        '''
-        return self.driver.delete(key)
-
-
-    def keys(self):
-        '''
-        Return all keys in session object
-        :return:
-        '''
-        return self.driver.keys()
-
-
-    def flush(self):
-        '''
-        this method force system to do session data persistence.
-        :return:
-        '''
-        pass
-
-    def set_expires(self, key, lifetime=None):
-        '''
-        set lifetime
-        :param key:
-        :param lifetime:
-        :return:
-        '''
-        if not lifetime:
-            lifetime = self.expires
-        return self.driver.expire(key, lifetime)
-
-    def new_id(self):
-        '''
-        :return: new session id
-        '''
-        return self._generate_session_id(36)
-
-
-    @property
-    def expires(self):
-        '''
-        :return: session expires time
-        '''
-        return self.SESSION_CONFIG['lifetime']
-
-
-class SessionMixin(object):
-
-    @property
-    def session(self):
-        return self._create_mixin(self, '__session_manager', SessionManager)
-
-    def _create_mixin(self, context, inner_property_name, session_handler):
-        if not hasattr(context, inner_property_name):
-            setattr(context, inner_property_name, session_handler(context))
-        return getattr(context, inner_property_name)
+if __name__ == "__main__":
+    logDict = CoreLog().genLogDict()
+    logging.config.dictConfig(logDict)
 

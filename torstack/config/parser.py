@@ -27,6 +27,8 @@ class Parser(object):
             log=log,
         ),
         base=dict(
+            log_enable=log_enable,
+            log=log,
             session_enable=session_enable,
             session=session,
             cookie_enable=cookie_enable,

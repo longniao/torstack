@@ -27,20 +27,13 @@ settings = dict(
     static_path="%(project_path)s/website/static",
 )
 
-# log
-log = dict(
-    enable=False,
-    log_level="WARNING",
-    log_console=False,
-    log_file=True,
-    log_path="/tmp/logs/log",
-    when="D",
-    interval=1,
-    backupCount=30,
-    fmt="%(asctime)s - %(name)s - %(filename)s[line:%(lineno)d] - %(levelname)s - %(message)s",
-)
-
 # base config ====================================
+
+# log
+log_enable = True
+log = dict(
+    filtpath='/tmp',
+)
 
 # session
 session_enable = True

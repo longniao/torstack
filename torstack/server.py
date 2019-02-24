@@ -9,12 +9,15 @@ server definition.
 '''
 
 import sys
+import logging
+import logging.config
 import asyncio
 import tornado, tornado.options
 import tornado.platform.asyncio
 from torstack.config.parser import Parser as ConfigParser
 from torstack.app.web import WebApplication
 import tornado.locale
+from torstack.core.log import CoreLog
 
 class DefaultHandler(tornado.web.RequestHandler):
     def get(self):
@@ -116,8 +119,14 @@ class TorStackServer(object):
         if not port:
             port = self.config._dict['application']['port']
 
+        coreLog = CoreLog(self.config._dict['base']['log'])
+        logging.config.dictConfig(coreLog.genLogDict())
+
         tornado.options.parse_command_line()
         # application = WebApplication(handlers=self.handlers, config=self.config._dict)
+        if not self.application:
+            self.init_application()
+
         http_server = tornado.httpserver.HTTPServer(self.application)
 
         # 判断是否为debug环境
@@ -125,9 +134,6 @@ class TorStackServer(object):
             # debug环境下，单进程模式
             http_server.listen(port)
         else:
-            # 加载日志管理
-            # CoreLog(options.log)
-
             # 生产环境下，多进程模式
             http_server.bind(port)
             http_server.start(1)  # Forks multiple sub-processes
