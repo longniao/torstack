@@ -64,7 +64,7 @@ class BaseHandler(tornado.web.RequestHandler):
                     self._session_data = json.loads(session_string)
                     self.session.set_expires(self.session_id, self.session.expires)
                 except:
-                    raise BaseException('10001', "Unexpected error:", sys.exc_info()[0])
+                    raise BaseException('10001', "Unexpected error: %s" % str(sys.exc_info()[0]))
 
         return self._session_data
 
