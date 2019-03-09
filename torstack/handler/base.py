@@ -15,6 +15,7 @@ import json
 import time
 import tornado.web
 from torstack.exception import BaseException
+from torstack.library.obj import ObjLibrary
 
 class BaseHandler(tornado.web.RequestHandler):
 
@@ -75,7 +76,9 @@ class BaseHandler(tornado.web.RequestHandler):
         :return:
         '''
         try:
-            if not isinstance(data, dict):
+            if isinstance(data, dict):
+                data = ObjLibrary().to_dict(data)
+            elif not isinstance(data, dict):
                 data = dict(data)
             self.session.set(self.session_id, data)
         except:
