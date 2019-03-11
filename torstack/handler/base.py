@@ -76,10 +76,10 @@ class BaseHandler(tornado.web.RequestHandler):
         :return:
         '''
         try:
-            if isinstance(data, object):
+            if isinstance(data, dict):
+                pass
+            elif not isinstance(data, object):
                 data = ObjLibrary().to_dict(data)
-            elif not isinstance(data, dict):
-                data = dict(data)
             self.session.set(self.session_id, data)
         except:
             self.session.set(self.session_id, data)
