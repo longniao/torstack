@@ -76,7 +76,7 @@ class BaseHandler(tornado.web.RequestHandler):
         :return:
         '''
         try:
-            if isinstance(data, dict):
+            if isinstance(data, object):
                 data = ObjLibrary().to_dict(data)
             elif not isinstance(data, dict):
                 data = dict(data)
