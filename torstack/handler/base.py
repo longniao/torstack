@@ -141,8 +141,6 @@ class BaseHandler(tornado.web.RequestHandler):
         '''
         try:
             kwargs['current_user'] = self.current_user
-            if 'user_messages' not in kwargs:
-                kwargs['user_messages'] = self.read_messages()
             return self.render(template, **kwargs)
         except:
             self.gen_http_error(500, "Unexpected error: %s" % sys.exc_info()[0])
