@@ -48,3 +48,12 @@ class StringLibrary(object):
         :return:
         '''
         return ''.join(random.sample(string.ascii_letters + string.digits, len))
+
+    @staticmethod
+    def substr(string, start=0, len=10):
+        '''
+        substr string
+        :return:
+        '''
+        l = list(string)
+        return ''.join(l[start:len])
