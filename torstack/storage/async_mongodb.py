@@ -122,11 +122,11 @@ class AsyncMongodb(object):
 
     def get_session(self, dbname=None, dbtype='master'):
         try:
-            if not self.current_db:
-                if not dbname:
+            if dbname:
+                self.use(dbname, dbtype)
+            else:
+                if not self.current_db:
                     raise KeyError('error dbname')
-                else:
-                    self.use(dbname, dbtype)
 
             return choice(self.clientPool[self.current_db])
         except KeyError:

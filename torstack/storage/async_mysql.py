@@ -15,6 +15,7 @@ import asyncio
 import sqlalchemy as sa
 from aiomysql.sa import create_engine
 from contextlib import contextmanager
+from random import choice
 
 engine_setting = dict(
     echo=False,  # print sql
@@ -146,11 +147,11 @@ class AsyncMysql(object):
 
     def get_session(self, dbname=None, dbtype='master'):
         try:
-            if not self.current_db:
-                if not dbname:
+            if dbname:
+                self.use(dbname, dbtype)
+            else:
+                if not self.current_db:
                     raise KeyError('error dbname')
-                else:
-                    self.use(dbname, dbtype)
 
             return choice(self.sessionPool[self.current_db])
         except KeyError:
@@ -160,11 +161,11 @@ class AsyncMysql(object):
 
     def get_engine(self, dbname=None, dbtype='master'):
         try:
-            if not self.current_db:
-                if not dbname:
+            if dbname:
+                self.use(dbname, dbtype)
+            else:
+                if not self.current_db:
                     raise KeyError('error dbname')
-                else:
-                    self.use(dbname, dbtype)
 
             return choice(self.enginePool[self.current_db])
         except KeyError:
