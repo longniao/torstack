@@ -18,12 +18,21 @@ class StringLibrary(object):
     '''
 
     @staticmethod
-    def gen_uuid():
+    def gen_uuid(type=1):
         '''
         uuid
         :return:
         '''
-        return str(uuid.uuid4())
+        if type == 1:
+            return str(uuid.uuid1())
+        elif type == 2:
+            return str(uuid.uuid2())
+        elif type == 3:
+            return str(uuid.uuid3())
+        elif type == 4:
+            return str(uuid.uuid4())
+        elif type == 5:
+            return str(uuid.uuid5())
 
     @staticmethod
     def gen_random_letters(len=8):
