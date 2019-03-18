@@ -34,7 +34,7 @@ class SyncFile(object):
         :param file:
         :return:
         '''
-        path = '%s/%s' % (self.path, file)
+        path = os.path.join(self.path, file)
         if os.path.exists(path):
             with open(path, 'r') as fp:
                 return fp.read()
@@ -49,7 +49,8 @@ class SyncFile(object):
         :return:
         '''
         self.mkdir(self.path)
-        path = '%s/%s' % (self.path, file)
+        path = os.path.join(self.path, file)
+        self.mkdir(os.path.dirname(path))
         fp = open(path, 'w+')
         fp.write(content)
         fp.close()
@@ -61,7 +62,7 @@ class SyncFile(object):
         :param file:
         :return:
         '''
-        path = '%s/%s' % (self.path, file)
+        path = os.path.join(self.path, file)
         if os.path.exists(path):
             os.remove(path)
         else:
