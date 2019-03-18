@@ -63,7 +63,7 @@ class WebApplication(tornado.web.Application):
 
         # file default
         from torstack.storage.sync_file import SyncFile
-        self.storage['file'] = SyncFile()
+        self.storage['file'] = SyncFile(path=config['application']['settings']['upload_path'])
 
         # ===================================================================
         # ======= session and cookie ========================================

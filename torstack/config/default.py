@@ -25,6 +25,7 @@ settings = dict(
     login_url="/account",
     template_path="%(project_path)s/website/template",
     static_path="%(project_path)s/website/static",
+    upload_path="/tmp",
 )
 
 # base config ====================================
