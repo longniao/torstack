@@ -51,7 +51,7 @@ class SyncFile(object):
         self.mkdir(self.path)
         path = os.path.join(self.path, file)
         self.mkdir(os.path.dirname(path))
-        fp = open(path, 'w+')
+        fp = open(path, 'wb+')
         fp.write(content)
         fp.close()
         return True
