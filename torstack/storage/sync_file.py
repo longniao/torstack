@@ -48,6 +48,9 @@ class SyncFile(object):
         :param lifetime:
         :return:
         '''
+        if isinstance(content, str):
+            content = content.encode(encoding='utf-8')
+
         self.mkdir(self.path)
         path = os.path.join(self.path, file)
         self.mkdir(os.path.dirname(path))
