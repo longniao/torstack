@@ -110,6 +110,7 @@ mysql = [dict(
     username='',
     password='',
     type='master',
+    charset='utf8',
 )]
 
 # mongodb

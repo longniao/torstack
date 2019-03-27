@@ -63,7 +63,7 @@ class SyncMysql(object):
 
         for config in configs:
             try:
-                host, port, dbname, username, password, master = config.get('host'), config.get('port'), config.get('dbname'), config.get('username'), config.get('password'), config.get('type', 'master')
+                host, port, dbname, username, password, master, charset = config.get('host'), config.get('port'), config.get('dbname'), config.get('username'), config.get('password'), config.get('type', 'master'), config.get('charset', 'utf8')
 
                 if not isinstance(host, str):
                     raise ValueError('Invalid host')
@@ -72,7 +72,15 @@ class SyncMysql(object):
                 elif not isinstance(port, int):
                     raise ValueError('Invalid port')
 
-                self.config_list.append(config)
+                self.config_list.append(dict(
+                    host=host,
+                    port=port,
+                    dbname=dbname,
+                    username=username,
+                    password=password,
+                    master=master,
+                    charset=charset,
+                ))
             except Exception as e:
                 raise Exception('error: %s', str(e))
 
@@ -122,7 +130,7 @@ class SyncMysql(object):
         )
 
     def __create_single_engine(self, config):
-        engine_url = 'mysql+pymysql://%s:%s@%s:%s/%s?charset=utf8' % (config['username'], config['password'], config['host'], config['port'], config['dbname'])
+        engine_url = 'mysql+pymysql://%s:%s@%s:%s/%s?charset=%s' % (config['username'], config['password'], config['host'], config['port'], config['dbname'], config['charset'])
         engine = create_engine(engine_url, **engine_setting)
         return engine
 
