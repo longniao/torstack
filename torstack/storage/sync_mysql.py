@@ -63,7 +63,7 @@ class SyncMysql(object):
 
         for config in configs:
             try:
-                host, port, dbname, username, password, master, charset = config.get('host'), config.get('port'), config.get('dbname'), config.get('username'), config.get('password'), config.get('type', 'master'), config.get('charset', 'utf8')
+                host, port, dbname, username, password, type, charset = config.get('host'), config.get('port'), config.get('dbname'), config.get('username'), config.get('password'), config.get('type', 'master'), config.get('charset', 'utf8')
 
                 if not isinstance(host, str):
                     raise ValueError('Invalid host')
@@ -78,7 +78,7 @@ class SyncMysql(object):
                     dbname=dbname,
                     username=username,
                     password=password,
-                    master=master,
+                    type=type,
                     charset=charset,
                 ))
             except Exception as e:
