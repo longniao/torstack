@@ -26,9 +26,12 @@ engine_setting=dict(
         # 如果mysql重启或断开过连接，那么依然会在第一次时报"MySQL server has gone away"，
         # 假如需要非常严格的mysql断线重连策略，可以设置心跳。
         # 心跳设置参考https://stackoverflow.com/questions/18054224/python-sqlalchemy-mysql-server-has-gone-away
-        pool_recycle=25200,
-        pool_size=20,
+        pool_recycle=3600,
+        pool_size=100,
+        pool_timeout=30,
         max_overflow=20,
+        isolation_level="READ UNCOMMITTED",
+        pool_pre_ping=True,
     )
 
 class SyncMysql(object):
