@@ -4,7 +4,7 @@ aiohttp==3.3.2
 aiomysql==0.0.19
 aioredis==1.2.0
 pytest==3.6.1
-redis==2.10.6
+redis==4.4.4
 SQLAlchemy==1.2.10
 motor==2.0.0
 elasticsearch>=6.3.1
